@@ -1,6 +1,5 @@
 package com.keemsa.seasonify.features.start;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
@@ -8,6 +7,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.v4.content.FileProvider;
+import android.support.v7.app.AppCompatActivity;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -26,7 +26,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class MainActivity extends Activity implements BitmapLoaderAsyncTask.BitmapLoaderAsyncTaskReceiver{
+public class MainActivity extends AppCompatActivity implements BitmapLoaderAsyncTask.BitmapLoaderAsyncTaskReceiver{
 
     private static final String LOG_TAG = MainActivity.class.getSimpleName();
     private static final int REQUEST_IMAGE_CAPTURE = 1;
@@ -34,17 +34,12 @@ public class MainActivity extends Activity implements BitmapLoaderAsyncTask.Bitm
     private Classifier classifier;
     private Executor executor = Executors.newSingleThreadExecutor();
 
-//    private static final int INPUT_SIZE = 224;
     private static final int INPUT_SIZE = 128;
     private static final int IMAGE_MEAN = 117;
     private static final float IMAGE_STD = 1;
-//    private static final String INPUT_NAME = "input";
-//    private static final String OUTPUT_NAME = "output";
     private static final String INPUT_NAME = "input_images_input";
     private static final String OUTPUT_NAME = "output_labels/Softmax";
 
-//    private static final String MODEL_FILE = "file:///android_asset/tensorflow_inception_graph.pb";
-//    private static final String LABEL_FILE = "file:///android_asset/imagenet_comp_graph_label_strings.txt";
     private static final String MODEL_FILE = "file:///android_asset/seasonify.pb";
     private static final String LABEL_FILE = "file:///android_asset/seasonify.txt";
 
