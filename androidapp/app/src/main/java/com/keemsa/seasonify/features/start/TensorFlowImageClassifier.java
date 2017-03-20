@@ -110,6 +110,7 @@ public class TensorFlowImageClassifier implements Classifier {
             throw new RuntimeException("TF initialization failed");
         }
         // The shape of the output is [N, NUM_CLASSES], where N is the batch size.
+//        int numClasses = 4;
         int numClasses =
                 (int) c.inferenceInterface.graph().operation(outputName).output(0).shape().size(1);
         Log.i(TAG, "Read " + c.labels.size() + " labels, output layer size is " + numClasses);
@@ -141,9 +142,13 @@ public class TensorFlowImageClassifier implements Classifier {
         bitmap.getPixels(intValues, 0, bitmap.getWidth(), 0, 0, bitmap.getWidth(), bitmap.getHeight());
         for (int i = 0; i < intValues.length; ++i) {
             final int val = intValues[i];
-            floatValues[i * 3 + 0] = (((val >> 16) & 0xFF) - imageMean) / imageStd;
-            floatValues[i * 3 + 1] = (((val >> 8) & 0xFF) - imageMean) / imageStd;
-            floatValues[i * 3 + 2] = ((val & 0xFF) - imageMean) / imageStd;
+//            floatValues[i * 3 + 0] = (float)(((val >> 16) & 0xFF)  / 127.5) - 1;
+//            floatValues[i * 3 + 1] = (float)(((val >> 8) & 0xFF) / 127.5) - 1;
+//            floatValues[i * 3 + 2] = (float)((val & 0xFF) / 127.5) - 1;
+
+            floatValues[i * 3 + 0] = (float)(((val >> 16) & 0xFF));
+            floatValues[i * 3 + 1] = (float)(((val >> 8) & 0xFF));
+            floatValues[i * 3 + 2] = (float)((val & 0xFF));
         }
         Trace.endSection();
 
@@ -166,7 +171,7 @@ public class TensorFlowImageClassifier implements Classifier {
         // Find the best classifications.
         PriorityQueue<Recognition> pq =
                 new PriorityQueue<Recognition>(
-                        3,
+                        4,
                         new Comparator<Recognition>() {
                             @Override
                             public int compare(Recognition lhs, Recognition rhs) {

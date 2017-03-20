@@ -34,15 +34,19 @@ public class MainActivity extends Activity implements BitmapLoaderAsyncTask.Bitm
     private Classifier classifier;
     private Executor executor = Executors.newSingleThreadExecutor();
 
-    private static final int INPUT_SIZE = 224;
+//    private static final int INPUT_SIZE = 224;
+    private static final int INPUT_SIZE = 128;
     private static final int IMAGE_MEAN = 117;
     private static final float IMAGE_STD = 1;
-    private static final String INPUT_NAME = "input";
-    private static final String OUTPUT_NAME = "output";
+//    private static final String INPUT_NAME = "input";
+//    private static final String OUTPUT_NAME = "output";
+    private static final String INPUT_NAME = "input_images_input";
+    private static final String OUTPUT_NAME = "output_labels/Softmax";
 
-    private static final String MODEL_FILE = "file:///android_asset/tensorflow_inception_graph.pb";
-    private static final String LABEL_FILE =
-            "file:///android_asset/imagenet_comp_graph_label_strings.txt";
+//    private static final String MODEL_FILE = "file:///android_asset/tensorflow_inception_graph.pb";
+//    private static final String LABEL_FILE = "file:///android_asset/imagenet_comp_graph_label_strings.txt";
+    private static final String MODEL_FILE = "file:///android_asset/seasonify.pb";
+    private static final String LABEL_FILE = "file:///android_asset/seasonify.txt";
 
     @BindView(R.id.imv_face)
     ImageView imv_face;
