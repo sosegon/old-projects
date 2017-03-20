@@ -54,7 +54,7 @@ public class MainActivity extends Activity implements BitmapLoaderAsyncTask.Bitm
     @BindView(R.id.txt_results)
     TextView txt_results;
 
-    @OnClick(R.id.btn_scan)
+    @OnClick(R.id.fab_scan)
     public void start_camera(){
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         // Ensure that there's a camera activity to handle the intent
