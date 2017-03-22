@@ -3,9 +3,9 @@ package com.keemsa.seasonify.features.start;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.net.Uri;
 import android.os.AsyncTask;
 
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -13,7 +13,7 @@ import java.io.InputStream;
  * Created by sebastian on 3/10/17.
  */
 
-public class BitmapLoaderAsyncTask extends AsyncTask<Uri, Void, Bitmap> {
+public class BitmapLoaderAsyncTask extends AsyncTask<String, Void, Bitmap> {
 
   interface BitmapLoaderAsyncTaskReceiver {
     void classify(Bitmap bitmap);
@@ -31,7 +31,7 @@ public class BitmapLoaderAsyncTask extends AsyncTask<Uri, Void, Bitmap> {
   }
 
   @Override
-  protected Bitmap doInBackground(Uri... params) {
+  protected Bitmap doInBackground(String... params) {
     try{
       return getBitmap(params[0]);
 
@@ -45,8 +45,9 @@ public class BitmapLoaderAsyncTask extends AsyncTask<Uri, Void, Bitmap> {
     mReceiver.classify(bitmap);
   }
 
-  public Bitmap getBitmap(Uri uri) throws IOException {
-    InputStream input = mContext.getContentResolver().openInputStream(uri);
+  public Bitmap getBitmap(String path) throws IOException {
+//    InputStream input = mContext.getContentResolver().openInputStream(uri);
+    InputStream input = new FileInputStream(path);
     Bitmap bitmap = BitmapFactory.decodeStream(input, null, null);
     bitmap = Bitmap.createScaledBitmap(bitmap, mImageSize, mImageSize, false);
     input.close();

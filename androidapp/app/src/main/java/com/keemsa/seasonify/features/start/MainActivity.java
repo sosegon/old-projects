@@ -31,6 +31,7 @@ public class MainActivity extends AppCompatActivity implements BitmapLoaderAsync
     private static final String LOG_TAG = MainActivity.class.getSimpleName();
     private static final int REQUEST_IMAGE_CAPTURE = 1;
     private Uri mUriPhoto;
+    private File mPhotoFile;
     private Classifier classifier;
     private Executor executor = Executors.newSingleThreadExecutor();
 
@@ -55,17 +56,16 @@ public class MainActivity extends AppCompatActivity implements BitmapLoaderAsync
         // Ensure that there's a camera activity to handle the intent
         if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
             // Create the File where the photo should go
-            File photoFile = null;
             try {
-                photoFile = createImageFile();
+                mPhotoFile = createImageFile();
             } catch (IOException ex) {
                 // Error occurred while creating the File
             }
             // Continue only if the File was successfully created
-            if (photoFile != null) {
+            if (mPhotoFile != null) {
                 mUriPhoto = FileProvider.getUriForFile(this,
                         "com.keemsa.seasonify.fileprovider",
-                        photoFile);
+                        mPhotoFile);
                 takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, mUriPhoto);
                 startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
             }
@@ -88,9 +88,11 @@ public class MainActivity extends AppCompatActivity implements BitmapLoaderAsync
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if(requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
-            Picasso.with(this).load(mUriPhoto).into(imv_face);
+//            Picasso.with(this).load(mUriPhoto).into(imv_face);
+            Picasso.with(this).load(mPhotoFile).into(imv_face);
             BitmapLoaderAsyncTask task = new BitmapLoaderAsyncTask(this, this, INPUT_SIZE);
-            task.execute(mUriPhoto);
+//            task.execute(mUriPhoto);
+            task.execute(mPhotoFile.getAbsolutePath());
         }
     }
 
