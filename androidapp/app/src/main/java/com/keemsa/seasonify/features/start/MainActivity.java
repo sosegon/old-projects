@@ -26,23 +26,14 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class MainActivity extends AppCompatActivity implements BitmapLoaderAsyncTask.BitmapLoaderAsyncTaskReceiver{
+public class MainActivity extends AppCompatActivity implements MainMvpView {
 
     private static final String LOG_TAG = MainActivity.class.getSimpleName();
     private static final int REQUEST_IMAGE_CAPTURE = 1;
     private Uri mUriPhoto;
     private File mPhotoFile;
-    private Classifier classifier;
-    private Executor executor = Executors.newSingleThreadExecutor();
 
-    private static final int INPUT_SIZE = 128;
-    private static final int IMAGE_MEAN = 117;
-    private static final float IMAGE_STD = 1;
-    private static final String INPUT_NAME = "input_images_input";
-    private static final String OUTPUT_NAME = "output_labels/Softmax";
-
-    private static final String MODEL_FILE = "file:///android_asset/seasonify.pb";
-    private static final String LABEL_FILE = "file:///android_asset/seasonify.txt";
+    private MainPresenter mPresenter;
 
     @BindView(R.id.imv_face)
     ImageView imv_face;
@@ -57,13 +48,14 @@ public class MainActivity extends AppCompatActivity implements BitmapLoaderAsync
         if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
             // Create the File where the photo should go
             try {
-                mPhotoFile = createImageFile();
+                mPhotoFile = mPresenter.createImageFile(this);
             } catch (IOException ex) {
                 // Error occurred while creating the File
             }
             // Continue only if the File was successfully created
             if (mPhotoFile != null) {
-                mUriPhoto = FileProvider.getUriForFile(this,
+                mUriPhoto = FileProvider.getUriForFile(
+                        this,
                         "com.keemsa.seasonify.fileprovider",
                         mPhotoFile);
                 takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, mUriPhoto);
@@ -80,19 +72,30 @@ public class MainActivity extends AppCompatActivity implements BitmapLoaderAsync
                 mUriPhoto = Uri.parse(savedInstanceState.getString("uri_file_path"));
             }
         }
+
+        mPresenter = new MainPresenter();
+        mPresenter.initTensorFlowAndLoadModel(this);
+
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
-        initTensorFlowAndLoadModel();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        mPresenter.attachView(this);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        mPresenter.detachView();
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if(requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
-//            Picasso.with(this).load(mUriPhoto).into(imv_face);
-            Picasso.with(this).load(mPhotoFile).into(imv_face);
-            BitmapLoaderAsyncTask task = new BitmapLoaderAsyncTask(this, this, INPUT_SIZE);
-//            task.execute(mUriPhoto);
-            task.execute(mPhotoFile.getAbsolutePath());
+            mPresenter.classifyImage(this, mPhotoFile, mUriPhoto);
         }
     }
 
@@ -103,47 +106,14 @@ public class MainActivity extends AppCompatActivity implements BitmapLoaderAsync
         super.onSaveInstanceState(outState);
     }
 
-    private File createImageFile() throws IOException {
-        // Create an image file name
-        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-        String imageFileName = "JPEG_" + timeStamp + "_";
-        File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
-        File image = File.createTempFile(
-                imageFileName,  /* prefix */
-                ".jpg",         /* suffix */
-                storageDir      /* directory */
-        );
 
-        // Save a file: path for use with ACTION_VIEW intents
-//        mCurrentPhotoPath = image.getAbsolutePath();
-        return image;
+    @Override
+    public void updateFaceView() {
+        Picasso.with(this).load(mUriPhoto).into(imv_face);
     }
 
     @Override
-    public void classify(Bitmap bitmap) {
-        final List<Classifier.Recognition> results = classifier.recognizeImage(bitmap);
-
-        txt_results.setText(results.toString());
-    }
-
-    private void initTensorFlowAndLoadModel() {
-        executor.execute(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    classifier = TensorFlowImageClassifier.create(
-                            getAssets(),
-                            MODEL_FILE,
-                            LABEL_FILE,
-                            INPUT_SIZE,
-                            IMAGE_MEAN,
-                            IMAGE_STD,
-                            INPUT_NAME,
-                            OUTPUT_NAME);
-                } catch (final Exception e) {
-                    throw new RuntimeException("Error initializing TensorFlow!", e);
-                }
-            }
-        });
+    public void updateResult(String result) {
+        txt_results.setText(result);
     }
 }

@@ -1,5 +1,7 @@
 package com.keemsa.seasonify.features.start;
 
+import android.net.Uri;
+
 import com.keemsa.seasonify.base.MvpView;
 
 /**
@@ -7,4 +9,7 @@ import com.keemsa.seasonify.base.MvpView;
  */
 
 public interface MainMvpView extends MvpView {
+
+    void updateFaceView();
+    void updateResult(String result);
 }
