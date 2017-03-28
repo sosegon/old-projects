@@ -30,7 +30,7 @@ public class MainActivity extends AppCompatActivity implements MainMvpView {
 
     private static final String LOG_TAG = MainActivity.class.getSimpleName();
     private static final int REQUEST_IMAGE_CAPTURE = 1;
-    private Uri mUriPhoto;
+    private boolean onActivityResultCalled = false;
     private File mPhotoFile;
 
     private MainPresenter mPresenter;
@@ -54,11 +54,8 @@ public class MainActivity extends AppCompatActivity implements MainMvpView {
             }
             // Continue only if the File was successfully created
             if (mPhotoFile != null) {
-                mUriPhoto = FileProvider.getUriForFile(
-                        this,
-                        "com.keemsa.seasonify.fileprovider",
-                        mPhotoFile);
-                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, mUriPhoto);
+                Uri uriPhoto = mPresenter.generateUri(this, mPhotoFile);
+                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, uriPhoto);
                 startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
             }
         }
@@ -67,13 +64,8 @@ public class MainActivity extends AppCompatActivity implements MainMvpView {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (savedInstanceState != null) {
-            if (mUriPhoto == null && savedInstanceState.getString("uri_file_path") != null) {
-                mUriPhoto = Uri.parse(savedInstanceState.getString("uri_file_path"));
-            }
-        }
 
-        mPresenter = new MainPresenter();
+        mPresenter = new MainPresenter(this);
         mPresenter.initTensorFlowAndLoadModel(this);
 
         setContentView(R.layout.activity_main);
@@ -83,33 +75,50 @@ public class MainActivity extends AppCompatActivity implements MainMvpView {
     @Override
     protected void onResume() {
         super.onResume();
-        mPresenter.attachView(this);
+        if(!mPresenter.isViewAttached()) {
+            mPresenter.attachView(this);
+        }
+
+        /*
+            onResume gets called after onActivityResult, but
+            the latter is not called every time, just when the
+            camera activity has been started.
+            To avoid conflict when updating the UI, ta flag is used,
+            so previous results are loaded in any situation except
+            when the camera activity has been started.
+         */
+        if(!onActivityResultCalled) {
+            mPresenter.loadPreviousResults(this);
+        }
+
+        onActivityResultCalled = false; // if it was called
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        mPresenter.detachView();
+        if(mPresenter.isViewAttached()) {
+            mPresenter.detachView();
+        }
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if(requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
-            mPresenter.classifyImage(this, mPhotoFile, mUriPhoto);
+            mPresenter.classifyImage(this, mPhotoFile);
+            onActivityResultCalled = true;
         }
     }
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
-        if (mUriPhoto != null)
-            outState.putString("uri_file_path", mUriPhoto.toString());
         super.onSaveInstanceState(outState);
     }
 
 
     @Override
-    public void updateFaceView() {
-        Picasso.with(this).load(mUriPhoto).into(imv_face);
+    public void updateFaceView(Uri uriPhoto) {
+        Picasso.with(this).load(uriPhoto).into(imv_face);
     }
 
     @Override

@@ -1,7 +1,11 @@
 <resources>
     <string name="app_name">Seasonify</string>
     <string name="action_scan">Scan</string>
-    
+
+    <!--Keys for previous photo and prediction stored in shared preferences-->
+    <string name="prf_prev_photo" translatable="false">prev_photo</string>
+    <string name="prf_prev_prediction" translatable="false">prev_prediction</string>
+
     <string-array name="autumn_colors">
         <item>#fdebea</item>
         <item>#f4dbd7</item>

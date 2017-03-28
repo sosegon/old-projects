@@ -1,11 +1,16 @@
 package com.keemsa.seasonify.features.start;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.ContextWrapper;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Environment;
+import android.preference.PreferenceManager;
+import android.support.v4.content.FileProvider;
 
+import com.keemsa.seasonify.R;
 import com.keemsa.seasonify.base.BasePresenter;
 
 import java.io.File;
@@ -15,6 +20,9 @@ import java.util.Date;
 import java.util.List;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
+
+import butterknife.BindString;
+import butterknife.ButterKnife;
 
 /**
  * Created by sebastian on 3/27/17.
@@ -34,10 +42,18 @@ public class MainPresenter extends BasePresenter<MainMvpView> implements  Bitmap
     private static final String MODEL_FILE = "file:///android_asset/seasonify.pb";
     private static final String LABEL_FILE = "file:///android_asset/seasonify.txt";
 
-    public MainPresenter() {
+    @BindString(R.string.prf_prev_photo)
+    String mPrfPrevPhotoKey;
+
+    @BindString(R.string.prf_prev_prediction)
+    String mPrfPrevPredictionKey;
+
+
+    public MainPresenter(Activity activity) {
+        ButterKnife.bind(this, activity);
     }
 
-    public void classifyImage(Context context, File photoFile, Uri photoUri) {
+    public void classifyImage(Context context, File photoFile) {
         BitmapLoaderAsyncTask task = new BitmapLoaderAsyncTask(context, this, INPUT_SIZE);
         task.execute(photoFile.getAbsolutePath());
     }
@@ -78,13 +94,43 @@ public class MainPresenter extends BasePresenter<MainMvpView> implements  Bitmap
     }
 
     @Override
-    public void classify(Bitmap bitmap) {
+    public void classify(Context context, String path, Bitmap bitmap) {
         final List<Classifier.Recognition> results = classifier.recognizeImage(bitmap);
 
         if(isViewAttached()) {
-            getMvpView().updateFaceView();
+            getMvpView().updateFaceView(generateUri(context, new File(path)));
             getMvpView().updateResult(results.get(0).getTitle());
+            storeResults(context, path, results.get(0).getTitle());
         }
+    }
+
+    public Uri generateUri(Context context, File file) {
+       return FileProvider.getUriForFile(
+                context,
+                "com.keemsa.seasonify.fileprovider",
+                file
+       );
+    }
+
+    public void loadPreviousResults(Context context) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        String path = preferences.getString(mPrfPrevPhotoKey, "");
+        String result = preferences.getString(mPrfPrevPredictionKey, "");
+
+        if(isViewAttached()){
+            if(!path.equals("") || !result.equals("")){
+                getMvpView().updateFaceView(generateUri(context, new File(path)));
+                getMvpView().updateResult(result);
+            }
+        }
+    }
+
+    private void storeResults(Context context, String path, String prediction) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putString(mPrfPrevPhotoKey, path);
+        editor.putString(mPrfPrevPredictionKey, prediction);
+        editor.apply();
     }
 
 }

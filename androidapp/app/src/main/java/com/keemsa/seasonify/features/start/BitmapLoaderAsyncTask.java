@@ -16,12 +16,13 @@ import java.io.InputStream;
 public class BitmapLoaderAsyncTask extends AsyncTask<String, Void, Bitmap> {
 
   interface BitmapLoaderAsyncTaskReceiver {
-    void classify(Bitmap bitmap);
+    void classify(Context context, String path, Bitmap bitmap);
   }
 
   private BitmapLoaderAsyncTaskReceiver mReceiver;
   private Context mContext;
   private int mImageSize;
+  private String mPath;
 
   public BitmapLoaderAsyncTask(Context context, BitmapLoaderAsyncTaskReceiver receiver, int imageSize) {
     super();
@@ -33,7 +34,8 @@ public class BitmapLoaderAsyncTask extends AsyncTask<String, Void, Bitmap> {
   @Override
   protected Bitmap doInBackground(String... params) {
     try{
-      return getBitmap(params[0]);
+      mPath = params[0];
+      return getBitmap(mPath);
 
     } catch (IOException e){
       return null;
@@ -42,11 +44,10 @@ public class BitmapLoaderAsyncTask extends AsyncTask<String, Void, Bitmap> {
 
   @Override
   protected void onPostExecute(Bitmap bitmap) {
-    mReceiver.classify(bitmap);
+    mReceiver.classify(mContext, mPath, bitmap);
   }
 
   public Bitmap getBitmap(String path) throws IOException {
-//    InputStream input = mContext.getContentResolver().openInputStream(uri);
     InputStream input = new FileInputStream(path);
     Bitmap bitmap = BitmapFactory.decodeStream(input, null, null);
     bitmap = Bitmap.createScaledBitmap(bitmap, mImageSize, mImageSize, false);

@@ -10,6 +10,6 @@ import com.keemsa.seasonify.base.MvpView;
 
 public interface MainMvpView extends MvpView {
 
-    void updateFaceView();
+    void updateFaceView(Uri uriPhoto);
     void updateResult(String result);
 }
