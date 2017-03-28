@@ -83,7 +83,7 @@ public class MainPresenter extends BasePresenter<MainMvpView> implements  Bitmap
 
         if(isViewAttached()) {
             getMvpView().updateFaceView();
-            getMvpView().updateResult(results.toString());
+            getMvpView().updateResult(results.get(0).getTitle());
         }
     }
 
