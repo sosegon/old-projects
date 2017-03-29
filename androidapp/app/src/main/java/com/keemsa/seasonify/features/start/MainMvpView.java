@@ -12,4 +12,5 @@ public interface MainMvpView extends MvpView {
 
     void updateFaceView(Uri uriPhoto);
     void updateResult(String result);
+    void updatePalette(int colors[]);
 }

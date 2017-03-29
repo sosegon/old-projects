@@ -8,11 +8,13 @@ import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.keemsa.seasonify.R;
 import com.squareup.picasso.Picasso;
+import com.thebluealliance.spectrum.SpectrumPalette;
 
 import java.io.File;
 import java.io.IOException;
@@ -40,6 +42,10 @@ public class MainActivity extends AppCompatActivity implements MainMvpView {
 
     @BindView(R.id.txt_results)
     TextView txt_results;
+
+    @BindView(R.id.palette)
+    SpectrumPalette palette;
+
 
     @OnClick(R.id.fab_scan)
     public void start_camera(){
@@ -124,5 +130,13 @@ public class MainActivity extends AppCompatActivity implements MainMvpView {
     @Override
     public void updateResult(String result) {
         txt_results.setText(result);
+    }
+
+    @Override
+    public void updatePalette(int[] colors) {
+        if(colors.length != 0) {
+            palette.setVisibility(View.VISIBLE);
+            palette.setColors(colors);
+        }
     }
 }

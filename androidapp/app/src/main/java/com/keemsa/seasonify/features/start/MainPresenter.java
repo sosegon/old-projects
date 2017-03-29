@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
+import butterknife.BindArray;
 import butterknife.BindString;
 import butterknife.ButterKnife;
 
@@ -47,6 +48,18 @@ public class MainPresenter extends BasePresenter<MainMvpView> implements  Bitmap
 
     @BindString(R.string.prf_prev_prediction)
     String mPrfPrevPredictionKey;
+
+    @BindArray(R.array.autumn_colors)
+    int[] autumn_colors;
+
+    @BindArray(R.array.spring_colors)
+    int[] spring_colors;
+
+    @BindArray(R.array.summer_colors)
+    int[] summer_colors;
+
+    @BindArray(R.array.winter_colors)
+    int[] winter_colors;
 
 
     public MainPresenter(Activity activity) {
@@ -98,9 +111,12 @@ public class MainPresenter extends BasePresenter<MainMvpView> implements  Bitmap
         final List<Classifier.Recognition> results = classifier.recognizeImage(bitmap);
 
         if(isViewAttached()) {
+
+            String season = results.get(0).getTitle();
             getMvpView().updateFaceView(generateUri(context, new File(path)));
-            getMvpView().updateResult(results.get(0).getTitle());
-            storeResults(context, path, results.get(0).getTitle());
+            getMvpView().updateResult(season);
+            getMvpView().updatePalette(getSeasonalColors(season));
+            storeResults(context, path, season);
         }
     }
 
@@ -121,6 +137,7 @@ public class MainPresenter extends BasePresenter<MainMvpView> implements  Bitmap
             if(!path.equals("") || !result.equals("")){
                 getMvpView().updateFaceView(generateUri(context, new File(path)));
                 getMvpView().updateResult(result);
+                getMvpView().updatePalette(getSeasonalColors(result));
             }
         }
     }
@@ -131,6 +148,20 @@ public class MainPresenter extends BasePresenter<MainMvpView> implements  Bitmap
         editor.putString(mPrfPrevPhotoKey, path);
         editor.putString(mPrfPrevPredictionKey, prediction);
         editor.apply();
+    }
+
+    private int[] getSeasonalColors(String season) {
+        if (season.equals("autumn")) {
+            return autumn_colors;
+        } else if (season.equals("spring")) {
+            return spring_colors;
+        } else if (season.equals("summer")) {
+            return summer_colors;
+        } else if (season.equals("winter")) {
+            return winter_colors;
+        }
+
+        return new int[]{};
     }
 
 }

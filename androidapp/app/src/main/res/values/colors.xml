@@ -4,4 +4,289 @@
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
     <color name="theme_accent">#3BCFFF</color>
+
+    <array name="autumn_colors">
+            <item>#fdebea</item>
+            <item>#f4dbd7</item>
+            <item>#e6cec0</item>
+            <item>#f0d8bf</item>
+            <item>#e7c894</item>
+            <item>#ffcec8</item>
+            <item>#ffafa8</item>
+            <item>#ff8b77</item>
+            <item>#ff6d7c</item>
+            <item>#ff6464</item>
+
+            <item>#ff3442</item>
+            <item>#fa1e3f</item>
+            <item>#b12a52</item>
+            <item>#74273b</item>
+            <item>#c0bcb1</item>
+            <item>#888481</item>
+            <item>#776d6c</item>
+            <item>#5b4a54</item>
+            <item>#94918c</item>
+            <item>#c1bfb3</item>
+
+            <item>#777368</item>
+            <item>#777368</item>
+            <item>#261f27</item>
+            <item>#75625e</item>
+            <item>#df7f8a</item>
+            <item>#d95779</item>
+            <item>#c5a783</item>
+            <item>#a9836b</item>
+            <item>#b1ac74</item>
+            <item>#8d8f60</item>
+
+            <item>#8e8631</item>
+            <item>#504533</item>
+            <item>#473741</item>
+            <item>#352e3e</item>
+            <item>#2d262d</item>
+            <item>#e7aa8e</item>
+            <item>#d8917f</item>
+            <item>#a9565e</item>
+            <item>#652535</item>
+            <item>#2d222a</item>
+
+            <item>#80a963</item>
+            <item>#386637</item>
+            <item>#2d6c51</item>
+            <item>#183833</item>
+            <item>#182c2b</item>
+            <item>#f0bc66</item>
+            <item>#eda55b</item>
+            <item>#d19b53</item>
+            <item>#8f5138</item>
+            <item>#583a38</item>
+
+            <item>#45b1bd</item>
+            <item>#1f6e7d</item>
+            <item>#4eb6d1</item>
+            <item>#1b6278</item>
+            <item>#173d50</item>
+            <item>#eb9d5d</item>
+            <item>#d4814b</item>
+            <item>#d75f47</item>
+            <item>#ac2d3e</item>
+            <item>#71202f</item>
+
+            <item>#577fb2</item>
+            <item>#223671</item>
+            <item>#584a88</item>
+    </array>
+    <array name="spring_colors">
+        <item>#f7e5d7</item>
+        <item>#f1ce98</item>
+        <item>#dab56e</item>
+        <item>#eed2c6</item>
+        <item>#d1a171</item>
+        <item>#edb18c</item>
+        <item>#c2825c</item>
+        <item>#c7c3c0</item>
+        <item>#afaca3</item>
+        <item>#8e8f89</item>
+
+        <item>#786e6d</item>
+        <item>#4b3c41</item>
+        <item>#bed15e</item>
+        <item>#9dba2a</item>
+        <item>#778e1a</item>
+        <item>#2b9241</item>
+        <item>#0e5a2c</item>
+        <item>#6dce6d</item>
+        <item>#52b642</item>
+        <item>#0e7e2a</item>
+
+        <item>#71d36e</item>
+        <item>#4bb73f</item>
+        <item>#107f30</item>
+        <item>#065e45</item>
+        <item>#045449</item>
+        <item>#432a26</item>
+        <item>#5f4c3d</item>
+        <item>#a38760</item>
+        <item>#b5a27a</item>
+        <item>#d0ca8c</item>
+
+        <item>#e6c17b</item>
+        <item>#e6cd73</item>
+        <item>#e3c261</item>
+        <item>#d7a836</item>
+        <item>#d39133</item>
+        <item>#79362e</item>
+        <item>#673335</item>
+        <item>#442022</item>
+        <item>#095852</item>
+        <item>#137d6f</item>
+
+        <item>#52bea4</item>
+        <item>#39ae5d</item>
+        <item>#37b061</item>
+        <item>#52c369</item>
+        <item>#5ac3a5</item>
+        <item>#35a49d</item>
+        <item>#2badaf</item>
+        <item>#176e81</item>
+        <item>#0348a7</item>
+        <item>#e7977e</item>
+
+        <item>#e75e4e</item>
+        <item>#e86963</item>
+        <item>#e34263</item>
+        <item>#d51a35</item>
+        <item>#e66874</item>
+        <item>#e34051</item>
+        <item>#8ba8e2</item>
+        <item>#6188d7</item>
+        <item>#4064c5</item>
+        <item>#0547a8</item>
+
+        <item>#a586ca</item>
+        <item>#7657b4</item>
+        <item>#24207f</item>
+    </array>
+    <array name="summer_colors">
+        <item>#e5e3d7</item>
+        <item>#d4d1c2</item>
+        <item>#d3d0cb</item>
+        <item>#a79e95</item>
+        <item>#837e7a</item>
+        <item>#79ddb7</item>
+        <item>#1dc894</item>
+        <item>#22a385</item>
+        <item>#1c9f77</item>
+        <item>#184f3c</item>
+
+        <item>#b1b6b9</item>
+        <item>#8a9495</item>
+        <item>#6f7477</item>
+        <item>#80949d</item>
+        <item>#526977</item>
+        <item>#1bc8ac</item>
+        <item>#35cfc5</item>
+        <item>#25b8ae</item>
+        <item>#227d74</item>
+        <item>#265a34</item>
+
+        <item>#c3bfb6</item>
+        <item>#8f797b</item>
+        <item>#6a5657</item>
+        <item>#5d4d4e</item>
+        <item>#583847</item>
+        <item>#f2dbb2</item>
+        <item>#efdc8f</item>
+        <item>#f8d18e</item>
+        <item>#fffeac</item>
+        <item>#fffe44</item>
+
+        <item>#70d0e0</item>
+        <item>#3ab5c5</item>
+        <item>#27c2c6</item>
+        <item>#2c9ea8</item>
+        <item>#228292</item>
+        <item>#85caeb</item>
+        <item>#6bb8e6</item>
+        <item>#27c3bf</item>
+        <item>#2c9ea8</item>
+        <item>#228292</item>
+
+        <item>#f7888e</item>
+        <item>#ee5a66</item>
+        <item>#f76d7c</item>
+        <item>#e03c55</item>
+        <item>#bd3251</item>
+        <item>#fa96a2</item>
+        <item>#fa96a2</item>
+        <item>#f7788d</item>
+        <item>#ea4d6c</item>
+        <item>#cd2e54</item>
+
+        <item>#f3a9b6</item>
+        <item>#f39ab8</item>
+        <item>#f783a6</item>
+        <item>#dd5885</item>
+        <item>#b0476f</item>
+        <item>#90acdc</item>
+        <item>#7c98d7</item>
+        <item>#5479c0</item>
+        <item>#35639e</item>
+        <item>#35639e</item>
+
+        <item>#9883c8</item>
+        <item>#6c5b9f</item>
+        <item>#554784</item>
+    </array>
+    <array name="winter_colors">
+        <item>#ffffff</item>
+        <item>#e2dfda</item>
+        <item>#d3d0c7</item>
+        <item>#9c938c</item>
+        <item>#75706c</item>
+        <item>#ced2d5</item>
+        <item>#babfc2</item>
+        <item>#8a9495</item>
+        <item>#3d4245</item>
+        <item>#0e0e0e</item>
+
+        <item>#f5d4df</item>
+        <item>#fbef99</item>
+        <item>#b1e7c5</item>
+        <item>#a9e8f1</item>
+        <item>#c9d4f0</item>
+        <item>#f8ec74</item>
+        <item>#fde561</item>
+        <item>#ffd95e</item>
+        <item>#dc364e</item>
+        <item>#ad2740</item>
+
+        <item>#33c676</item>
+        <item>#14b862</item>
+        <item>#107b43</item>
+        <item>#135c3e</item>
+        <item>#18c08d</item>
+        <item>#127b5d</item>
+        <item>#114b3d</item>
+        <item>#23adb7</item>
+        <item>#146672</item>
+        <item>#41b8d8</item>
+
+        <item>#2299c3</item>
+        <item>#115f86</item>
+        <item>#2e85ca</item>
+        <item>#0b60b0</item>
+        <item>#ffc2eb</item>
+        <item>#ff97da</item>
+        <item>#fa77bb</item>
+        <item>#f964b5</item>
+        <item>#ab2a6a</item>
+        <item>#fe93c1</item>
+
+        <item>#fd5b8d</item>
+        <item>#f75c9e</item>
+        <item>#a73269</item>
+        <item>#562239</item>
+        <item>#f79dd0</item>
+        <item>#dd5792</item>
+        <item>#a73269</item>
+        <item>#742544</item>
+        <item>#3a2230</item>
+        <item>#c982d2</item>
+
+        <item>#8a4fa1</item>
+        <item>#5e357b</item>
+        <item>#a157a4</item>
+        <item>#45295a</item>
+        <item>#7b356b</item>
+        <item>#5b3872</item>
+        <item>#38397a</item>
+        <item>#2f2c5b</item>
+        <item>#1f304e</item>
+        <item>#3b66b4</item>
+
+        <item>#20418e</item>
+        <item>#212f54</item>
+        <item>#27221f</item>
+    </array>
 </resources>

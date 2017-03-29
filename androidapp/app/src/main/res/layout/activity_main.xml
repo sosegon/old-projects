@@ -33,6 +33,15 @@
             android:textStyle="bold"
             tools:text="Summer"
             />
+
+        <com.thebluealliance.spectrum.SpectrumPalette
+            android:id="@+id/palette"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            app:spectrum_autoPadding="true"
+            app:spectrum_outlineWidth="1dp"
+            app:spectrum_columnCount="6" />
     </LinearLayout>
 
     <android.support.design.widget.FloatingActionButton
