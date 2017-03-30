@@ -6,6 +6,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -40,12 +41,11 @@ public class MainActivity extends AppCompatActivity implements MainMvpView {
     @BindView(R.id.imv_face)
     ImageView imv_face;
 
-    @BindView(R.id.txt_results)
-    TextView txt_results;
-
     @BindView(R.id.palette)
     SpectrumPalette palette;
 
+    @BindView(R.id.ctb)
+    CollapsingToolbarLayout ctb;
 
     @OnClick(R.id.fab_scan)
     public void start_camera(){
@@ -129,7 +129,7 @@ public class MainActivity extends AppCompatActivity implements MainMvpView {
 
     @Override
     public void updateResult(String result) {
-        txt_results.setText(result);
+        ctb.setTitle(result);
     }
 
     @Override
