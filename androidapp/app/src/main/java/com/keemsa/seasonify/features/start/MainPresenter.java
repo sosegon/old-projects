@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.ContextWrapper;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
+import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Environment;
 import android.preference.PreferenceManager;
@@ -163,5 +164,7 @@ public class MainPresenter extends BasePresenter<MainMvpView> implements  Bitmap
 
         return new int[]{};
     }
+
+
 
 }

@@ -3,9 +3,12 @@ package com.keemsa.seasonify.features.start;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
+import android.media.ExifInterface;
 import android.os.AsyncTask;
 
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -49,10 +52,56 @@ public class BitmapLoaderAsyncTask extends AsyncTask<String, Void, Bitmap> {
 
   public Bitmap getBitmap(String path) throws IOException {
     InputStream input = new FileInputStream(path);
-    Bitmap bitmap = BitmapFactory.decodeStream(input, null, null);
-    bitmap = Bitmap.createScaledBitmap(bitmap, mImageSize, mImageSize, false);
+    BitmapFactory.Options bounds = new BitmapFactory.Options();
+    Bitmap bitmap = BitmapFactory.decodeStream(input, null, bounds);
+
+    int rotationAngle = getCameraPhotoOrientation(mContext, mPath);
+    Matrix matrix = new Matrix();
+    matrix.postRotate(rotationAngle, (float) bitmap.getWidth() / 2, (float) bitmap.getHeight() / 2);
+
+    // passed to the classifier
+    Bitmap scaledBitmap = Bitmap.createBitmap(bitmap, 0, 0, mImageSize, mImageSize, matrix, false);
+
+    // saved to storage
+    Bitmap rotatedBitmap = Bitmap.createBitmap(bitmap, 0, 0, bounds.outWidth, bounds.outHeight, matrix, false);
+
+    FileOutputStream fos = new FileOutputStream(mPath);
+    rotatedBitmap.compress(Bitmap.CompressFormat.JPEG, 100, fos);
+
+    fos.flush();
+    fos.close();
     input.close();
-    return bitmap;
+
+    return scaledBitmap;
+  }
+
+  // from http://stackoverflow.com/a/28404421
+  private int getCameraPhotoOrientation(Context context, String path) {
+    int rotate = 0;
+    try {
+
+      ExifInterface exif = new ExifInterface(path);
+      int orientation = exif.getAttributeInt(
+              ExifInterface.TAG_ORIENTATION,
+              ExifInterface.ORIENTATION_UNDEFINED);
+      switch (orientation) {
+        case ExifInterface.ORIENTATION_NORMAL:
+          rotate = 0;
+        case ExifInterface.ORIENTATION_ROTATE_270:
+          rotate = 270;
+          break;
+        case ExifInterface.ORIENTATION_ROTATE_180:
+          rotate = 180;
+          break;
+        case ExifInterface.ORIENTATION_ROTATE_90:
+          rotate = 90;
+          break;
+      }
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+
+    return rotate;
   }
 
 }
