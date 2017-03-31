@@ -9,6 +9,8 @@ import android.provider.MediaStore;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
+import android.view.Menu;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -47,6 +49,9 @@ public class MainActivity extends AppCompatActivity implements MainMvpView {
     @BindView(R.id.ctb)
     CollapsingToolbarLayout ctb;
 
+    @BindView(R.id.tb)
+    Toolbar tb;
+
     @OnClick(R.id.fab_scan)
     public void start_camera(){
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
@@ -76,6 +81,8 @@ public class MainActivity extends AppCompatActivity implements MainMvpView {
 
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
+
+        setSupportActionBar(tb);
     }
 
     @Override
@@ -121,6 +128,11 @@ public class MainActivity extends AppCompatActivity implements MainMvpView {
         super.onSaveInstanceState(outState);
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.options, menu);
+        return true;
+    }
 
     @Override
     public void updateFaceView(Uri uriPhoto) {
