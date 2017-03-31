@@ -6,6 +6,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.media.ExifInterface;
 import android.os.AsyncTask;
+import android.util.Log;
 
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -56,6 +57,7 @@ public class BitmapLoaderAsyncTask extends AsyncTask<String, Void, Bitmap> {
     Bitmap bitmap = BitmapFactory.decodeStream(input, null, bounds);
 
     int rotationAngle = getCameraPhotoOrientation(mContext, mPath);
+    Log.e("ASync", "Rotate angle: " + rotationAngle);
     Matrix matrix = new Matrix();
     matrix.postRotate(rotationAngle, (float) bitmap.getWidth() / 2, (float) bitmap.getHeight() / 2);
 
