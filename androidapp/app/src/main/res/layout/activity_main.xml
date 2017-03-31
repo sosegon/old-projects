@@ -57,14 +57,26 @@
         android:layout_height="match_parent"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-        <com.thebluealliance.spectrum.SpectrumPalette
-            android:id="@+id/palette"
+        <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:visibility="gone"
-            app:spectrum_autoPadding="true"
-            app:spectrum_outlineWidth="1dp"
-            app:spectrum_columnCount="6" />
+            android:layout_height="match_parent">
+            <android.support.v7.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
+                android:layout_marginTop="32dp">
+
+                <com.thebluealliance.spectrum.SpectrumPalette
+                    android:id="@+id/palette"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:visibility="gone"
+                    android:layout_gravity="center_horizontal"
+                    app:spectrum_columnCount="5" />
+
+            </android.support.v7.widget.CardView>
+        </FrameLayout>
     </android.support.v4.widget.NestedScrollView>
 
     <android.support.design.widget.FloatingActionButton
