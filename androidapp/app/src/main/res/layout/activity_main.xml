@@ -10,6 +10,7 @@
     tools:context="com.keemsa.seasonify.features.start.MainActivity">
 
     <android.support.design.widget.AppBarLayout
+        android:id="@+id/abl"
         android:layout_width="match_parent"
         android:layout_height="300dp"
         android:fitsSystemWindows="true"
@@ -70,13 +71,14 @@
         android:id="@+id/fab_scan"
         android:stateListAnimator="@anim/fab_state_list_anim"
         android:background="@drawable/fab_scan_background"
-        android:layout_gravity="bottom|end"
         android:layout_marginRight="@dimen/fab_margin"
-        android:layout_marginBottom="@dimen/fab_margin"
         android:layout_width="56dp"
         android:layout_height="56dp"
         android:src="@drawable/ic_face"
         android:elevation="@dimen/fab_elevation"
-        android:contentDescription="@string/action_scan"/>
+        android:contentDescription="@string/action_scan"
+        android:clickable="true"
+        app:layout_anchor="@id/abl"
+        app:layout_anchorGravity="bottom|right|end"/>
 
 </android.support.design.widget.CoordinatorLayout>
