@@ -11,8 +11,11 @@ import android.os.Environment;
 import android.preference.PreferenceManager;
 import android.support.v4.content.FileProvider;
 
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.keemsa.seasonify.R;
 import com.keemsa.seasonify.base.BasePresenter;
+import com.keemsa.seasonify.model.Prediction;
 
 import java.io.File;
 import java.io.IOException;
@@ -44,6 +47,9 @@ public class MainPresenter extends BasePresenter<MainMvpView> implements  Bitmap
     private static final String MODEL_FILE = "file:///android_asset/seasonify.pb";
     private static final String LABEL_FILE = "file:///android_asset/seasonify.txt";
 
+    private FirebaseDatabase mFirebaseDatabase;
+    private DatabaseReference mPredictionsDatabaseReference;
+
     @BindString(R.string.prf_prev_photo)
     String mPrfPrevPhotoKey;
 
@@ -65,6 +71,8 @@ public class MainPresenter extends BasePresenter<MainMvpView> implements  Bitmap
 
     public MainPresenter(Activity activity) {
         ButterKnife.bind(this, activity);
+        mFirebaseDatabase = FirebaseDatabase.getInstance();
+        mPredictionsDatabaseReference = mFirebaseDatabase.getReference().child("predictions");
     }
 
     public void classifyImage(Context context, File photoFile) {
@@ -118,6 +126,10 @@ public class MainPresenter extends BasePresenter<MainMvpView> implements  Bitmap
             getMvpView().updateResult(season);
             getMvpView().updatePalette(getSeasonalColors(season));
             storeResults(context, path, season);
+
+            int seasonInt = getPredictionAsInteger(season);
+            Prediction prediction = new Prediction(seasonInt,  null);
+            mPredictionsDatabaseReference.push().setValue(prediction);
         }
     }
 
@@ -165,6 +177,17 @@ public class MainPresenter extends BasePresenter<MainMvpView> implements  Bitmap
         return new int[]{};
     }
 
-
+    private int getPredictionAsInteger(String season){
+        if (season.equals("autumn")) {
+            return 0;
+        } else if (season.equals("spring")) {
+            return 1;
+        } else if (season.equals("summer")) {
+            return 2;
+        } else if (season.equals("winter")) {
+            return 3;
+        }
+        return -1;
+    }
 
 }
