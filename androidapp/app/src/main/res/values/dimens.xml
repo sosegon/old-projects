@@ -5,4 +5,12 @@
     <dimen name="fab_elevation">6dp</dimen>
     <dimen name="fab_press_translation_z">6dp</dimen>
     <dimen name="fab_margin">24dp</dimen>
+
+    <!--width = n cols x 70 - 30-->
+    <!--height = n rows x 70 - 30-->
+    <dimen name="widget_margin">0dp</dimen>
+    <dimen name="widget_season_default_width">180dp</dimen> <!--3 cols-->
+    <dimen name="widget_season_default_height">40dp</dimen> <!--1 row-->
+    <dimen name="widget_season_min_resize_width">110dp</dimen> <!--2 cols-->
+    <dimen name="widget_season_min_resize_height">@dimen/widget_season_default_height</dimen>
 </resources>

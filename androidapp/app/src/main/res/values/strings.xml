@@ -6,4 +6,7 @@
     <string name="prf_prev_photo" translatable="false">prev_photo</string>
     <string name="prf_prev_prediction" translatable="false">prev_prediction</string>
 
+    <string name="lbl_w_season">Seasonify widget</string>
+
+
 </resources>

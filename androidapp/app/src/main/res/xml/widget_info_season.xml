@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<appwidget-provider
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:initialLayout="@layout/widget_season"
+    android:minHeight="@dimen/widget_season_default_height"
+    android:minResizeHeight="@dimen/widget_season_min_resize_height"
+    android:minResizeWidth="@dimen/widget_season_min_resize_width"
+    android:minWidth="@dimen/widget_season_default_width"
+    android:resizeMode="horizontal"
+    android:updatePeriodMillis="0"
+    tools:ignore="UnusedAttribute">
+
+</appwidget-provider>
