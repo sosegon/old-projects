@@ -9,10 +9,17 @@ import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Environment;
 import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
 import android.support.v4.content.FileProvider;
+import android.util.Log;
 
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 import com.keemsa.seasonify.R;
 import com.keemsa.seasonify.base.BasePresenter;
 import com.keemsa.seasonify.model.Prediction;
@@ -49,6 +56,8 @@ public class MainPresenter extends BasePresenter<MainMvpView> implements  Bitmap
 
     private FirebaseDatabase mFirebaseDatabase;
     private DatabaseReference mPredictionsDatabaseReference;
+    private FirebaseStorage mFirebaseStorage;
+    private StorageReference mFacePhotoStorageReference;
 
     @BindString(R.string.prf_prev_photo)
     String mPrfPrevPhotoKey;
@@ -73,6 +82,8 @@ public class MainPresenter extends BasePresenter<MainMvpView> implements  Bitmap
         ButterKnife.bind(this, activity);
         mFirebaseDatabase = FirebaseDatabase.getInstance();
         mPredictionsDatabaseReference = mFirebaseDatabase.getReference().child("predictions");
+        mFirebaseStorage = FirebaseStorage.getInstance();
+        mFacePhotoStorageReference = mFirebaseStorage.getReference().child("face_photos");
     }
 
     public void classifyImage(Context context, File photoFile) {
@@ -122,14 +133,30 @@ public class MainPresenter extends BasePresenter<MainMvpView> implements  Bitmap
         if(isViewAttached()) {
 
             String season = results.get(0).getTitle();
-            getMvpView().updateFaceView(generateUri(context, new File(path)));
+            Uri photoUri = generateUri(context, new File(path));
+            Uri photoUri2 = Uri.fromFile(new File(path));
+            getMvpView().updateFaceView(photoUri);
             getMvpView().updateResult(season);
             getMvpView().updatePalette(getSeasonalColors(season));
             storeResults(context, path, season);
 
-            int seasonInt = getPredictionAsInteger(season);
-            Prediction prediction = new Prediction(seasonInt,  null);
-            mPredictionsDatabaseReference.push().setValue(prediction);
+            final int seasonInt = getPredictionAsInteger(season);
+            StorageReference facePhotoRef = mFacePhotoStorageReference.child(photoUri.getLastPathSegment());
+            facePhotoRef.putFile(photoUri2).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                @Override
+                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                    Uri downloadUrl = taskSnapshot.getDownloadUrl();
+                    Prediction prediction = new Prediction(seasonInt,  downloadUrl.toString());
+                    mPredictionsDatabaseReference.push().setValue(prediction);
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    Log.e("Presenter", "error when storing file");
+                }
+            });
+
+
         }
     }
 
