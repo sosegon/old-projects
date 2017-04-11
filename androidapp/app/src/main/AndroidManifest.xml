@@ -28,12 +28,13 @@
                 android:resource="@xml/file_paths"></meta-data>
         </provider>
         <!-- Simple widget-->
+        <service android:name=".features.widget.SeasonWidgetIntentService"/>
         <receiver
             android:name=".features.widget.SeasonWidgetProvider"
             android:label="@string/lbl_w_season">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE"/>
-                <action android:name="com.keemsa.seasonify.ACTION_DATA_UPDATED" />
+                <!--<action android:name="com.keemsa.seasonify.ACTION_DATA_UPDATED" />-->
             </intent-filter>
             <meta-data android:name="android.appwidget.provider"
                 android:resource="@xml/widget_info_season"/>
