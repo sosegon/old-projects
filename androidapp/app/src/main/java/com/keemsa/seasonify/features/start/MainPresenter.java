@@ -3,6 +3,7 @@ package com.keemsa.seasonify.features.start;
 import android.app.Activity;
 import android.content.Context;
 import android.content.ContextWrapper;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.media.ExifInterface;
@@ -50,6 +51,7 @@ public class MainPresenter extends BasePresenter<MainMvpView> implements  Bitmap
     private static final float IMAGE_STD = 1;
     private static final String INPUT_NAME = "input_images_input";
     private static final String OUTPUT_NAME = "output_labels/Softmax";
+    public static final String ACTION_DATA_UPDATED = "com.keemsa.seasonify.ACTION_DATA_UPDATED";
 
     private static final String MODEL_FILE = "file:///android_asset/seasonify.pb";
     private static final String LABEL_FILE = "file:///android_asset/seasonify.txt";
@@ -127,7 +129,7 @@ public class MainPresenter extends BasePresenter<MainMvpView> implements  Bitmap
     }
 
     @Override
-    public void classify(Context context, String path, Bitmap bitmap) {
+    public void classify(final Context context, String path, Bitmap bitmap) {
         final List<Classifier.Recognition> results = classifier.recognizeImage(bitmap);
 
         if(isViewAttached()) {
@@ -148,6 +150,11 @@ public class MainPresenter extends BasePresenter<MainMvpView> implements  Bitmap
                     Uri downloadUrl = taskSnapshot.getDownloadUrl();
                     Prediction prediction = new Prediction(seasonInt,  downloadUrl.toString());
                     mPredictionsDatabaseReference.push().setValue(prediction);
+
+                    // Send broadcast to update the widgets
+                    Intent updateIntent = new Intent(ACTION_DATA_UPDATED);
+                    updateIntent.setPackage(context.getPackageName());
+                    context.sendBroadcast(updateIntent);
                 }
             }).addOnFailureListener(new OnFailureListener() {
                 @Override
