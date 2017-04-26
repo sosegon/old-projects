@@ -1,6 +1,7 @@
 package com.keemsa.seasonify.features.start;
 
 import android.app.Activity;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.ContextWrapper;
 import android.content.Intent;
@@ -9,6 +10,7 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Environment;
 import android.preference.PreferenceManager;
+import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.v4.content.FileProvider;
 import android.util.Log;
@@ -23,6 +25,7 @@ import com.google.firebase.storage.UploadTask;
 import com.keemsa.seasonify.R;
 import com.keemsa.seasonify.base.BasePresenter;
 import com.keemsa.seasonify.model.Prediction;
+import com.keemsa.seasonify.util.Cluster;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -109,10 +112,14 @@ public class MainPresenter extends BasePresenter<MainMvpView> implements  Bitmap
     }
 
     public File createImageFile(Context context) throws IOException {
+
+        // The directory for the picture
+        final String appName = context.getResources().getString(R.string.app_name);
+        File storageDir = context.getExternalFilesDir(appName);
+
         // Create an image file name
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
         String imageFileName = "JPEG_" + timeStamp + "_";
-        File storageDir = context.getExternalFilesDir(Environment.DIRECTORY_PICTURES);
         File image = File.createTempFile(
                 imageFileName,  /* prefix */
                 ".jpg",         /* suffix */

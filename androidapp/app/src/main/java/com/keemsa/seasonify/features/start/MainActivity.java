@@ -16,6 +16,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.keemsa.seasonify.R;
+import com.keemsa.seasonify.util.SeasonifyImage;
 import com.squareup.picasso.Picasso;
 import com.thebluealliance.spectrum.SpectrumPalette;
 
@@ -119,6 +120,7 @@ public class MainActivity extends AppCompatActivity implements MainMvpView {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if(requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
             mPresenter.classifyImage(this, mPhotoFile);
+            SeasonifyImage.addImageToGallery(mPhotoFile.getAbsolutePath(), this);
             onActivityResultCalled = true;
         }
     }
