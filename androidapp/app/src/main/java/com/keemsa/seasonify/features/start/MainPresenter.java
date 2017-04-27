@@ -1,16 +1,13 @@
 package com.keemsa.seasonify.features.start;
 
 import android.app.Activity;
-import android.content.ContentValues;
 import android.content.Context;
 import android.content.ContextWrapper;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.net.Uri;
-import android.os.Environment;
 import android.preference.PreferenceManager;
-import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.v4.content.FileProvider;
 import android.util.Log;
@@ -22,10 +19,11 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
+import com.keemsa.seasonify.BuildConfig;
 import com.keemsa.seasonify.R;
 import com.keemsa.seasonify.base.BasePresenter;
 import com.keemsa.seasonify.model.Prediction;
-import com.keemsa.seasonify.util.Cluster;
+import com.keemsa.seasonify.util.SeasonifyImage;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -56,7 +54,7 @@ import org.opencv.objdetect.CascadeClassifier;
  * Created by sebastian on 3/27/17.
  */
 
-public class MainPresenter extends BasePresenter<MainMvpView> implements  BitmapLoaderAsyncTask.BitmapLoaderAsyncTaskReceiver{
+public class MainPresenter extends BasePresenter<MainMvpView> implements BitmapLoaderAsyncTask.BitmapLoaderAsyncTaskReceiver {
 
     private final String LOG_TAG = MainPresenter.class.getSimpleName();
     private Classifier classifier;
@@ -154,22 +152,21 @@ public class MainPresenter extends BasePresenter<MainMvpView> implements  Bitmap
     public void classify(final Context context, String path, Bitmap bitmap) {
         Bitmap faceBitmap = detectFace(context, path);
 
-        if(faceBitmap != null){
+        if (faceBitmap != null) {
 
             String faceOnlyPath = new StringBuilder(path).reverse().toString();
             faceOnlyPath = faceOnlyPath.substring(4);
             faceOnlyPath = new StringBuilder(faceOnlyPath).reverse().toString() + "_faceonly.jpg";
 
-            try {
-                FileOutputStream out = new FileOutputStream(faceOnlyPath);
-                faceBitmap.compress(Bitmap.CompressFormat.JPEG, 100, out);
-            } catch (IOException e) {
-                Log.e(LOG_TAG, "Error saving face bitmap: " + e.getMessage());
+            SeasonifyImage.saveImage(faceBitmap, faceOnlyPath);
+
+            if (BuildConfig.DEBUG) {
+                SeasonifyImage.addImageToGallery(context, faceOnlyPath);
             }
 
             final List<Classifier.Recognition> results = classifier.recognizeImage(faceBitmap);
 
-            if(isViewAttached()) {
+            if (isViewAttached()) {
 
                 String season = results.get(0).getTitle();
                 Uri photoUri = generateUri(context, new File(path)); // To update the view
@@ -185,7 +182,7 @@ public class MainPresenter extends BasePresenter<MainMvpView> implements  Bitmap
                     @Override
                     public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                         Uri downloadUrl = taskSnapshot.getDownloadUrl();
-                        Prediction prediction = new Prediction(seasonInt,  downloadUrl.toString());
+                        Prediction prediction = new Prediction(seasonInt, downloadUrl.toString());
                         mPredictionsDatabaseReference.push().setValue(prediction);
 
                         // Send broadcast to update the widgets
@@ -207,11 +204,11 @@ public class MainPresenter extends BasePresenter<MainMvpView> implements  Bitmap
     }
 
     public Uri generateUri(Context context, File file) {
-       return FileProvider.getUriForFile(
+        return FileProvider.getUriForFile(
                 context,
                 "com.keemsa.seasonify.fileprovider",
                 file
-       );
+        );
     }
 
     public void loadPreviousResults(Context context) {
@@ -219,8 +216,8 @@ public class MainPresenter extends BasePresenter<MainMvpView> implements  Bitmap
         String path = preferences.getString(mPrfPrevPhotoKey, "");
         String result = preferences.getString(mPrfPrevPredictionKey, "");
 
-        if(isViewAttached()){
-            if(!path.equals("") || !result.equals("")){
+        if (isViewAttached()) {
+            if (!path.equals("") || !result.equals("")) {
                 getMvpView().updateFaceView(generateUri(context, new File(path)));
                 getMvpView().updateResult(result);
                 getMvpView().updatePalette(getSeasonalColors(result));
@@ -250,7 +247,7 @@ public class MainPresenter extends BasePresenter<MainMvpView> implements  Bitmap
         return new int[]{};
     }
 
-    private int getPredictionAsInteger(String season){
+    private int getPredictionAsInteger(String season) {
         if (season.equals("autumn")) {
             return 0;
         } else if (season.equals("spring")) {
@@ -269,8 +266,7 @@ public class MainPresenter extends BasePresenter<MainMvpView> implements  Bitmap
             @Override
             public void onManagerConnected(int status) {
                 switch (status) {
-                    case BaseLoaderCallback.SUCCESS:
-                    {
+                    case BaseLoaderCallback.SUCCESS: {
                         try {
 
                             // load cascade file from application resources
@@ -298,11 +294,12 @@ public class MainPresenter extends BasePresenter<MainMvpView> implements  Bitmap
                         } catch (IOException e) {
                             Log.e(LOG_TAG, "Failed to load cascade: + " + e.getMessage());
                         }
-                    } break;
-                    default:
-                    {
+                    }
+                    break;
+                    default: {
                         super.onManagerConnected(status);
-                    } break;
+                    }
+                    break;
                 }
             }
         };
@@ -322,7 +319,7 @@ public class MainPresenter extends BasePresenter<MainMvpView> implements  Bitmap
         Mat imgMAT = Imgcodecs.imread(path, Imgcodecs.CV_LOAD_IMAGE_COLOR);
         MatOfRect faces = new MatOfRect();
 
-        if (mJavaDetector != null){
+        if (mJavaDetector != null) {
             mJavaDetector.detectMultiScale(imgMAT, faces);
         }
 

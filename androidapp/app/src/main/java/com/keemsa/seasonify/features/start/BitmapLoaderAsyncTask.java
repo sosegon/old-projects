@@ -8,6 +8,8 @@ import android.media.ExifInterface;
 import android.os.AsyncTask;
 import android.util.Log;
 
+import com.keemsa.seasonify.util.SeasonifyImage;
+
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -66,12 +68,8 @@ public class BitmapLoaderAsyncTask extends AsyncTask<String, Void, Bitmap> {
 
     // saved to storage
     Bitmap rotatedBitmap = Bitmap.createBitmap(bitmap, 0, 0, bounds.outWidth, bounds.outHeight, matrix, false);
+    SeasonifyImage.saveImage(rotatedBitmap, mPath);
 
-    FileOutputStream fos = new FileOutputStream(mPath);
-    rotatedBitmap.compress(Bitmap.CompressFormat.JPEG, 100, fos);
-
-    fos.flush();
-    fos.close();
     input.close();
 
     return scaledBitmap;

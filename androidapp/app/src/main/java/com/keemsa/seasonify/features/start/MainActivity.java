@@ -120,7 +120,7 @@ public class MainActivity extends AppCompatActivity implements MainMvpView {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if(requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
             mPresenter.classifyImage(this, mPhotoFile);
-            SeasonifyImage.addImageToGallery(mPhotoFile.getAbsolutePath(), this);
+            SeasonifyImage.addImageToGallery(this, mPhotoFile.getAbsolutePath());
             onActivityResultCalled = true;
         }
     }
