@@ -23,7 +23,9 @@ import com.keemsa.seasonify.BuildConfig;
 import com.keemsa.seasonify.R;
 import com.keemsa.seasonify.base.BasePresenter;
 import com.keemsa.seasonify.model.Prediction;
+import com.keemsa.seasonify.util.Cluster;
 import com.keemsa.seasonify.util.SeasonifyImage;
+import com.keemsa.seasonify.util.SeasonifyUtils;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -154,10 +156,7 @@ public class MainPresenter extends BasePresenter<MainMvpView> implements BitmapL
 
         if (faceBitmap != null) {
 
-            String faceOnlyPath = new StringBuilder(path).reverse().toString();
-            faceOnlyPath = faceOnlyPath.substring(4);
-            faceOnlyPath = new StringBuilder(faceOnlyPath).reverse().toString() + "_faceonly.jpg";
-
+            String faceOnlyPath = SeasonifyUtils.getFileNameNoExtension(path) + "_faceOnly.jpg";
             SeasonifyImage.saveImage(faceBitmap, faceOnlyPath);
 
             if (BuildConfig.DEBUG) {
@@ -330,6 +329,17 @@ public class MainPresenter extends BasePresenter<MainMvpView> implements BitmapL
 
             Imgproc.resize(faceMAT, nFaceMAT, new Size(INPUT_SIZE, INPUT_SIZE)); // resize to pass to classifier
             Imgproc.cvtColor(nFaceMAT, nFaceMAT, Imgproc.COLOR_RGB2BGR); // bitmap is BGR
+
+            if(BuildConfig.DEBUG){
+                List<Mat> clusters = Cluster.cluster(nFaceMAT, 3);
+                String baseName = SeasonifyUtils.getFileNameNoExtension(path);
+
+                for(int i = 0; i < clusters.size(); i++){
+                    String clusterName = baseName + "k_" + i + ".jpg";
+                    SeasonifyImage.saveImage(clusters.get(i), clusterName);
+                    SeasonifyImage.addImageToGallery(context, clusterName);
+                }
+            }
 
             Bitmap bmp = Bitmap.createBitmap(nFaceMAT.cols(), nFaceMAT.rows(), Bitmap.Config.RGB_565);
             Utils.matToBitmap(nFaceMAT, bmp);
