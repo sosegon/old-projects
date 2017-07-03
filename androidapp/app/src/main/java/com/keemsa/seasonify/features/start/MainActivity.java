@@ -11,11 +11,13 @@ import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.keemsa.seasonify.R;
+import com.keemsa.seasonify.features.about.AboutActivity;
 import com.keemsa.seasonify.util.SeasonifyImage;
 import com.squareup.picasso.Picasso;
 import com.thebluealliance.spectrum.SpectrumPalette;
@@ -134,6 +136,18 @@ public class MainActivity extends AppCompatActivity implements MainMvpView {
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.options, menu);
         return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.act_about:
+                Intent aboutIntent = new Intent(this, AboutActivity.class);
+                startActivity(aboutIntent);
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 
     @Override
