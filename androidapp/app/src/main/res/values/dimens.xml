@@ -13,4 +13,7 @@
     <dimen name="widget_season_default_height">110dp</dimen> <!--1 row-->
     <dimen name="widget_season_min_resize_width">110dp</dimen> <!--2 cols-->
     <dimen name="widget_season_min_resize_height">@dimen/widget_season_default_height</dimen>
+
+    <dimen name="default_preview_image_height">36dp</dimen>
+    <dimen name="default_preview_height">40dp</dimen>
 </resources>
