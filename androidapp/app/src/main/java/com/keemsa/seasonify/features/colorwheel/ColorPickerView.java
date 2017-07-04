@@ -6,6 +6,7 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.PorterDuff;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.EditText;
@@ -22,6 +23,7 @@ public class ColorPickerView extends View {
     private static final float STROKE_RATIO = 2f;
 
     private Bitmap colorWheel;
+    private Canvas colorWheelCanvas;
     private int density = 10;
 
     private float lightness = 1;
@@ -48,6 +50,7 @@ public class ColorPickerView extends View {
 
     public ColorPickerView(Context context, AttributeSet attrs) {
         super(context, attrs);
+        initWith(context, attrs);
     }
 
     @Override
@@ -93,6 +96,12 @@ public class ColorPickerView extends View {
             canvas.drawCircle(currentColorCircle.getX(), currentColorCircle.getY(), size, alphaPatternPaint);
             canvas.drawCircle(currentColorCircle.getX(), currentColorCircle.getY(), size, colorWheelFill);
         }
+    }
+
+    @Override
+    protected void onSizeChanged(int w, int h, int oldw, int oldh) {
+        super.onSizeChanged(w, h, oldw, oldh);
+        updateColorWheel();
     }
 
     public void setDensity(int density) {
@@ -176,6 +185,46 @@ public class ColorPickerView extends View {
         setInitialColor(initialColor, true);
 
         typedArray.recycle();
+    }
+
+    private void updateColorWheel() {
+        int width = getMeasuredWidth();
+        int height = getMeasuredHeight();
+
+        if (height < width)
+            width = height;
+        if (width <= 0)
+            return;
+        if (colorWheel == null) {
+            colorWheel = Bitmap.createBitmap(width, width, Bitmap.Config.ARGB_8888);
+            colorWheelCanvas = new Canvas(colorWheel);
+            alphaPatternPaint.setShader(PaintBuilder.createAlphaPatternShader(8));
+        }
+        drawColorWheel();
+        invalidate();
+    }
+
+    private void drawColorWheel() {
+        colorWheelCanvas.drawColor(0, PorterDuff.Mode.CLEAR);
+
+        if (renderer == null) return;
+
+        float half = colorWheelCanvas.getWidth() / 2f;
+        float strokeWidth = STROKE_RATIO * (1f + ColorWheelRenderer.GAP_PERCENTAGE);
+        float maxRadius = half - strokeWidth - half / density;
+        float cSize = maxRadius / (density - 1) / 2;
+
+        ColorWheelRenderOption colorWheelRenderOption = renderer.getRenderOption();
+        colorWheelRenderOption.density = this.density;
+        colorWheelRenderOption.maxRadius = maxRadius;
+        colorWheelRenderOption.cSize = cSize;
+        colorWheelRenderOption.strokeWidth = strokeWidth;
+        colorWheelRenderOption.alpha = alpha;
+        colorWheelRenderOption.lightness = lightness;
+        colorWheelRenderOption.targetCanvas = colorWheelCanvas;
+
+        renderer.initWith(colorWheelRenderOption);
+        renderer.draw();
     }
 
     public enum WHEEL_TYPE {
