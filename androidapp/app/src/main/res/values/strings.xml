@@ -23,6 +23,10 @@
         My seasonal color is <xliff:g id="season">%1$s</xliff:g>. Find yours! <a href="https://"></a> #Seasonify
     </string>
 
+    <!--Ads-->
+    <string name="id_admob">ca-app-pub-2537006732160548~6139664116</string>
+    <string name="id_adunit">ca-app-pub-2537006732160548/9093130510</string>
+
 
 </resources>
 

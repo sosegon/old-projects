@@ -1,24 +1,21 @@
 package com.keemsa.seasonify.features.start;
 
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.design.widget.CollapsingToolbarLayout;
-import android.support.v4.content.FileProvider;
-import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.ShareActionProvider;
 import android.support.v7.widget.Toolbar;
-import android.view.ActionProvider;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.TextView;
 
+import com.google.android.gms.ads.AdListener;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.InterstitialAd;
+import com.google.android.gms.ads.MobileAds;
 import com.keemsa.seasonify.R;
 import com.keemsa.seasonify.features.about.AboutActivity;
 import com.keemsa.seasonify.util.SeasonifyImage;
@@ -27,13 +24,6 @@ import com.thebluealliance.spectrum.SpectrumPalette;
 
 import java.io.File;
 import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.List;
-import java.util.concurrent.Executor;
-import java.util.concurrent.Executors;
-
-import android.support.v7.widget.ShareActionProvider;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -45,7 +35,7 @@ public class MainActivity extends AppCompatActivity implements MainMvpView {
     private static final int REQUEST_IMAGE_CAPTURE = 1;
     private boolean onActivityResultCalled = false;
     private File mPhotoFile;
-    private ShareActionProvider mShareActionProvider;
+    private InterstitialAd mInterstitialAd;
 
     private MainPresenter mPresenter;
 
@@ -63,21 +53,10 @@ public class MainActivity extends AppCompatActivity implements MainMvpView {
 
     @OnClick(R.id.fab_scan)
     public void start_camera(){
-        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        // Ensure that there's a camera activity to handle the intent
-        if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
-            // Create the File where the photo should go
-            try {
-                mPhotoFile = mPresenter.createImageFile(this);
-            } catch (IOException ex) {
-                // Error occurred while creating the File
-            }
-            // Continue only if the File was successfully created
-            if (mPhotoFile != null) {
-                Uri uriPhoto = mPresenter.generateUri(this, mPhotoFile);
-                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, uriPhoto);
-                startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
-            }
+        if(mInterstitialAd != null && mInterstitialAd.isLoaded()) {
+            mInterstitialAd.show();
+        } else {
+            displayCamera();
         }
     }
 
@@ -92,6 +71,8 @@ public class MainActivity extends AppCompatActivity implements MainMvpView {
         ButterKnife.bind(this);
 
         setSupportActionBar(tb);
+
+        initAd();
     }
 
     @Override
@@ -180,6 +161,39 @@ public class MainActivity extends AppCompatActivity implements MainMvpView {
         if(colors.length != 0) {
             palette.setVisibility(View.VISIBLE);
             palette.setColors(colors);
+        }
+    }
+
+    private void initAd() {
+        MobileAds.initialize(this, getString(R.string.id_admob));
+        mInterstitialAd = new InterstitialAd(this);
+        mInterstitialAd.setAdUnitId(getString(R.string.id_adunit));
+        mInterstitialAd.setAdListener(new AdListener() {
+            @Override
+            public void onAdClosed() {
+                displayCamera();
+            }
+        });
+        AdRequest ar = new AdRequest.Builder().build();
+        mInterstitialAd.loadAd(ar);
+    }
+
+    private void displayCamera() {
+        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        // Ensure that there's a camera activity to handle the intent
+        if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
+            // Create the File where the photo should go
+            try {
+                mPhotoFile = mPresenter.createImageFile(this);
+            } catch (IOException ex) {
+                // Error occurred while creating the File
+            }
+            // Continue only if the File was successfully created
+            if (mPhotoFile != null) {
+                Uri uriPhoto = mPresenter.generateUri(this, mPhotoFile);
+                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, uriPhoto);
+                startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
+            }
         }
     }
 }
