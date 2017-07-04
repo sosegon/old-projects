@@ -1,4 +1,4 @@
-<resources>
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
     <string name="app_name">Seasonify</string>
     <string name="action_scan">Scan</string>
 
@@ -8,12 +8,19 @@
 
     <string name="lbl_w_season">Seasonify widget</string>
     <string name="lbl_about">About</string>
+    <string name="lbl_share">Share</string>
 
     <!--About -->
     <string name="about">
         Seasonify is an application aimed to determine
         the <a href="https://en.wikipedia.org/wiki/Color_analysis_(art)">seasonal color</a>
         of a person.
+    </string>
+
+    <!--Share-->
+    <string name="msg_share">
+        <!--TODO update app url-->
+        My seasonal color is <xliff:g id="season">%1$s</xliff:g>. Find yours! <a href="https://"></a> #Seasonify
     </string>
 
 

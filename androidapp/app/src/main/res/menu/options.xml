@@ -1,7 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:bwq="http://schemas.android.com/apk/res-auto">
     <item
         android:id="@+id/act_about"
         android:title="About">
+    </item>
+    <item
+        android:id="@+id/act_share"
+        bwq:showAsAction="ifRoom"
+        android:title="@string/lbl_share"
+        android:actionProviderClass="android.widget.ShareActionProvider">
     </item>
 </menu>

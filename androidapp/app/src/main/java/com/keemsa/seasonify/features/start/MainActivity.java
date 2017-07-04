@@ -8,8 +8,11 @@ import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v4.content.FileProvider;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.ShareActionProvider;
 import android.support.v7.widget.Toolbar;
+import android.view.ActionProvider;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -30,6 +33,8 @@ import java.util.List;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
+import android.support.v7.widget.ShareActionProvider;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -40,6 +45,7 @@ public class MainActivity extends AppCompatActivity implements MainMvpView {
     private static final int REQUEST_IMAGE_CAPTURE = 1;
     private boolean onActivityResultCalled = false;
     private File mPhotoFile;
+    private ShareActionProvider mShareActionProvider;
 
     private MainPresenter mPresenter;
 
@@ -145,6 +151,15 @@ public class MainActivity extends AppCompatActivity implements MainMvpView {
                 Intent aboutIntent = new Intent(this, AboutActivity.class);
                 startActivity(aboutIntent);
                 return true;
+            case R.id.act_share:
+                Intent shareIntent = new Intent();
+                shareIntent.setAction(Intent.ACTION_SEND);
+                // TODO: Get the season correctly
+                shareIntent.putExtra(Intent.EXTRA_TEXT, getString(R.string.msg_share, ctb.getTitle()));
+                shareIntent.setType("text/plain");
+
+                startActivity(Intent.createChooser(shareIntent, getString(R.string.lbl_share)));
+
             default:
                 return super.onOptionsItemSelected(item);
         }
