@@ -15,6 +15,12 @@ import android.widget.LinearLayout;
 
 import com.keemsa.seasonify.R;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import butterknife.BindArray;
+import butterknife.ButterKnife;
+
 /**
  * Created by sebastian on 04/07/17.
  */
@@ -101,6 +107,11 @@ public class ColorPickerView extends View {
     @Override
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
         super.onSizeChanged(w, h, oldw, oldh);
+        updateColorWheel();
+    }
+
+    public void updateColors(int[] colors) {
+        renderer.updateColorList(colors);
         updateColorWheel();
     }
 

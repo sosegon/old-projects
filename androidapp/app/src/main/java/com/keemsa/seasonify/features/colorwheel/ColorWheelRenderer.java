@@ -16,4 +16,6 @@ public interface ColorWheelRenderer {
     void initWith(ColorWheelRenderOption colorWheelRenderOption);
 
     List<ColorCircle> getColorCircleList();
+
+    void updateColorList(int[] colors);
 }

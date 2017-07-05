@@ -3,6 +3,8 @@ package com.keemsa.seasonify.features.colorwheel;
 import android.graphics.Color;
 import android.graphics.Paint;
 
+import static android.R.attr.radius;
+
 /**
  * Created by sebastian on 04/07/17.
  */
@@ -13,7 +15,25 @@ public class SimpleColorWheelRenderer extends AbsColorWheelRenderer {
 
     @Override
     public void draw() {
-        final int setSize = colorCircleList.size();
+        int count = colorList.size();
+        float half = colorWheelRenderOption.targetCanvas.getWidth() / 2f;
+        float size = colorWheelRenderOption.cSize;
+        float radius = colorWheelRenderOption.maxRadius;
+
+        for(int i = 0; i < count; i++) {
+            double angle = Math.PI * 2 * i / count + (Math.PI / count) * ((i + 1) % 2);
+            float x = half + (float) (radius * Math.cos(angle));
+            float y = half + (float) (radius * Math.sin(angle));
+
+            hsv = colorList.get(i);
+            selectorFill.setColor(Color.HSVToColor(hsv));
+            selectorFill.setAlpha(getAlphaValueAsInt());
+
+            colorWheelRenderOption.targetCanvas.drawCircle(x, y, size - colorWheelRenderOption.strokeWidth, selectorFill);
+            colorCircleList.add(new ColorCircle(x, y, hsv));
+        }
+
+        /*final int setSize = colorCircleList.size();
         int currentCount = 0;
         float half = colorWheelRenderOption.targetCanvas.getWidth() / 2f;
         int density = colorWheelRenderOption.density;
@@ -42,6 +62,6 @@ public class SimpleColorWheelRenderer extends AbsColorWheelRenderer {
                 else colorCircleList.get(currentCount).set(x, y, hsv);
                 currentCount++;
             }
-        }
+        }*/
     }
 }
