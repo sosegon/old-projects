@@ -18,6 +18,7 @@ import com.google.android.gms.ads.InterstitialAd;
 import com.google.android.gms.ads.MobileAds;
 import com.keemsa.seasonify.R;
 import com.keemsa.seasonify.features.about.AboutActivity;
+import com.keemsa.seasonify.features.colorwheel.ColorPickerView;
 import com.keemsa.seasonify.util.SeasonifyImage;
 import com.squareup.picasso.Picasso;
 import com.thebluealliance.spectrum.SpectrumPalette;
@@ -42,8 +43,8 @@ public class MainActivity extends AppCompatActivity implements MainMvpView {
     @BindView(R.id.imv_face)
     ImageView imv_face;
 
-    @BindView(R.id.palette)
-    SpectrumPalette palette;
+    @BindView(R.id.color_wheel)
+    ColorPickerView color_wheel;
 
     @BindView(R.id.ctb)
     CollapsingToolbarLayout ctb;
@@ -159,8 +160,7 @@ public class MainActivity extends AppCompatActivity implements MainMvpView {
     @Override
     public void updatePalette(int[] colors) {
         if(colors.length != 0) {
-            palette.setVisibility(View.VISIBLE);
-            palette.setColors(colors);
+            color_wheel.updateColors(colors);
         }
     }
 
