@@ -14,6 +14,8 @@ import android.view.View;
 
 import com.keemsa.seasonify.R;
 
+import org.opencv.core.Mat;
+
 import java.util.ArrayList;
 
 /**
@@ -108,18 +110,17 @@ public class ColorPickerView extends View {
             case MotionEvent.ACTION_DOWN:
             case MotionEvent.ACTION_MOVE: {
                 int lastSelectedColor = getSelectedColor();
-                currentColorElement = findNearestByPosition(event.getX(), event.getY());
-                int selectedColor = getSelectedColor();
+                if(!isInnerArea(event.getX(), event.getY())) {
+                    currentColorElement = findNearestByPosition(event.getX(), event.getY());
+                    int selectedColor = getSelectedColor();
 
-                Log.e(LOG_TAG, "action move: " + currentColorElement.getAngle());
+                    callOnColorChangedListeners(lastSelectedColor, selectedColor);
 
-                callOnColorChangedListeners(lastSelectedColor, selectedColor);
-
-                invalidate();
+                    invalidate();
+                }
                 break;
             }
             case MotionEvent.ACTION_UP: {
-                Log.e(LOG_TAG, "action up");
                 int selectedColor = getSelectedColor();
                 if (listeners != null) {
                     for (OnColorSelectedListener listener : listeners) {
@@ -149,6 +150,18 @@ public class ColorPickerView extends View {
         }
     }
 
+    private boolean isInnerArea(float x, float y) {
+        float centerX = colorWheelCanvas.getWidth() / 2;
+        float centerY = colorWheelCanvas.getHeight() / 2;
+        float dx = Math.abs(x - centerX);
+        float dy = Math.abs(y - centerY);
+
+        float distToCenter = (float)Math.sqrt(dx * dx + dy * dy);
+        float radius = (centerX - strokeWidth) * innerRadius;
+
+        return distToCenter <= radius;
+
+    }
     private ColorElement findNearestByPosition(float x, float y) {
         ColorElement near = null;
         double minDist = Double.MAX_VALUE;
