@@ -21,7 +21,6 @@ import com.keemsa.seasonify.features.about.AboutActivity;
 import com.keemsa.seasonify.features.colorwheel.ColorPickerView;
 import com.keemsa.seasonify.util.SeasonifyImage;
 import com.squareup.picasso.Picasso;
-import com.thebluealliance.spectrum.SpectrumPalette;
 
 import java.io.File;
 import java.io.IOException;
