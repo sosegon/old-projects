@@ -6,6 +6,7 @@
     <color name="theme_accent">#3BCFFF</color>
 
     <array name="autumn_colors">
+        <!--red-->
         <item>#fdebea</item>
         <item>#f4dbd7</item>
         <item>#e6cec0</item>
@@ -50,11 +51,11 @@
         <item>#652535</item>
         <item>#2d222a</item>
 
-        <item>#80a963</item>
+        <item>#182c2b</item>
+        <item>#183833</item>
         <item>#386637</item>
         <item>#2d6c51</item>
-        <item>#183833</item>
-        <item>#182c2b</item>
+        <item>#80a963</item>
         <item>#f0bc66</item>
         <item>#eda55b</item>
         <item>#d19b53</item>
@@ -174,7 +175,7 @@
         <item>#8f797b</item>
         <item>#6a5657</item>
         <item>#5d4d4e</item>
-        <item>#583847</item>
+        <!--<item>#583847</item>
         <item>#f2dbb2</item>
         <item>#efdc8f</item>
         <item>#f8d18e</item>
@@ -184,8 +185,8 @@
         <item>#70d0e0</item>
         <item>#3ab5c5</item>
         <item>#27c2c6</item>
-        <item>#2c9ea8</item>
-        <item>#228292</item>
+        <item>#2c9ea8</item>-->
+        <!--<item>#228292</item>
         <item>#85caeb</item>
         <item>#6bb8e6</item>
         <item>#27c3bf</item>
@@ -216,7 +217,7 @@
 
         <item>#9883c8</item>
         <item>#6c5b9f</item>
-        <item>#554784</item>
+        <item>#554784</item>-->
     </array>
     <array name="winter_colors">
         <item>#ffffff</item>

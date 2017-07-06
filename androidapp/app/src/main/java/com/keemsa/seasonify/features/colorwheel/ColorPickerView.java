@@ -8,51 +8,37 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.PorterDuff;
 import android.util.AttributeSet;
+import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
-import android.widget.EditText;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
 
 import com.keemsa.seasonify.R;
 
 import java.util.ArrayList;
-import java.util.List;
-
-import butterknife.BindArray;
-import butterknife.ButterKnife;
 
 /**
  * Created by sebastian on 04/07/17.
  */
 
 public class ColorPickerView extends View {
+    private static final String LOG_TAG = ColorPickerView.class.getSimpleName();
     private static final float STROKE_RATIO = 2f;
 
     private Bitmap colorWheel;
     private Canvas colorWheelCanvas;
-    private int density = 10;
+    private float innerRadius = 0.75f; // percentage
+    private float strokeWidth = 5f;
 
-    private float lightness = 1;
-    private float alpha = 1;
-    private int backgroundColor = 0x00000000;
+    private int backgroundColor = 0xffffff;
+    private ColorElement currentColorElement;
 
-    private Integer initialColors[] = new Integer[]{null, null, null, null, null};
-    private int colorSelection = 0;
-    private Integer initialColor;
-    private Integer pickerTextColor;
-    private ColorCircle currentColorCircle;
+    private ArrayList<OnColorChangedListener> colorChangedListeners = new ArrayList<>();
+    private ArrayList<OnColorSelectedListener> listeners = new ArrayList<>();
 
     private Paint colorWheelFill = PaintBuilder.newPaint().color(0).build();
-    private Paint selectorStroke1 = PaintBuilder.newPaint().color(0xffffffff).build();
-    private Paint selectorStroke2 = PaintBuilder.newPaint().color(0xff000000).build();
-    private Paint alphaPatternPaint = PaintBuilder.newPaint().build();
-
-    private EditText colorEdit;
-    private LinearLayout colorPreview;
+    private Paint selectorStroke = PaintBuilder.newPaint().color(0xffffffff).stroke(strokeWidth).style(Paint.Style.STROKE).build();
 
     private ColorWheelRenderer renderer;
-
-    private int alphaSliderViewId, lightnessSliderViewId;
 
     public ColorPickerView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -91,16 +77,22 @@ public class ColorPickerView extends View {
         canvas.drawColor(backgroundColor);
         if (colorWheel != null)
             canvas.drawBitmap(colorWheel, 0, 0, null);
-        if (currentColorCircle != null) {
-            float maxRadius = canvas.getWidth() / 2f - STROKE_RATIO * (1f + ColorWheelRenderer.GAP_PERCENTAGE);
-            float size = maxRadius / density / 2;
-            colorWheelFill.setColor(Color.HSVToColor(currentColorCircle.getHsvWithLightness(this.lightness)));
-            colorWheelFill.setAlpha((int) (alpha * 0xff));
-            canvas.drawCircle(currentColorCircle.getX(), currentColorCircle.getY(), size * STROKE_RATIO, selectorStroke1);
-            canvas.drawCircle(currentColorCircle.getX(), currentColorCircle.getY(), size * (1 + (STROKE_RATIO - 1) / 2), selectorStroke2);
+        if (currentColorElement != null) {
+            float half = canvas.getWidth() / 2f;
 
-            canvas.drawCircle(currentColorCircle.getX(), currentColorCircle.getY(), size, alphaPatternPaint);
-            canvas.drawCircle(currentColorCircle.getX(), currentColorCircle.getY(), size, colorWheelFill);
+            float startAngle = currentColorElement.getAngle();
+            float sweepAngle = currentColorElement.getSweepAngle();
+
+            canvas.drawArc(strokeWidth,
+                            strokeWidth,
+                            canvas.getWidth() - strokeWidth,
+                            canvas.getHeight() - strokeWidth,
+                            startAngle, sweepAngle, true, selectorStroke);
+
+            // Circle to create effect of blank space in the middle of the color wheel
+            colorWheelFill.setColor(Color.parseColor("#ffffff"));
+            float blankRadius = innerRadius * renderer.getRenderOption().radius;
+            canvas.drawCircle(half, half, blankRadius, colorWheelFill);
         }
     }
 
@@ -110,14 +102,78 @@ public class ColorPickerView extends View {
         updateColorWheel();
     }
 
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        switch (event.getAction()) {
+            case MotionEvent.ACTION_DOWN:
+            case MotionEvent.ACTION_MOVE: {
+                int lastSelectedColor = getSelectedColor();
+                currentColorElement = findNearestByPosition(event.getX(), event.getY());
+                int selectedColor = getSelectedColor();
+
+                Log.e(LOG_TAG, "action move: " + currentColorElement.getAngle());
+
+                callOnColorChangedListeners(lastSelectedColor, selectedColor);
+
+                invalidate();
+                break;
+            }
+            case MotionEvent.ACTION_UP: {
+                Log.e(LOG_TAG, "action up");
+                int selectedColor = getSelectedColor();
+                if (listeners != null) {
+                    for (OnColorSelectedListener listener : listeners) {
+                        try {
+                            listener.onColorSelected(selectedColor);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+                invalidate();
+                break;
+            }
+        }
+        return true;
+    }
+
+    protected void callOnColorChangedListeners(int oldColor, int newColor) {
+        if (colorChangedListeners != null && oldColor != newColor) {
+            for (OnColorChangedListener listener : colorChangedListeners) {
+                try {
+                    listener.onColorChanged(newColor);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
+    private ColorElement findNearestByPosition(float x, float y) {
+        ColorElement near = null;
+        double minDist = Double.MAX_VALUE;
+
+        for (ColorElement colorElement : renderer.getColorElementList()) {
+            double dist = colorElement.sqDist(x, y);
+            if (minDist > dist) {
+                minDist = dist;
+                near = colorElement;
+            }
+        }
+
+        return near;
+    }
+
+    public int getSelectedColor() {
+        int color = 0;
+        if (currentColorElement != null)
+            color = Utils.colorAtLightness(currentColorElement.getColor(), 1);
+        return Utils.adjustAlpha(1, color);
+    }
+
     public void updateColors(int[] colors) {
         renderer.updateColorList(colors);
         updateColorWheel();
-    }
-
-    public void setDensity(int density) {
-        this.density = Math.max(2, density);
-        invalidate();
     }
 
     public void setRenderer(ColorWheelRenderer renderer) {
@@ -125,75 +181,15 @@ public class ColorPickerView extends View {
         invalidate();
     }
 
-    public void setInitialColor(int color, boolean updateText) {
-        float[] hsv = new float[3];
-        Color.colorToHSV(color, hsv);
-
-        this.alpha = Utils.getAlphaPercent(color);
-        this.lightness = hsv[2];
-        this.initialColors[this.colorSelection] = color;
-        this.initialColor = color;
-        setColorPreviewColor(color);
-        currentColorCircle = findNearestByColor(color);
-    }
-
-    private ColorCircle findNearestByColor(int color) {
-        float[] hsv = new float[3];
-        Color.colorToHSV(color, hsv);
-        ColorCircle near = null;
-        double minDiff = Double.MAX_VALUE;
-        double x = hsv[1] * Math.cos(hsv[0] * Math.PI / 180);
-        double y = hsv[1] * Math.sin(hsv[0] * Math.PI / 180);
-
-        for (ColorCircle colorCircle : renderer.getColorCircleList()) {
-            float[] hsv1 = colorCircle.getHsv();
-            double x1 = hsv1[1] * Math.cos(hsv1[0] * Math.PI / 180);
-            double y1 = hsv1[1] * Math.sin(hsv1[0] * Math.PI / 180);
-            double dx = x - x1;
-            double dy = y - y1;
-            double dist = dx * dx + dy * dy;
-            if (dist < minDiff) {
-                minDiff = dist;
-                near = colorCircle;
-            }
-        }
-
-        return near;
-    }
-
-    private void setColorPreviewColor(int newColor) {
-        if (colorPreview == null || initialColors == null || colorSelection > initialColors.length || initialColors[colorSelection] == null)
-            return;
-
-        int children = colorPreview.getChildCount();
-        if (children == 0 || colorPreview.getVisibility() != View.VISIBLE)
-            return;
-
-        View childView = colorPreview.getChildAt(colorSelection);
-        if (!(childView instanceof LinearLayout))
-            return;
-        LinearLayout childLayout = (LinearLayout) childView;
-        ImageView childImage = (ImageView) childLayout.findViewById(R.id.image_preview);
-        childImage.setImageDrawable(new CircleColorDrawable(newColor));
-    }
-
     private void initWith(Context context, AttributeSet attrs) {
         final TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.ColorPickerPreference);
 
-        density = typedArray.getInt(R.styleable.ColorPickerPreference_density, 10);
-        initialColor = typedArray.getInt(R.styleable.ColorPickerPreference_initialColor, 0xffffffff);
-
-        pickerTextColor = typedArray.getInt(R.styleable.ColorPickerPreference_pickerColorEditTextColor, 0xffffffff);
+        innerRadius = typedArray.getFloat(R.styleable.ColorPickerPreference_innerRadius, 0.75f);
 
         WHEEL_TYPE wheelType = WHEEL_TYPE.indexOf(typedArray.getInt(R.styleable.ColorPickerPreference_wheelType, 0));
         ColorWheelRenderer renderer = ColorWheelRendererBuilder.getRenderer(wheelType);
 
-        alphaSliderViewId = typedArray.getResourceId(R.styleable.ColorPickerPreference_alphaSliderView, 0);
-        lightnessSliderViewId = typedArray.getResourceId(R.styleable.ColorPickerPreference_lightnessSliderView, 0);
-
         setRenderer(renderer);
-        setDensity(density);
-        setInitialColor(initialColor, true);
 
         typedArray.recycle();
     }
@@ -209,7 +205,6 @@ public class ColorPickerView extends View {
         if (colorWheel == null) {
             colorWheel = Bitmap.createBitmap(width, width, Bitmap.Config.ARGB_8888);
             colorWheelCanvas = new Canvas(colorWheel);
-            alphaPatternPaint.setShader(PaintBuilder.createAlphaPatternShader(8));
         }
         drawColorWheel();
         invalidate();
@@ -221,17 +216,12 @@ public class ColorPickerView extends View {
         if (renderer == null) return;
 
         float half = colorWheelCanvas.getWidth() / 2f;
-        float strokeWidth = STROKE_RATIO * (1f + ColorWheelRenderer.GAP_PERCENTAGE);
-        float maxRadius = half - strokeWidth - half / density;
-        float cSize = maxRadius / (density - 1) / 2;
+        float radius = half - strokeWidth;
 
         ColorWheelRenderOption colorWheelRenderOption = renderer.getRenderOption();
-        colorWheelRenderOption.density = this.density;
-        colorWheelRenderOption.maxRadius = maxRadius;
-        colorWheelRenderOption.cSize = cSize;
+        colorWheelRenderOption.radius = radius;
+        colorWheelRenderOption.innerRadius = innerRadius;
         colorWheelRenderOption.strokeWidth = strokeWidth;
-        colorWheelRenderOption.alpha = alpha;
-        colorWheelRenderOption.lightness = lightness;
         colorWheelRenderOption.targetCanvas = colorWheelCanvas;
 
         renderer.initWith(colorWheelRenderOption);
@@ -239,16 +229,14 @@ public class ColorPickerView extends View {
     }
 
     public enum WHEEL_TYPE {
-        FLOWER, CIRCLE;
+        CIRCLE;
 
         public static WHEEL_TYPE indexOf(int index) {
             switch (index) {
                 case 0:
-                    return FLOWER;
-                case 1:
                     return CIRCLE;
             }
-            return FLOWER;
+            return CIRCLE;
         }
     }
 }

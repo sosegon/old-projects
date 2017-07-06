@@ -1,6 +1,7 @@
 package com.keemsa.seasonify.features.colorwheel;
 
 import android.graphics.Color;
+import android.graphics.RectF;
 
 /**
  * Created by sebastian on 04/07/17.
@@ -24,6 +25,14 @@ public class Utils {
         Color.colorToHSV(color, hsv);
         hsv[2] = lightness;
         return Color.HSVToColor(hsv);
+    }
+
+    public static RectF getRectF(ColorWheelRenderOption options) {
+        int width = options.targetCanvas.getWidth();
+        int height = options.targetCanvas.getHeight();
+        float strokeWidth =  options.strokeWidth;
+
+        return new RectF(strokeWidth, strokeWidth, width - strokeWidth, height - strokeWidth);
     }
 
     public static float lightnessOfColor(int color) {

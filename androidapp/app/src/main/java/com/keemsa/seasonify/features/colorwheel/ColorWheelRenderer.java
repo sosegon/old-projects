@@ -7,7 +7,6 @@ import java.util.List;
  */
 
 public interface ColorWheelRenderer {
-    float GAP_PERCENTAGE = 0.025f;
 
     void draw();
 
@@ -15,7 +14,7 @@ public interface ColorWheelRenderer {
 
     void initWith(ColorWheelRenderOption colorWheelRenderOption);
 
-    List<ColorCircle> getColorCircleList();
+    List<ColorElement> getColorElementList();
 
     void updateColorList(int[] colors);
 }

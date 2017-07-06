@@ -6,26 +6,36 @@ import android.graphics.Color;
  * Created by sebastian on 04/07/17.
  */
 // based on https://github.com/QuadFlask/colorpicker/blob/master/library/src/main/java/com/flask/colorpicker/ColorCircle.java
-public class ColorCircle {
-    private float x, y;
+public class ColorElement {
+    private float x, y, angle, sweepAngle;
     private float[] hsv = new float[3];
     private float[] hsvClone;
     private int color;
 
-    public ColorCircle(float x, float y, float[] hsv) {
-        set(x, y, hsv);
-    }
-
-    public ColorCircle(float x, float y, int r, int g, int b) {
-        Color.RGBToHSV(r, g, b, this.hsv);
-        this.x = x;
-        this.y = y;
+    public ColorElement(float x, float y, float angle, float sweepAngle, float[] hsv) {
+        set(x, y, angle, sweepAngle, hsv);
     }
 
     public double sqDist(float x, float y) {
         double dx = this.x - x;
         double dy = this.y - y;
         return dx * dx + dy * dy;
+    }
+
+    public float getAngle() {
+        return angle;
+    }
+
+    public void setAngle(float angle) {
+        this.angle = angle;
+    }
+
+    public float getSweepAngle() {
+        return sweepAngle;
+    }
+
+    public void setSweepAngle(float sweepAngle) {
+        this.sweepAngle = sweepAngle;
     }
 
     public float getX() {
@@ -49,9 +59,11 @@ public class ColorCircle {
         return hsvClone;
     }
 
-    public void set(float x, float y, float[] hsv) {
+    public void set(float x, float y, float angle, float sweepAngle, float[] hsv) {
         this.x = x;
         this.y = y;
+        this.angle = angle;
+        this.sweepAngle = sweepAngle;
         this.hsv[0] = hsv[0];
         this.hsv[1] = hsv[1];
         this.hsv[2] = hsv[2];
