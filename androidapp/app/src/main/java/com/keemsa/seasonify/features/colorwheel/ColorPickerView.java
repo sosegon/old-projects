@@ -4,17 +4,13 @@ import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.PorterDuff;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
 import com.keemsa.seasonify.R;
-
-import org.opencv.core.Mat;
 
 import java.util.ArrayList;
 
@@ -24,14 +20,13 @@ import java.util.ArrayList;
 
 public class ColorPickerView extends View {
     private static final String LOG_TAG = ColorPickerView.class.getSimpleName();
-    private static final float STROKE_RATIO = 2f;
 
-    private Bitmap colorWheel;
-    private Canvas colorWheelCanvas;
+    private Bitmap colorWheel, centerWheel;
+    private Canvas colorWheelCanvas, centerWheelCanvas;
     private float innerRadius = 0.75f; // percentage
     private float strokeWidth = 5f;
 
-    private int backgroundColor = 0xffffff;
+    private int backgroundColor = 0x145632;
     private ColorElement currentColorElement;
 
     private ArrayList<OnColorChangedListener> colorChangedListeners = new ArrayList<>();
@@ -75,8 +70,8 @@ public class ColorPickerView extends View {
 
     @Override
     protected void onDraw(Canvas canvas) {
-        super.onDraw(canvas);
-        canvas.drawColor(backgroundColor);
+        //super.onDraw(canvas);
+        canvas.drawColor(backgroundColor, PorterDuff.Mode.LIGHTEN);
         if (colorWheel != null)
             canvas.drawBitmap(colorWheel, 0, 0, null);
         if (currentColorElement != null) {
@@ -92,10 +87,12 @@ public class ColorPickerView extends View {
                             startAngle, sweepAngle, true, selectorStroke);
 
             // Circle to create effect of blank space in the middle of the color wheel
-            colorWheelFill.setColor(Color.parseColor("#ffffff"));
+            colorWheelFill.setColor((int)(Math.random()*10));
             float blankRadius = innerRadius * renderer.getRenderOption().radius;
             canvas.drawCircle(half, half, blankRadius, colorWheelFill);
         }
+        if (centerWheel != null)
+            canvas.drawBitmap(centerWheel, 0, 0, null);
     }
 
     @Override
@@ -189,6 +186,11 @@ public class ColorPickerView extends View {
         updateColorWheel();
     }
 
+    public void updateCenter(Bitmap bitmap) {
+        renderer.setCenter(bitmap);
+        updateCenterWheel();
+    }
+
     public void setRenderer(ColorWheelRenderer renderer) {
         this.renderer = renderer;
         invalidate();
@@ -238,7 +240,41 @@ public class ColorPickerView extends View {
         colorWheelRenderOption.targetCanvas = colorWheelCanvas;
 
         renderer.initWith(colorWheelRenderOption);
-        renderer.draw();
+        renderer.drawColor();
+    }
+
+    private void updateCenterWheel() {
+        int width = getMeasuredWidth();
+        int height = getMeasuredHeight();
+
+        if (height < width)
+            width = height;
+        if (width <= 0)
+            return;
+        if (centerWheel == null) {
+            centerWheel = Bitmap.createBitmap(width, width, Bitmap.Config.ARGB_8888);
+            centerWheelCanvas = new Canvas(centerWheel);
+        }
+        drawCenterWheel();
+        invalidate();
+    }
+
+    private void drawCenterWheel() {
+        centerWheelCanvas.drawColor(0, PorterDuff.Mode.CLEAR);
+
+        if (renderer == null) return;
+
+        float half = colorWheelCanvas.getWidth() / 2f;
+        float radius = half - strokeWidth;
+
+        ColorWheelRenderOption colorWheelRenderOption = renderer.getRenderOption();
+        colorWheelRenderOption.radius = radius;
+        colorWheelRenderOption.innerRadius = innerRadius;
+        colorWheelRenderOption.strokeWidth = strokeWidth;
+        colorWheelRenderOption.targetCanvas = centerWheelCanvas;
+
+        renderer.initWith(colorWheelRenderOption);
+        renderer.drawCenter();
     }
 
     public enum WHEEL_TYPE {
