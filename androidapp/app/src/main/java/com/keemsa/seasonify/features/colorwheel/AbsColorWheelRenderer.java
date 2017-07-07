@@ -34,7 +34,6 @@ public abstract class AbsColorWheelRenderer implements ColorWheelRenderer {
 
     public void initWith(ColorWheelRenderOption colorWheelRenderOption) {
         this.colorWheelRenderOption = colorWheelRenderOption;
-        this.colorElementList.clear();
     }
 
     @Override
