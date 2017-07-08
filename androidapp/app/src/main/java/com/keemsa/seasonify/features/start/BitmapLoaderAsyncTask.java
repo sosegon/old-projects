@@ -23,25 +23,49 @@ public class BitmapLoaderAsyncTask extends AsyncTask<String, Void, Bitmap> {
 
   interface BitmapLoaderAsyncTaskReceiver {
     void classify(Context context, String path, Bitmap bitmap);
+    void load(Context context, Bitmap bitmap);
   }
+
+  public enum TASK_TYPE {
+    LOAD, CLASSIFY;
+
+    public static TASK_TYPE indexOf(int index) {
+      switch (index) {
+        case 0:
+          return CLASSIFY;
+        case 1:
+          return LOAD;
+      }
+      return LOAD;
+    }
+  }
+
 
   private BitmapLoaderAsyncTaskReceiver mReceiver;
   private Context mContext;
   private int mImageSize;
   private String mPath;
+  private TASK_TYPE mTaskType;
 
-  public BitmapLoaderAsyncTask(Context context, BitmapLoaderAsyncTaskReceiver receiver, int imageSize) {
+  public BitmapLoaderAsyncTask(Context context, BitmapLoaderAsyncTaskReceiver receiver, int imageSize, int taskType) {
     super();
     mContext = context;
     mReceiver = receiver;
     mImageSize = imageSize;
+    mTaskType = TASK_TYPE.indexOf(taskType);
   }
 
   @Override
   protected Bitmap doInBackground(String... params) {
     try{
       mPath = params[0];
-      return getBitmap(mPath);
+      switch (mTaskType) {
+        case LOAD:
+          return getBitmapLoad(mPath);
+        case CLASSIFY:
+          return getBitmapClassify(mPath);
+      }
+      return null;
 
     } catch (IOException e){
       return null;
@@ -50,10 +74,16 @@ public class BitmapLoaderAsyncTask extends AsyncTask<String, Void, Bitmap> {
 
   @Override
   protected void onPostExecute(Bitmap bitmap) {
-    mReceiver.classify(mContext, mPath, bitmap);
+    switch (mTaskType) {
+      case LOAD:
+        mReceiver.load(mContext, bitmap);
+        break;
+      case CLASSIFY:
+        mReceiver.classify(mContext, mPath, bitmap);
+    }
   }
 
-  public Bitmap getBitmap(String path) throws IOException {
+  public Bitmap getBitmapClassify(String path) throws IOException {
     InputStream input = new FileInputStream(path);
     BitmapFactory.Options bounds = new BitmapFactory.Options();
     Bitmap bitmap = BitmapFactory.decodeStream(input, null, bounds);
@@ -72,6 +102,22 @@ public class BitmapLoaderAsyncTask extends AsyncTask<String, Void, Bitmap> {
 
     input.close();
 
+    return scaledBitmap;
+  }
+
+  public Bitmap getBitmapLoad(String path) throws IOException {
+    InputStream input = new FileInputStream(path);
+    BitmapFactory.Options bounds = new BitmapFactory.Options();
+    Bitmap bitmap = BitmapFactory.decodeStream(input, null, bounds);
+
+    int height = bitmap.getHeight();
+    int width = bitmap.getWidth();
+
+    Matrix matrix = new Matrix();
+    matrix.postScale(mImageSize / width, mImageSize /height);
+    Bitmap scaledBitmap = Bitmap.createBitmap(bitmap, 0, 0, width, height, matrix, false);
+
+    input.close();
     return scaledBitmap;
   }
 

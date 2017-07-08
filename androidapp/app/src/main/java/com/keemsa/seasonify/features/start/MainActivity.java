@@ -1,6 +1,7 @@
 package com.keemsa.seasonify.features.start;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -9,7 +10,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
+import android.view.ViewTreeObserver;
 import android.widget.ImageView;
 
 import com.google.android.gms.ads.AdListener;
@@ -73,6 +74,19 @@ public class MainActivity extends AppCompatActivity implements MainMvpView {
         setSupportActionBar(tb);
 
         initAd();
+
+        // Add a tree observer so the color wheel can
+        // be updated once is ready, that is all its
+        // dimensions are available
+        color_wheel.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                color_wheel.getViewTreeObserver().removeOnGlobalLayoutListener(this); // avoid more than one call
+                if(!onActivityResultCalled) {
+                    mPresenter.loadPreviousResults(MainActivity.this);
+                }
+            }
+        });
     }
 
     @Override
@@ -81,20 +95,6 @@ public class MainActivity extends AppCompatActivity implements MainMvpView {
         if(!mPresenter.isViewAttached()) {
             mPresenter.attachView(this);
         }
-
-        /*
-            onResume gets called after onActivityResult, but
-            the latter is not called every time, just when the
-            camera activity has been started.
-            To avoid conflict when updating the UI, ta flag is used,
-            so previous results are loaded in any situation except
-            when the camera activity has been started.
-         */
-        if(!onActivityResultCalled) {
-            mPresenter.loadPreviousResults(this);
-        }
-
-        onActivityResultCalled = false; // if it was called
     }
 
     @Override
@@ -157,10 +157,16 @@ public class MainActivity extends AppCompatActivity implements MainMvpView {
     }
 
     @Override
-    public void updatePalette(int[] colors) {
+    public void updateColorWheel(final int[] colors, Bitmap bitmap) {
+
         if(colors.length != 0) {
             color_wheel.updateColors(colors);
         }
+
+        if(bitmap != null){
+            color_wheel.updateCenter(bitmap);
+        }
+
     }
 
     private void initAd() {

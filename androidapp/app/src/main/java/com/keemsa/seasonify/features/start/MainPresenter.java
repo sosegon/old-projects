@@ -107,7 +107,7 @@ public class MainPresenter extends BasePresenter<MainMvpView> implements BitmapL
     }
 
     public void classifyImage(Context context, File photoFile) {
-        BitmapLoaderAsyncTask task = new BitmapLoaderAsyncTask(context, this, INPUT_SIZE);
+        BitmapLoaderAsyncTask task = new BitmapLoaderAsyncTask(context, this, INPUT_SIZE, 0);
         task.execute(photoFile.getAbsolutePath());
     }
 
@@ -151,6 +151,21 @@ public class MainPresenter extends BasePresenter<MainMvpView> implements BitmapL
     }
 
     @Override
+    public void load(Context context, Bitmap bitmap) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        String result = preferences.getString(mPrfPrevPredictionKey, "");
+        String path = preferences.getString(mPrfPrevPhotoKey, "");
+
+        if (isViewAttached()) {
+            if (bitmap != null && (!result.equals("") || !path.equals(""))) {
+                getMvpView().updateFaceView(generateUri(context, new File(path)));
+                getMvpView().updateResult(result);
+                getMvpView().updateColorWheel(getSeasonalColors(result), bitmap);
+            }
+        }
+    }
+
+    @Override
     public void classify(final Context context, String path, Bitmap bitmap) {
         Bitmap faceBitmap = detectFace(context, path);
 
@@ -172,8 +187,8 @@ public class MainPresenter extends BasePresenter<MainMvpView> implements BitmapL
                 Uri photoUri2 = Uri.fromFile(new File(faceOnlyPath)); // To store in firebase
                 getMvpView().updateFaceView(photoUri);
                 getMvpView().updateResult(season);
-                getMvpView().updatePalette(getSeasonalColors(season));
-                storeResults(context, path, season);
+                getMvpView().updateColorWheel(getSeasonalColors(season), faceBitmap);
+                storeResults(context, faceOnlyPath, season);
 
                 final int seasonInt = getPredictionAsInteger(season);
                 StorageReference facePhotoRef = mFacePhotoStorageReference.child(photoUri2.getLastPathSegment());
@@ -211,17 +226,12 @@ public class MainPresenter extends BasePresenter<MainMvpView> implements BitmapL
     }
 
     public void loadPreviousResults(Context context) {
+
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
         String path = preferences.getString(mPrfPrevPhotoKey, "");
-        String result = preferences.getString(mPrfPrevPredictionKey, "");
 
-        if (isViewAttached()) {
-            if (!path.equals("") || !result.equals("")) {
-                getMvpView().updateFaceView(generateUri(context, new File(path)));
-                getMvpView().updateResult(result);
-                getMvpView().updatePalette(getSeasonalColors(result));
-            }
-        }
+        BitmapLoaderAsyncTask task = new BitmapLoaderAsyncTask(context, this, INPUT_SIZE, 1);
+        task.execute(path);
     }
 
     private void storeResults(Context context, String path, String prediction) {
