@@ -7,8 +7,8 @@ package com.keemsa.seasonify.features.colorwheel;
 public class ColorWheelRendererBuilder {
     public static ColorWheelRenderer getRenderer(ColorPickerView.WHEEL_TYPE wheelType) {
         switch (wheelType) {
-            case CIRCLE:
-                return new SimpleColorWheelRenderer();
+            case ARC:
+                return new ArcColorWheelRenderer();
         }
         throw new IllegalArgumentException("wrong WHEEL_TYPE");
     }

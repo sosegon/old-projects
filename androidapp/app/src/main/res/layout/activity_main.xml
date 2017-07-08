@@ -43,7 +43,7 @@
             android:layout_marginBottom="@dimen/surface_vertical_margin"
             android:background="#fff"
             android:elevation="@dimen/surface_elevation"
-            app:wheelType="CIRCLE"
+            app:wheelType="ARC"
             app:innerRadius=".75"
             />
 

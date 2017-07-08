@@ -24,7 +24,7 @@ public class ColorPickerView extends View {
     private Bitmap colorWheel, centerWheel;
     private Canvas colorWheelCanvas, centerWheelCanvas;
     private float innerRadius = 0.75f; // percentage
-    private float strokeWidth = 5f;
+    private float strokeWidth = 4f;
 
     private int backgroundColor = 0x145632;
     private ColorElement currentColorElement;
@@ -33,7 +33,8 @@ public class ColorPickerView extends View {
     private ArrayList<OnColorSelectedListener> listeners = new ArrayList<>();
 
     private Paint colorWheelFill = PaintBuilder.newPaint().color(0).build();
-    private Paint selectorStroke = PaintBuilder.newPaint().color(0xffffffff).stroke(strokeWidth).style(Paint.Style.STROKE).build();
+    private Paint selectorOutterStroke = PaintBuilder.newPaint().color(0xff000000).stroke(strokeWidth).style(Paint.Style.STROKE).build();
+    private Paint selectorInnerStroke = PaintBuilder.newPaint().color(0x7fffffff).stroke(strokeWidth).style(Paint.Style.STROKE).build();
 
     private ColorWheelRenderer renderer;
 
@@ -80,11 +81,25 @@ public class ColorPickerView extends View {
             float startAngle = currentColorElement.getAngle();
             float sweepAngle = currentColorElement.getSweepAngle();
 
-            canvas.drawArc(strokeWidth,
-                            strokeWidth,
-                            canvas.getWidth() - strokeWidth,
-                            canvas.getHeight() - strokeWidth,
-                            startAngle, sweepAngle, true, selectorStroke);
+            float gap = strokeWidth * 0.5f;
+            // the gap is half the stroke because the stroke of a
+            // shape is right in the middle of the boundaries
+
+            canvas.drawArc(gap,
+                            gap,
+                            canvas.getWidth() - gap,
+                            canvas.getHeight() - gap,
+                            startAngle, sweepAngle, false, selectorOutterStroke);
+
+            gap = strokeWidth * 1.5f;
+            // the gap is one and a half the stroke because the stroke of a
+            // shape is right in the middle of the boundaries
+
+            canvas.drawArc(gap,
+                    gap,
+                    canvas.getWidth() - gap,
+                    canvas.getHeight() - gap,
+                    startAngle, sweepAngle, false, selectorInnerStroke);
 
             // Circle to create effect of blank space in the middle of the color wheel
             colorWheelFill.setColor(0xffffff);
@@ -231,7 +246,7 @@ public class ColorPickerView extends View {
         if (renderer == null) return;
 
         float half = colorWheelCanvas.getWidth() / 2f;
-        float radius = half - strokeWidth;
+        float radius = half;
 
         ColorWheelRenderOption colorWheelRenderOption = renderer.getRenderOption();
         colorWheelRenderOption.radius = radius;
@@ -265,7 +280,7 @@ public class ColorPickerView extends View {
         if (renderer == null) return;
 
         float half = colorWheelCanvas.getWidth() / 2f;
-        float radius = half - strokeWidth;
+        float radius = half;
 
         ColorWheelRenderOption colorWheelRenderOption = renderer.getRenderOption();
         colorWheelRenderOption.radius = radius;
@@ -278,12 +293,14 @@ public class ColorPickerView extends View {
     }
 
     public enum WHEEL_TYPE {
-        CIRCLE;
+        CIRCLE, ARC;
 
         public static WHEEL_TYPE indexOf(int index) {
             switch (index) {
                 case 0:
                     return CIRCLE;
+                case 1:
+                    return ARC;
             }
             return CIRCLE;
         }

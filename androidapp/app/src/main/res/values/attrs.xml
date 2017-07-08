@@ -3,7 +3,8 @@
 	<declare-styleable name="ColorPickerPreference">
 		<attr name="innerRadius" format="float"/>
 		<attr name="wheelType" format="enum">
-			<enum name="CIRCLE" value="1"/>
+			<enum name="CIRCLE" value="0"/>
+			<enum name="ARC" value="1"/>
 		</attr>
 	</declare-styleable>
 </resources>

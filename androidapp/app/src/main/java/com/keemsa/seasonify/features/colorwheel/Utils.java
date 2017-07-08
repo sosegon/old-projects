@@ -30,9 +30,9 @@ public class Utils {
     public static RectF getRectF(ColorWheelRenderOption options) {
         int width = options.targetCanvas.getWidth();
         int height = options.targetCanvas.getHeight();
-        float strokeWidth =  options.strokeWidth;
+        float gap =  options.strokeWidth;
 
-        return new RectF(strokeWidth, strokeWidth, width - strokeWidth, height - strokeWidth);
+        return new RectF(gap, gap, width - gap, height - gap);
     }
 
     public static float lightnessOfColor(int color) {

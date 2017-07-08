@@ -2,6 +2,10 @@ package com.keemsa.seasonify.features.colorwheel;
 
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffXfermode;
+import android.graphics.RectF;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -44,6 +48,28 @@ public abstract class AbsColorWheelRenderer implements ColorWheelRenderer {
 
     public List<ColorElement> getColorElementList() {
         return colorElementList;
+    }
+
+
+    @Override
+    public void drawCenter() {
+        if(center == null)
+            return;
+
+        // Use a new paint to avoid blank bitmap due to setting
+        // xfermode
+        Paint selectorFill2 = PaintBuilder.newPaint().antiAlias(true).build();
+        float half = colorWheelRenderOption.targetCanvas.getWidth() / 2f;
+        float radius = colorWheelRenderOption.radius;
+        float innerRadius = colorWheelRenderOption.innerRadius * radius;
+
+        float x = half - innerRadius;
+        float y = x;
+
+        colorWheelRenderOption.targetCanvas.drawCircle(half, half, innerRadius, selectorFill2);
+        selectorFill2.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN));
+        RectF dst = new RectF(x, y, x + 2 * innerRadius, y + 2 * innerRadius);
+        colorWheelRenderOption.targetCanvas.drawBitmap(center, null, dst, selectorFill2);
     }
 
 }
