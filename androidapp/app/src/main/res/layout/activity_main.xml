@@ -45,6 +45,7 @@
             android:elevation="@dimen/surface_elevation"
             app:wheelType="ARC"
             app:innerRadiusRatio=".75"
+            app:colorSelection="TRIAD"
             />
 
     </LinearLayout>

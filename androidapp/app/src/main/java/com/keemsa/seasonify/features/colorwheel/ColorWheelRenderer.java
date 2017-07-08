@@ -1,6 +1,7 @@
 package com.keemsa.seasonify.features.colorwheel;
 
 import android.graphics.Bitmap;
+import android.graphics.Canvas;
 
 import java.util.List;
 
@@ -23,4 +24,8 @@ public interface ColorWheelRenderer {
     void drawCenter();
 
     void setCenter(Bitmap bitmap);
+
+    List<ColorElement> getColorElements(ColorPickerView.COLOR_SELECTION colorSelection, float x, float y);
+
+    void drawSelected(Canvas canvas, List<ColorElement> colors);
 }

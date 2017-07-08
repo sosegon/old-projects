@@ -1,14 +1,20 @@
 package com.keemsa.seasonify.features.colorwheel;
 
+import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.RectF;
+
+import java.util.List;
 
 /**
  * Created by sebastian on 04/07/17.
  */
 
 public class ArcColorWheelRenderer extends AbsColorWheelRenderer {
+    private Paint colorWheelFill = PaintBuilder.newPaint().color(0).build();
+    private Paint selectorOuterStroke = PaintBuilder.newPaint().color(0xff000000).stroke(strokeWidth).style(Paint.Style.STROKE).build();
+    private Paint selectorInnerStroke = PaintBuilder.newPaint().color(0x7fffffff).stroke(strokeWidth).style(Paint.Style.STROKE).build();
     private Paint selectorFill = PaintBuilder.newPaint().antiAlias(true).build();
     private float[] hsv = new float[3];
 
@@ -48,4 +54,41 @@ public class ArcColorWheelRenderer extends AbsColorWheelRenderer {
         colorWheelRenderOption.targetCanvas.drawCircle(half, half, innerRadius, selectorFill);
     }
 
+    @Override
+    public void drawSelected(Canvas canvas, List<ColorElement> colors) {
+        float half = canvas.getWidth() / 2f;
+
+        for(ColorElement currentColorElement : colors) {
+            float startAngle = currentColorElement.getAngle();
+            float sweepAngle = currentColorElement.getSweepAngle();
+
+            float gap = strokeWidth * 0.5f;
+            // the gap is half the stroke because the stroke of a
+            // shape is right in the middle of the boundaries
+
+            canvas.drawArc(gap,
+                    gap,
+                    canvas.getWidth() - gap,
+                    canvas.getHeight() - gap,
+                    startAngle, sweepAngle, false, selectorOuterStroke);
+
+            gap = strokeWidth * 1.5f;
+            // the gap is one and a half the stroke because the stroke of a
+            // shape is right in the middle of the boundaries
+
+            canvas.drawArc(gap,
+                    gap,
+                    canvas.getWidth() - gap,
+                    canvas.getHeight() - gap,
+                    startAngle, sweepAngle, false, selectorInnerStroke);
+        }
+
+
+        // Circle to create effect of blank space in the middle of the color wheel
+        colorWheelFill.setColor(0xffffffff);
+        float gap = strokeWidth;
+        float outerRadius = half - gap;
+        float innerRadius = colorWheelRenderOption.innerRadiusRatio * outerRadius;
+        canvas.drawCircle(half, half, innerRadius, colorWheelFill);
+    }
 }

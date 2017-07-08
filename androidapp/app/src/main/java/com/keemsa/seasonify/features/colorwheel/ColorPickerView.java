@@ -13,6 +13,7 @@ import android.view.View;
 import com.keemsa.seasonify.R;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by sebastian on 04/07/17.
@@ -27,16 +28,20 @@ public class ColorPickerView extends View {
     private float strokeWidth = 4f;
 
     private int backgroundColor = 0x145632;
-    private ColorElement currentColorElement;
+    private List<ColorElement> currentColorElements;
 
     private ArrayList<OnColorChangedListener> colorChangedListeners = new ArrayList<>();
     private ArrayList<OnColorSelectedListener> listeners = new ArrayList<>();
 
-    private Paint colorWheelFill = PaintBuilder.newPaint().color(0).build();
-    private Paint selectorOuterStroke = PaintBuilder.newPaint().color(0xff000000).stroke(strokeWidth).style(Paint.Style.STROKE).build();
-    private Paint selectorInnerStroke = PaintBuilder.newPaint().color(0x7fffffff).stroke(strokeWidth).style(Paint.Style.STROKE).build();
 
     private ColorWheelRenderer renderer;
+
+    private COLOR_SELECTION colorSelection;
+
+    public void setColorSelection(COLOR_SELECTION colorSelection) {
+        this.colorSelection = colorSelection;
+        invalidate();
+    }
 
     public ColorPickerView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -75,38 +80,8 @@ public class ColorPickerView extends View {
         canvas.drawColor(backgroundColor, PorterDuff.Mode.LIGHTEN);
         if (colorWheel != null)
             canvas.drawBitmap(colorWheel, 0, 0, null);
-        if (currentColorElement != null) {
-            float half = canvas.getWidth() / 2f;
-
-            float startAngle = currentColorElement.getAngle();
-            float sweepAngle = currentColorElement.getSweepAngle();
-
-            float gap = strokeWidth * 0.5f;
-            // the gap is half the stroke because the stroke of a
-            // shape is right in the middle of the boundaries
-
-            canvas.drawArc(gap,
-                            gap,
-                            canvas.getWidth() - gap,
-                            canvas.getHeight() - gap,
-                            startAngle, sweepAngle, false, selectorOuterStroke);
-
-            gap = strokeWidth * 1.5f;
-            // the gap is one and a half the stroke because the stroke of a
-            // shape is right in the middle of the boundaries
-
-            canvas.drawArc(gap,
-                    gap,
-                    canvas.getWidth() - gap,
-                    canvas.getHeight() - gap,
-                    startAngle, sweepAngle, false, selectorInnerStroke);
-
-            // Circle to create effect of blank space in the middle of the color wheel
-            colorWheelFill.setColor(0xffffffff);
-            gap = strokeWidth;
-            float outerRadius = half - gap;
-            float innerRadius = innerRadiusRatio * outerRadius;
-            canvas.drawCircle(half, half, innerRadius, colorWheelFill);
+        if (currentColorElements != null && currentColorElements.size() > 0) {
+            renderer.drawSelected(canvas, currentColorElements);
         }
         if (centerWheel != null)
             canvas.drawBitmap(centerWheel, 0, 0, null);
@@ -123,29 +98,29 @@ public class ColorPickerView extends View {
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
             case MotionEvent.ACTION_MOVE: {
-                int lastSelectedColor = getSelectedColor();
+//                int lastSelectedColor = getSelectedColor();
                 if(isColorsArea(event.getX(), event.getY())) {
-                    currentColorElement = findNearestByPosition(event.getX(), event.getY());
-                    int selectedColor = getSelectedColor();
-
-                    callOnColorChangedListeners(lastSelectedColor, selectedColor);
+                    currentColorElements = renderer.getColorElements(colorSelection, event.getX(), event.getY());
+//                    int selectedColor = getSelectedColor();
+//
+//                    callOnColorChangedListeners(lastSelectedColor, selectedColor);
 
                     invalidate();
                 }
                 break;
             }
             case MotionEvent.ACTION_UP: {
-                int selectedColor = getSelectedColor();
-                if (listeners != null) {
-                    for (OnColorSelectedListener listener : listeners) {
-                        try {
-                            listener.onColorSelected(selectedColor);
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                    }
-                }
-                invalidate();
+//                int selectedColor = getSelectedColor();
+//                if (listeners != null) {
+//                    for (OnColorSelectedListener listener : listeners) {
+//                        try {
+//                            listener.onColoqrSelected(selectedColor);
+//                        } catch (Exception e) {
+//                            e.printStackTrace();
+//                        }
+//                    }
+//                }
+//                invalidate();
                 break;
             }
         }
@@ -179,28 +154,6 @@ public class ColorPickerView extends View {
 
         return distToCenter >= innerRadius && distToCenter <= outerRadius;
     }
-    
-    private ColorElement findNearestByPosition(float x, float y) {
-        ColorElement near = null;
-        double minDist = Double.MAX_VALUE;
-
-        for (ColorElement colorElement : renderer.getColorElementList()) {
-            double dist = colorElement.sqDist(x, y);
-            if (minDist > dist) {
-                minDist = dist;
-                near = colorElement;
-            }
-        }
-
-        return near;
-    }
-
-    public int getSelectedColor() {
-        int color = 0;
-        if (currentColorElement != null)
-            color = Utils.colorAtLightness(currentColorElement.getColor(), 1);
-        return Utils.adjustAlpha(1, color);
-    }
 
     public void updateColors(int[] colors) {
         renderer.updateColorList(colors);
@@ -221,6 +174,7 @@ public class ColorPickerView extends View {
         final TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.ColorPickerPreference);
 
         innerRadiusRatio = typedArray.getFloat(R.styleable.ColorPickerPreference_innerRadiusRatio, 0.75f);
+        colorSelection = COLOR_SELECTION.indexOf(typedArray.getInt(R.styleable.ColorPickerPreference_colorSelection, 0));
 
         WHEEL_TYPE wheelType = WHEEL_TYPE.indexOf(typedArray.getInt(R.styleable.ColorPickerPreference_wheelType, 0));
         ColorWheelRenderer renderer = ColorWheelRendererBuilder.getRenderer(wheelType);
@@ -309,6 +263,27 @@ public class ColorPickerView extends View {
                     return ARC;
             }
             return CIRCLE;
+        }
+    }
+
+    public enum COLOR_SELECTION {
+        SINGLE, COMPLEMENTARY, TRIAD, ANALOGOUS, SQUARE;
+
+        public static COLOR_SELECTION indexOf(int index) {
+            switch (index) {
+                case 0:
+                    return SINGLE;
+                case 1:
+                    return COMPLEMENTARY;
+                case 2:
+                    return TRIAD;
+                case 3:
+                    return ANALOGOUS;
+                case 4:
+                    return SQUARE;
+                default:
+                    return SINGLE;
+            }
         }
     }
 }
