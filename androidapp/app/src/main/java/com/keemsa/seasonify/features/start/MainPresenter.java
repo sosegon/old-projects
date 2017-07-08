@@ -154,11 +154,9 @@ public class MainPresenter extends BasePresenter<MainMvpView> implements BitmapL
     public void load(Context context, Bitmap bitmap) {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
         String result = preferences.getString(mPrfPrevPredictionKey, "");
-        String path = preferences.getString(mPrfPrevPhotoKey, "");
 
         if (isViewAttached()) {
-            if (bitmap != null && (!result.equals("") || !path.equals(""))) {
-                getMvpView().updateFaceView(generateUri(context, new File(path)));
+            if (bitmap != null && !result.equals("")) {
                 getMvpView().updateResult(result);
                 getMvpView().updateColorWheel(getSeasonalColors(result), bitmap);
             }
@@ -185,7 +183,6 @@ public class MainPresenter extends BasePresenter<MainMvpView> implements BitmapL
                 String season = results.get(0).getTitle();
                 Uri photoUri = generateUri(context, new File(path)); // To update the view
                 Uri photoUri2 = Uri.fromFile(new File(faceOnlyPath)); // To store in firebase
-                getMvpView().updateFaceView(photoUri);
                 getMvpView().updateResult(season);
                 getMvpView().updateColorWheel(getSeasonalColors(season), faceBitmap);
                 storeResults(context, faceOnlyPath, season);

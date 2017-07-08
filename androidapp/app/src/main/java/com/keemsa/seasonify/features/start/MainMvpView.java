@@ -13,7 +13,6 @@ import java.io.File;
 
 public interface MainMvpView extends MvpView {
 
-    void updateFaceView(Uri uriPhoto);
     void updateResult(String result);
     void updateColorWheel(int colors[], Bitmap bitmap);
 }

@@ -12,6 +12,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.ViewTreeObserver;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
@@ -40,14 +41,11 @@ public class MainActivity extends AppCompatActivity implements MainMvpView {
 
     private MainPresenter mPresenter;
 
-    @BindView(R.id.imv_face)
-    ImageView imv_face;
+    @BindView(R.id.txt_season)
+    TextView txt_season;
 
     @BindView(R.id.color_wheel)
     ColorPickerView color_wheel;
-
-    @BindView(R.id.ctb)
-    CollapsingToolbarLayout ctb;
 
     @BindView(R.id.tb)
     Toolbar tb;
@@ -136,7 +134,7 @@ public class MainActivity extends AppCompatActivity implements MainMvpView {
                 Intent shareIntent = new Intent();
                 shareIntent.setAction(Intent.ACTION_SEND);
                 // TODO: Get the season correctly
-                shareIntent.putExtra(Intent.EXTRA_TEXT, getString(R.string.msg_share, ctb.getTitle()));
+                shareIntent.putExtra(Intent.EXTRA_TEXT, getString(R.string.msg_share, txt_season.getText()));
                 shareIntent.setType("text/plain");
 
                 startActivity(Intent.createChooser(shareIntent, getString(R.string.lbl_share)));
@@ -147,13 +145,8 @@ public class MainActivity extends AppCompatActivity implements MainMvpView {
     }
 
     @Override
-    public void updateFaceView(Uri uriPhoto) {
-        Picasso.with(this).load(uriPhoto).into(imv_face);
-    }
-
-    @Override
     public void updateResult(String result) {
-        ctb.setTitle(result);
+        txt_season.setText(result);
     }
 
     @Override
