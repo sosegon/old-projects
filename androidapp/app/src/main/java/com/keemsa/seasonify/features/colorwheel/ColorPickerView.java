@@ -33,7 +33,7 @@ public class ColorPickerView extends View {
     private ArrayList<OnColorSelectedListener> listeners = new ArrayList<>();
 
     private Paint colorWheelFill = PaintBuilder.newPaint().color(0).build();
-    private Paint selectorOutterStroke = PaintBuilder.newPaint().color(0xff000000).stroke(strokeWidth).style(Paint.Style.STROKE).build();
+    private Paint selectorOuterStroke = PaintBuilder.newPaint().color(0xff000000).stroke(strokeWidth).style(Paint.Style.STROKE).build();
     private Paint selectorInnerStroke = PaintBuilder.newPaint().color(0x7fffffff).stroke(strokeWidth).style(Paint.Style.STROKE).build();
 
     private ColorWheelRenderer renderer;
@@ -89,7 +89,7 @@ public class ColorPickerView extends View {
                             gap,
                             canvas.getWidth() - gap,
                             canvas.getHeight() - gap,
-                            startAngle, sweepAngle, false, selectorOutterStroke);
+                            startAngle, sweepAngle, false, selectorOuterStroke);
 
             gap = strokeWidth * 1.5f;
             // the gap is one and a half the stroke because the stroke of a
