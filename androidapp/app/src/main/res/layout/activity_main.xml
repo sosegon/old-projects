@@ -44,7 +44,7 @@
             android:background="#fff"
             android:elevation="@dimen/surface_elevation"
             app:wheelType="ARC"
-            app:innerRadius=".75"
+            app:innerRadiusRatio=".75"
             />
 
     </LinearLayout>

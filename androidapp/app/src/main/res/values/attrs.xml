@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 	<declare-styleable name="ColorPickerPreference">
-		<attr name="innerRadius" format="float"/>
+		<attr name="innerRadiusRatio" format="float"/>
 		<attr name="wheelType" format="enum">
 			<enum name="CIRCLE" value="0"/>
 			<enum name="ARC" value="1"/>

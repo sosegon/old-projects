@@ -61,7 +61,7 @@ public abstract class AbsColorWheelRenderer implements ColorWheelRenderer {
         Paint selectorFill2 = PaintBuilder.newPaint().antiAlias(true).build();
         float half = colorWheelRenderOption.targetCanvas.getWidth() / 2f;
         float radius = colorWheelRenderOption.radius;
-        float innerRadius = colorWheelRenderOption.innerRadius * radius;
+        float innerRadius = colorWheelRenderOption.innerRadiusRatio * radius;
 
         float x = half - innerRadius;
         float y = x;

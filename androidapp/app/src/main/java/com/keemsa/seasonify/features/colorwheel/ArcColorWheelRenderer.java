@@ -2,8 +2,6 @@ package com.keemsa.seasonify.features.colorwheel;
 
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.graphics.PorterDuff;
-import android.graphics.PorterDuffXfermode;
 import android.graphics.RectF;
 
 /**
@@ -27,7 +25,7 @@ public class ArcColorWheelRenderer extends AbsColorWheelRenderer {
 
         float half = colorWheelRenderOption.targetCanvas.getWidth() / 2f;
         float radius = colorWheelRenderOption.radius;
-        float innerRadius = colorWheelRenderOption.innerRadius * radius;
+        float innerRadius = colorWheelRenderOption.innerRadiusRatio * radius;
 
         RectF oval = Utils.getRectF(colorWheelRenderOption);
 

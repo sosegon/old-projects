@@ -23,7 +23,7 @@ public class ColorPickerView extends View {
 
     private Bitmap colorWheel, centerWheel;
     private Canvas colorWheelCanvas, centerWheelCanvas;
-    private float innerRadius = 0.75f; // percentage
+    private float innerRadiusRatio = 0.75f; // radius / innerRadiusRatio
     private float strokeWidth = 4f;
 
     private int backgroundColor = 0x145632;
@@ -103,7 +103,7 @@ public class ColorPickerView extends View {
 
             // Circle to create effect of blank space in the middle of the color wheel
             colorWheelFill.setColor(0xffffff);
-            float blankRadius = innerRadius * renderer.getRenderOption().radius;
+            float blankRadius = innerRadiusRatio * renderer.getRenderOption().radius;
             canvas.drawCircle(half, half, blankRadius, colorWheelFill);
         }
         if (centerWheel != null)
@@ -169,7 +169,7 @@ public class ColorPickerView extends View {
         float dy = Math.abs(y - centerY);
 
         float distToCenter = (float)Math.sqrt(dx * dx + dy * dy);
-        float radius = (centerX - strokeWidth) * innerRadius;
+        float radius = (centerX - strokeWidth) * innerRadiusRatio;
 
         return distToCenter <= radius;
 
@@ -214,7 +214,7 @@ public class ColorPickerView extends View {
     private void initWith(Context context, AttributeSet attrs) {
         final TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.ColorPickerPreference);
 
-        innerRadius = typedArray.getFloat(R.styleable.ColorPickerPreference_innerRadius, 0.75f);
+        innerRadiusRatio = typedArray.getFloat(R.styleable.ColorPickerPreference_innerRadiusRatio, 0.75f);
 
         WHEEL_TYPE wheelType = WHEEL_TYPE.indexOf(typedArray.getInt(R.styleable.ColorPickerPreference_wheelType, 0));
         ColorWheelRenderer renderer = ColorWheelRendererBuilder.getRenderer(wheelType);
@@ -250,7 +250,7 @@ public class ColorPickerView extends View {
 
         ColorWheelRenderOption colorWheelRenderOption = renderer.getRenderOption();
         colorWheelRenderOption.radius = radius;
-        colorWheelRenderOption.innerRadius = innerRadius;
+        colorWheelRenderOption.innerRadiusRatio = innerRadiusRatio;
         colorWheelRenderOption.strokeWidth = strokeWidth;
         colorWheelRenderOption.targetCanvas = colorWheelCanvas;
 
@@ -284,7 +284,7 @@ public class ColorPickerView extends View {
 
         ColorWheelRenderOption colorWheelRenderOption = renderer.getRenderOption();
         colorWheelRenderOption.radius = radius;
-        colorWheelRenderOption.innerRadius = innerRadius;
+        colorWheelRenderOption.innerRadiusRatio = innerRadiusRatio;
         colorWheelRenderOption.strokeWidth = strokeWidth;
         colorWheelRenderOption.targetCanvas = centerWheelCanvas;
 

@@ -7,7 +7,7 @@ import android.graphics.Canvas;
  */
 
 public class ColorWheelRenderOption {
-    public float radius, innerRadius;
+    public float radius, innerRadiusRatio;
     public float strokeWidth;
     public Canvas targetCanvas;
 }
