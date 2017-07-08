@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
-import android.graphics.Paint;
 import android.graphics.PorterDuff;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
@@ -30,8 +29,8 @@ public class ColorPickerView extends View {
     private int backgroundColor = 0x145632;
     private List<ColorElement> currentColorElements;
 
-    private ArrayList<OnColorChangedListener> colorChangedListeners = new ArrayList<>();
-    private ArrayList<OnColorSelectedListener> listeners = new ArrayList<>();
+    private ArrayList<OnColorsChangedListener> colorChangedListeners = new ArrayList<>();
+    private ArrayList<OnColorsSelectedListener> listeners = new ArrayList<>();
 
 
     private ColorWheelRenderer renderer;
@@ -98,40 +97,37 @@ public class ColorPickerView extends View {
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
             case MotionEvent.ACTION_MOVE: {
-//                int lastSelectedColor = getSelectedColor();
                 if(isColorsArea(event.getX(), event.getY())) {
+                    List<ColorElement> previousColorElements = currentColorElements;
                     currentColorElements = renderer.getColorElements(colorSelection, event.getX(), event.getY());
-//                    int selectedColor = getSelectedColor();
-//
-//                    callOnColorChangedListeners(lastSelectedColor, selectedColor);
-
+                    callOnColorChangedListeners(previousColorElements, currentColorElements);
                     invalidate();
                 }
                 break;
             }
             case MotionEvent.ACTION_UP: {
-//                int selectedColor = getSelectedColor();
-//                if (listeners != null) {
-//                    for (OnColorSelectedListener listener : listeners) {
-//                        try {
-//                            listener.onColoqrSelected(selectedColor);
-//                        } catch (Exception e) {
-//                            e.printStackTrace();
-//                        }
-//                    }
-//                }
-//                invalidate();
+                currentColorElements = renderer.getColorElements(colorSelection, event.getX(), event.getY());
+                if (listeners != null) {
+                    for (OnColorsSelectedListener listener : listeners) {
+                        try {
+                            listener.onColorsSelected(currentColorElements);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+                invalidate();
                 break;
             }
         }
         return true;
     }
 
-    protected void callOnColorChangedListeners(int oldColor, int newColor) {
-        if (colorChangedListeners != null && oldColor != newColor) {
-            for (OnColorChangedListener listener : colorChangedListeners) {
+    protected void callOnColorChangedListeners(List<ColorElement> oldColors, List<ColorElement> newColors) {
+        if (colorChangedListeners != null && !oldColors.equals(newColors)) {
+            for (OnColorsChangedListener listener : colorChangedListeners) {
                 try {
-                    listener.onColorChanged(newColor);
+                    listener.onColorsChanged(newColors);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
