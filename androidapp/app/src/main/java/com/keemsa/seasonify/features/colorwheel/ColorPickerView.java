@@ -124,7 +124,7 @@ public class ColorPickerView extends View {
             case MotionEvent.ACTION_DOWN:
             case MotionEvent.ACTION_MOVE: {
                 int lastSelectedColor = getSelectedColor();
-                if(!isInnerArea(event.getX(), event.getY())) {
+                if(isColorsArea(event.getX(), event.getY())) {
                     currentColorElement = findNearestByPosition(event.getX(), event.getY());
                     int selectedColor = getSelectedColor();
 
@@ -164,18 +164,22 @@ public class ColorPickerView extends View {
         }
     }
 
-    private boolean isInnerArea(float x, float y) {
-        float centerX = colorWheelCanvas.getWidth() / 2;
-        float centerY = colorWheelCanvas.getHeight() / 2;
+    private boolean isColorsArea(float x, float y) {
+        float half = colorWheelCanvas.getWidth() / 2;
+        float centerX = half;
+        float centerY = half;
+        float gap = strokeWidth;
+        float outerRadius = half - gap;
+        float innerRadius = innerRadiusRatio * outerRadius;
+
         float dx = Math.abs(x - centerX);
         float dy = Math.abs(y - centerY);
 
         float distToCenter = (float)Math.sqrt(dx * dx + dy * dy);
-        float radius = (centerX - strokeWidth) * innerRadiusRatio;
 
-        return distToCenter <= radius;
-
+        return distToCenter >= innerRadius && distToCenter <= outerRadius;
     }
+    
     private ColorElement findNearestByPosition(float x, float y) {
         ColorElement near = null;
         double minDist = Double.MAX_VALUE;
