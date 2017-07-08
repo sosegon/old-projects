@@ -70,7 +70,7 @@ public class ColorPickerView extends View {
 
     @Override
     protected void onDraw(Canvas canvas) {
-        //super.onDraw(canvas);
+        super.onDraw(canvas);
         canvas.drawColor(backgroundColor, PorterDuff.Mode.LIGHTEN);
         if (colorWheel != null)
             canvas.drawBitmap(colorWheel, 0, 0, null);
@@ -87,7 +87,7 @@ public class ColorPickerView extends View {
                             startAngle, sweepAngle, true, selectorStroke);
 
             // Circle to create effect of blank space in the middle of the color wheel
-            colorWheelFill.setColor((int)(Math.random()*10));
+            colorWheelFill.setColor(0xffffff);
             float blankRadius = innerRadius * renderer.getRenderOption().radius;
             canvas.drawCircle(half, half, blankRadius, colorWheelFill);
         }

@@ -53,6 +53,9 @@ public class SimpleColorWheelRenderer extends AbsColorWheelRenderer {
         if(center == null)
             return;
 
+        // Use a new paint to avoid blank bitmap due to setting
+        // xfermode
+        Paint selectorFill2 = PaintBuilder.newPaint().antiAlias(true).build();
         float half = colorWheelRenderOption.targetCanvas.getWidth() / 2f;
         float radius = colorWheelRenderOption.radius;
         float innerRadius = colorWheelRenderOption.innerRadius * radius;
@@ -60,9 +63,9 @@ public class SimpleColorWheelRenderer extends AbsColorWheelRenderer {
         float x = half - innerRadius;
         float y = x;
 
-        colorWheelRenderOption.targetCanvas.drawCircle(half, half, innerRadius, selectorFill);
-        selectorFill.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN));
+        colorWheelRenderOption.targetCanvas.drawCircle(half, half, innerRadius, selectorFill2);
+        selectorFill2.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN));
         RectF dst = new RectF(x, y, x + 2 * innerRadius, y + 2 * innerRadius);
-        colorWheelRenderOption.targetCanvas.drawBitmap(center, null, dst, selectorFill);
+        colorWheelRenderOption.targetCanvas.drawBitmap(center, null, dst, selectorFill2);
     }
 }
