@@ -24,16 +24,18 @@ public class ArcColorWheelRenderer extends AbsColorWheelRenderer {
         float sweepAngle = 360 / count; // degrees
 
         float half = colorWheelRenderOption.targetCanvas.getWidth() / 2f;
-        float radius = colorWheelRenderOption.radius;
-        float innerRadius = colorWheelRenderOption.innerRadiusRatio * radius;
+        float gap = colorWheelRenderOption.strokeWidth;
+        float outerRadius = colorWheelRenderOption.radius - gap;
+        float innerRadius = colorWheelRenderOption.innerRadiusRatio * outerRadius;
+        float centerRadius = (outerRadius + innerRadius) / 2;
 
         RectF oval = Utils.getRectF(colorWheelRenderOption);
 
         for(int i = 0; i < count; i++) {
             float angle = sweepAngle * i;
             float radAngle = (float)(angle * Math.PI / 180); // needed for trigonometric operations
-            float x = half + (float) (radius * Math.cos(radAngle));
-            float y = half + (float) (radius * Math.sin(radAngle));
+            float x = half + (float) (centerRadius * Math.cos(radAngle));
+            float y = half + (float) (centerRadius * Math.sin(radAngle));
 
             hsv = colorList.get(i);
             selectorFill.setColor(Color.HSVToColor(hsv));
@@ -42,7 +44,7 @@ public class ArcColorWheelRenderer extends AbsColorWheelRenderer {
         }
 
         // Circle to create effect of blank space in the middle of the color wheel
-        selectorFill.setColor(Color.parseColor("#ffffff"));
+        selectorFill.setColor(0xffffffff);
         colorWheelRenderOption.targetCanvas.drawCircle(half, half, innerRadius, selectorFill);
     }
 

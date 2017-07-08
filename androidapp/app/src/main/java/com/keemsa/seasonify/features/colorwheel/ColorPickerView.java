@@ -102,9 +102,11 @@ public class ColorPickerView extends View {
                     startAngle, sweepAngle, false, selectorInnerStroke);
 
             // Circle to create effect of blank space in the middle of the color wheel
-            colorWheelFill.setColor(0xffffff);
-            float blankRadius = innerRadiusRatio * renderer.getRenderOption().radius;
-            canvas.drawCircle(half, half, blankRadius, colorWheelFill);
+            colorWheelFill.setColor(0xffffffff);
+            gap = strokeWidth;
+            float outerRadius = half - gap;
+            float innerRadius = innerRadiusRatio * outerRadius;
+            canvas.drawCircle(half, half, innerRadius, colorWheelFill);
         }
         if (centerWheel != null)
             canvas.drawBitmap(centerWheel, 0, 0, null);
