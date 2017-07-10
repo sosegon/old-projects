@@ -27,7 +27,7 @@ public class ColorPickerView extends View {
     private float strokeWidth = 4f;
 
     private int backgroundColor = 0x145632;
-    private List<ColorElement> currentColorElements;
+    private List<ColorElement> currentColorElements = new ArrayList<ColorElement>();
 
     private ArrayList<OnColorsChangedListener> colorChangedListeners = new ArrayList<>();
     private ArrayList<OnColorsSelectedListener> listeners = new ArrayList<>();
