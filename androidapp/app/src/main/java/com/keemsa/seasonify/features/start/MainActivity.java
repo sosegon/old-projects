@@ -5,13 +5,11 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
-import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.ViewTreeObserver;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.google.android.gms.ads.AdListener;
@@ -20,9 +18,8 @@ import com.google.android.gms.ads.InterstitialAd;
 import com.google.android.gms.ads.MobileAds;
 import com.keemsa.seasonify.R;
 import com.keemsa.seasonify.features.about.AboutActivity;
-import com.keemsa.seasonify.features.colorwheel.ColorPickerView;
+import com.keemsa.colorwheel.ColorPickerView;
 import com.keemsa.seasonify.util.SeasonifyImage;
-import com.squareup.picasso.Picasso;
 
 import java.io.File;
 import java.io.IOException;

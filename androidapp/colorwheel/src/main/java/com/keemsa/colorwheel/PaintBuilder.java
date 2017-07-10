@@ -1,4 +1,4 @@
-package com.keemsa.seasonify.features.colorwheel;
+package com.keemsa.colorwheel;
 
 /**
  * Created by sebastian on 04/07/17.

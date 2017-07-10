@@ -34,7 +34,7 @@
             android:background="#fff"
             android:elevation="@dimen/surface_elevation"/>
 
-        <com.keemsa.seasonify.features.colorwheel.ColorPickerView
+        <com.keemsa.colorwheel.ColorPickerView
             android:id="@+id/color_wheel"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

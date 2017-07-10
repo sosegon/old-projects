@@ -1,4 +1,4 @@
-package com.keemsa.seasonify.features.colorwheel;
+package com.keemsa.colorwheel;
 
 import android.graphics.Bitmap;
 import android.graphics.Canvas;

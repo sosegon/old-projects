@@ -1,4 +1,4 @@
-package com.keemsa.seasonify.features.colorwheel;
+package com.keemsa.colorwheel;
 
 import android.content.Context;
 import android.content.res.TypedArray;
@@ -8,9 +8,6 @@ import android.graphics.PorterDuff;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
-
-import com.keemsa.seasonify.R;
-
 import java.util.ArrayList;
 import java.util.List;
 
