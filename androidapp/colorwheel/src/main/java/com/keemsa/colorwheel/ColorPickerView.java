@@ -24,13 +24,14 @@ public class ColorPickerView extends View {
     private float strokeWidth = 4f;
 
     private int backgroundColor = 0x145632;
+
     private List<ColorElement> currentColorElements = new ArrayList<ColorElement>();
 
     private ArrayList<OnColorsChangedListener> colorChangedListeners = new ArrayList<>();
+
     private ArrayList<OnColorsSelectedListener> listeners = new ArrayList<>();
-
-
     private ColorWheelRenderer renderer;
+
 
     private COLOR_SELECTION colorSelection;
 
@@ -43,6 +44,10 @@ public class ColorPickerView extends View {
         }
 
         invalidate();
+    }
+
+    public List<ColorElement> getCurrentColorElements() {
+        return currentColorElements;
     }
 
     public ColorPickerView(Context context, AttributeSet attrs) {
