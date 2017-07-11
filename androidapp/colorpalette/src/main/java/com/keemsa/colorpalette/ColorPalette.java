@@ -164,6 +164,7 @@ public class ColorPalette extends LinearLayout {
         }
         createPaletteView();
 
+        width = widthMeasureSpec; // to match size set by user
         super.onMeasure(MeasureSpec.makeMeasureSpec(width, MeasureSpec.EXACTLY), MeasureSpec.makeMeasureSpec(height, MeasureSpec.EXACTLY));
     }
 
