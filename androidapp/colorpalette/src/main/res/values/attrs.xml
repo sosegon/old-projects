@@ -9,7 +9,7 @@
         <attr name="spectrum_outlineWidth" />
         <attr name="spectrum_columnCount" />
         <attr name="spectrum_autoPadding" format="boolean" />
-        <attr name="spectrum_clickeable" format="boolean" />
+        <attr name="spectrum_checkable" format="boolean" />
     </declare-styleable>
 
     <declare-styleable name="SpectrumPreference">
