@@ -20,7 +20,8 @@ public class ColorPickerView extends View {
 
     private Bitmap colorWheel, centerWheel;
     private Canvas colorWheelCanvas, centerWheelCanvas;
-    private float innerRadiusRatio = 0.75f; // radius / innerRadiusRatio
+    private float innerRadiusRatio = 0.75f; // innerRadius / radius
+    private float centerRadiusRatio = 0.5f; // centerRadius / radius
     private float strokeWidth = 4f;
 
     private int backgroundColor = 0x145632;
@@ -28,8 +29,8 @@ public class ColorPickerView extends View {
     private List<ColorElement> currentColorElements = new ArrayList<ColorElement>();
 
     private ArrayList<OnColorsChangedListener> colorChangedListeners = new ArrayList<>();
-
     private ArrayList<OnColorsSelectedListener> listeners = new ArrayList<>();
+    private ArrayList<OnCenterSelectedListener> centerSelectedListeners = new ArrayList<>();
     private ColorWheelRenderer renderer;
 
 
@@ -114,17 +115,30 @@ public class ColorPickerView extends View {
                 break;
             }
             case MotionEvent.ACTION_UP: {
-                currentColorElements = renderer.getColorElements(colorSelection, event.getX(), event.getY());
-                if (listeners != null) {
-                    for (OnColorsSelectedListener listener : listeners) {
-                        try {
-                            listener.onColorsSelected(currentColorElements);
-                        } catch (Exception e) {
-                            e.printStackTrace();
+                if(isColorsArea(event.getX(), event.getY())) {
+                    currentColorElements = renderer.getColorElements(colorSelection, event.getX(), event.getY());
+                    if (listeners != null) {
+                        for (OnColorsSelectedListener listener : listeners) {
+                            try {
+                                listener.onColorsSelected(currentColorElements);
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
                         }
                     }
+                    invalidate();
+                } else if(isCenterArea(event.getX(), event.getY())) {
+                    if(centerSelectedListeners != null) {
+                        for(OnCenterSelectedListener listener : centerSelectedListeners) {
+                            try {
+                                listener.onCenterSelected();
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }
+                    invalidate();
                 }
-                invalidate();
                 break;
             }
         }
@@ -141,6 +155,22 @@ public class ColorPickerView extends View {
                 }
             }
         }
+    }
+
+    private boolean isCenterArea(float x, float y) {
+        float half = colorWheelCanvas.getWidth() / 2;
+        float centerX = half;
+        float centerY = half;
+        float gap = strokeWidth;
+        float outerRadius = half - gap;
+        float centerRadius = centerRadiusRatio * outerRadius;
+
+        float dx = Math.abs(x - centerX);
+        float dy = Math.abs(y - centerY);
+
+        float distToCenter = (float)Math.sqrt(dx * dx + dy * dy);
+
+        return distToCenter <= centerRadius;
     }
 
     private boolean isColorsArea(float x, float y) {
@@ -182,11 +212,19 @@ public class ColorPickerView extends View {
         this.listeners.add(listener);
     }
 
+    public void addOnCenterSelectedListener(OnCenterSelectedListener listener) {
+        this.centerSelectedListeners.add(listener);
+    }
 
     private void initWith(Context context, AttributeSet attrs) {
         final TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.ColorPickerPreference);
 
         innerRadiusRatio = typedArray.getFloat(R.styleable.ColorPickerPreference_innerRadiusRatio, 0.75f);
+        centerRadiusRatio = typedArray.getFloat(R.styleable.ColorPickerPreference_centerRadiusRatio, 0.50f);
+        if(centerRadiusRatio > innerRadiusRatio){
+            centerRadiusRatio = innerRadiusRatio;
+        }
+
         colorSelection = COLOR_SELECTION.indexOf(typedArray.getInt(R.styleable.ColorPickerPreference_colorSelection, 0));
 
         WHEEL_TYPE wheelType = WHEEL_TYPE.indexOf(typedArray.getInt(R.styleable.ColorPickerPreference_wheelType, 0));
@@ -257,7 +295,7 @@ public class ColorPickerView extends View {
 
         ColorWheelRenderOption colorWheelRenderOption = renderer.getRenderOption();
         colorWheelRenderOption.radius = radius;
-        colorWheelRenderOption.innerRadiusRatio = innerRadiusRatio;
+        colorWheelRenderOption.centerRadiusRatio = centerRadiusRatio;
         colorWheelRenderOption.strokeWidth = strokeWidth;
         colorWheelRenderOption.targetCanvas = centerWheelCanvas;
 
