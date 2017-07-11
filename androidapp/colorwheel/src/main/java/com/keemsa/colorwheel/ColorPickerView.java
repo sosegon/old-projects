@@ -163,6 +163,15 @@ public class ColorPickerView extends View {
         invalidate();
     }
 
+    public void addOnColorsChangedListener(OnColorsChangedListener listener) {
+        this.colorChangedListeners.add(listener);
+    }
+
+    public void addOnColorsSelectedListener(OnColorsSelectedListener listener) {
+        this.listeners.add(listener);
+    }
+
+
     private void initWith(Context context, AttributeSet attrs) {
         final TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.ColorPickerPreference);
 
