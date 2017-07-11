@@ -36,6 +36,12 @@ public class ColorPickerView extends View {
 
     public void setColorSelection(COLOR_SELECTION colorSelection) {
         this.colorSelection = colorSelection;
+
+        if(currentColorElements.size() > 0) {
+            ColorElement main = currentColorElements.get(0);
+            currentColorElements = renderer.getColorElements(this.colorSelection, main.getX(), main.getY());
+        }
+
         invalidate();
     }
 
