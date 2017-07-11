@@ -12,6 +12,9 @@
     <dimen name="surface_horizontal_margin">8dp</dimen>
     <dimen name="surface_elevation">2dp</dimen>
 
+    <dimen name="icon_size">40dp</dimen>
+    <dimen name="icon_margin">8dp</dimen>
+
     <!--width = n cols x 70 - 30-->
     <!--height = n rows x 70 - 30-->
     <dimen name="widget_margin">0dp</dimen>

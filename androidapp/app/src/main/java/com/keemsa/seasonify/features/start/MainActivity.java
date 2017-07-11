@@ -9,8 +9,11 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewTreeObserver;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.google.android.gms.ads.AdListener;
@@ -56,6 +59,21 @@ public class MainActivity extends AppCompatActivity implements MainMvpView {
     @BindView(R.id.plt_combination)
     ColorPalette plt_combination;
 
+    @BindView(R.id.imv_single_sel)
+    ImageView imv_single_sel;
+
+    @BindView(R.id.imv_complementary_sel)
+    ImageView imv_complementary_sel;
+
+    @BindView(R.id.imv_triad_sel)
+    ImageView imv_triad_sel;
+
+    @BindView(R.id.imv_analogous_sel)
+    ImageView imv_analogous_sel;
+
+    @BindView(R.id.imv_quad_sel)
+    ImageView imv_quad_sel;
+
     @OnClick(R.id.fab_scan)
     public void start_camera(){
         if(mInterstitialAd != null && mInterstitialAd.isLoaded()) {
@@ -81,6 +99,7 @@ public class MainActivity extends AppCompatActivity implements MainMvpView {
 
         initColorWheel();
 
+        initColorSelection();
     }
 
     @Override
@@ -190,18 +209,41 @@ public class MainActivity extends AppCompatActivity implements MainMvpView {
         color_wheel.addOnColorsChangedListener(new OnColorsChangedListener() {
             @Override
             public void onColorsChanged(List<ColorElement> colors) {
-                int[] numColors = new int[colors.size()];
-
-                for(int i = 0; i < colors.size(); i++) {
-                    numColors[i] = colors.get(i).getColor();
-                }
-
-                plt_combination.setColors(numColors);
-
-                plt_combination.setVisibility(View.VISIBLE);
+                updateColorsPalette(colors);
             }
         });
 
+    }
+
+    private void initColorSelection() {
+        imv_single_sel.setOnTouchListener(createColorSelectionListener(ColorPickerView.COLOR_SELECTION.SINGLE));
+        imv_complementary_sel.setOnTouchListener(createColorSelectionListener(ColorPickerView.COLOR_SELECTION.COMPLEMENTARY));
+        imv_triad_sel.setOnTouchListener(createColorSelectionListener(ColorPickerView.COLOR_SELECTION.TRIAD));
+        imv_analogous_sel.setOnTouchListener(createColorSelectionListener(ColorPickerView.COLOR_SELECTION.ANALOGOUS));
+        imv_quad_sel.setOnTouchListener(createColorSelectionListener(ColorPickerView.COLOR_SELECTION.SQUARE));
+    }
+
+    private void updateColorsPalette(List<ColorElement> colors) {
+        int[] numColors = new int[colors.size()];
+
+        for(int i = 0; i < colors.size(); i++) {
+            numColors[i] = colors.get(i).getColor();
+        }
+
+        plt_combination.setColors(numColors);
+
+        plt_combination.setVisibility(View.VISIBLE);
+    }
+
+    private View.OnTouchListener createColorSelectionListener(final ColorPickerView.COLOR_SELECTION colorSelection) {
+        return new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                color_wheel.setColorSelection(colorSelection);
+                updateColorsPalette(color_wheel.getCurrentColorElements());
+                return false;
+            }
+        };
     }
 
     private void displayCamera() {

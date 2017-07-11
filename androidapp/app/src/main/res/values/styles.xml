@@ -8,4 +8,11 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
+    <style name="ic_color_selection">
+        <item name="android:layout_height">@dimen/icon_size</item>
+        <item name="android:layout_width">@dimen/icon_size</item>
+        <item name="android:layout_margin">@dimen/icon_margin</item>
+        <item name="android:scaleType">fitXY</item>
+    </style>
+
 </resources>
