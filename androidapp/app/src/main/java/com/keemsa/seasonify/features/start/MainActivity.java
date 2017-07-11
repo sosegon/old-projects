@@ -22,6 +22,7 @@ import com.google.android.gms.ads.InterstitialAd;
 import com.google.android.gms.ads.MobileAds;
 import com.keemsa.colorpalette.ColorPalette;
 import com.keemsa.colorwheel.ColorElement;
+import com.keemsa.colorwheel.OnCenterSelectedListener;
 import com.keemsa.colorwheel.OnColorsChangedListener;
 import com.keemsa.colorwheel.OnColorsSelectedListener;
 import com.keemsa.seasonify.R;
@@ -73,15 +74,6 @@ public class MainActivity extends AppCompatActivity implements MainMvpView {
 
     @BindView(R.id.imv_quad_sel)
     ImageView imv_quad_sel;
-
-    @OnClick(R.id.fab_scan)
-    public void start_camera(){
-        if(mInterstitialAd != null && mInterstitialAd.isLoaded()) {
-            mInterstitialAd.show();
-        } else {
-            displayCamera();
-        }
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -210,6 +202,17 @@ public class MainActivity extends AppCompatActivity implements MainMvpView {
             @Override
             public void onColorsChanged(List<ColorElement> colors) {
                 updateColorsPalette(colors);
+            }
+        });
+
+        color_wheel.addOnCenterSelectedListener(new OnCenterSelectedListener() {
+            @Override
+            public void onCenterSelected() {
+                if(mInterstitialAd != null && mInterstitialAd.isLoaded()) {
+                    mInterstitialAd.show();
+                } else {
+                    displayCamera();
+                }
             }
         });
 

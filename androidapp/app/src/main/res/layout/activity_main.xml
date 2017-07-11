@@ -78,6 +78,7 @@
             android:elevation="@dimen/surface_elevation"
             app:wheelType="ARC"
             app:innerRadiusRatio=".75"
+            app:centerRadiusRatio="0.5"
             app:colorSelection="TRIAD"
             />
 
@@ -98,18 +99,4 @@
 
     </LinearLayout>
 
-    <android.support.design.widget.FloatingActionButton
-        android:id="@+id/fab_scan"
-        android:stateListAnimator="@anim/fab_state_list_anim"
-        android:background="@drawable/fab_scan_background"
-        android:layout_gravity="bottom|end"
-        android:layout_marginRight="@dimen/fab_margin"
-        android:layout_marginBottom="@dimen/fab_margin"
-        android:layout_width="56dp"
-        android:layout_height="56dp"
-        android:src="@drawable/ic_face"
-        android:elevation="@dimen/fab_elevation"
-        android:contentDescription="@string/action_scan"
-        android:clickable="true"
-        app:layout_anchorGravity="bottom|right|end"/>
 </FrameLayout>
