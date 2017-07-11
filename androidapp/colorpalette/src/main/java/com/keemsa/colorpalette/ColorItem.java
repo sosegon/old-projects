@@ -35,13 +35,15 @@ public class ColorItem extends FrameLayout implements View.OnClickListener {
     private @ColorInt int mColor;
     private boolean mIsSelected = false;
     private int mOutlineWidth = 0;
+    private boolean mIsClickeable = true;
 
-    public ColorItem(Context context, @ColorInt int color, boolean isSelected, EventBus eventBus) {
+    public ColorItem(Context context, @ColorInt int color, boolean isSelected, EventBus eventBus, boolean isClickeable) {
         super(context);
 
         mColor = color;
         mIsSelected = isSelected;
         mEventBus = eventBus;
+        mIsClickeable = isClickeable;
 
         init();
         setChecked(mIsSelected);
@@ -157,7 +159,8 @@ public class ColorItem extends FrameLayout implements View.OnClickListener {
 
     @Override
     public void onClick(View v) {
-        mEventBus.post(new SelectedColorChangedEvent(mColor));
+        if(mIsClickeable)
+            mEventBus.post(new SelectedColorChangedEvent(mColor));
     }
 
     private Drawable createBackgroundDrawable() {

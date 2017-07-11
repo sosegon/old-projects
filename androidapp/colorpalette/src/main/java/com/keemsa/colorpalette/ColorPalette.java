@@ -42,6 +42,7 @@ public class ColorPalette extends LinearLayout {
     private int mNumColumns = 2;
     private int mOldNumColumns = -1;
     private boolean mViewInitialized = false;
+    private boolean mIsClickeable = true;
 
     private EventBus mEventBus;
 
@@ -65,6 +66,7 @@ public class ColorPalette extends LinearLayout {
         mAutoPadding = a.getBoolean(R.styleable.SpectrumPalette_spectrum_autoPadding, false);
         mOutlineWidth = a.getDimensionPixelSize(R.styleable.SpectrumPalette_spectrum_outlineWidth, 0);
         mFixedColumnCount = a.getInt(R.styleable.SpectrumPalette_spectrum_columnCount, -1);
+        mIsClickeable = a.getBoolean(R.styleable.SpectrumPalette_spectrum_clickeable, true);
         if (mFixedColumnCount != -1) {
             mHasFixedColumnCount = true;
         }
@@ -270,7 +272,7 @@ public class ColorPalette extends LinearLayout {
     }
 
     private ColorItem createColorItem(int color, int selectedColor) {
-        ColorItem view = new ColorItem(getContext(), color, color == selectedColor, mEventBus);
+        ColorItem view = new ColorItem(getContext(), color, color == selectedColor, mEventBus, mIsClickeable);
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(mColorItemDimension, mColorItemDimension);
         params.setMargins(mColorItemMargin, mColorItemMargin, mColorItemMargin, mColorItemMargin);
         view.setLayoutParams(params);
