@@ -38,6 +38,7 @@ dependencies {
     compile 'com.google.firebase:firebase-ads:9.6.1'
     compile project(':openCVLibrary320')
     compile project(':colorwheel')
+    compile project(':colorpalette')
 }
 
 apply plugin: 'com.google.gms.google-services'

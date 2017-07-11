@@ -9,6 +9,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.view.ViewTreeObserver;
 import android.widget.TextView;
 
@@ -16,6 +17,10 @@ import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.InterstitialAd;
 import com.google.android.gms.ads.MobileAds;
+import com.keemsa.colorpalette.ColorPalette;
+import com.keemsa.colorwheel.ColorElement;
+import com.keemsa.colorwheel.OnColorsChangedListener;
+import com.keemsa.colorwheel.OnColorsSelectedListener;
 import com.keemsa.seasonify.R;
 import com.keemsa.seasonify.features.about.AboutActivity;
 import com.keemsa.colorwheel.ColorPickerView;
@@ -23,6 +28,7 @@ import com.keemsa.seasonify.util.SeasonifyImage;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -47,6 +53,9 @@ public class MainActivity extends AppCompatActivity implements MainMvpView {
     @BindView(R.id.tb)
     Toolbar tb;
 
+    @BindView(R.id.plt_combination)
+    ColorPalette plt_combination;
+
     @OnClick(R.id.fab_scan)
     public void start_camera(){
         if(mInterstitialAd != null && mInterstitialAd.isLoaded()) {
@@ -70,18 +79,8 @@ public class MainActivity extends AppCompatActivity implements MainMvpView {
 
         initAd();
 
-        // Add a tree observer so the color wheel can
-        // be updated once is ready, that is all its
-        // dimensions are available
-        color_wheel.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-            @Override
-            public void onGlobalLayout() {
-                color_wheel.getViewTreeObserver().removeOnGlobalLayoutListener(this); // avoid more than one call
-                if(!onActivityResultCalled) {
-                    mPresenter.loadPreviousResults(MainActivity.this);
-                }
-            }
-        });
+        initColorWheel();
+
     }
 
     @Override
@@ -171,6 +170,38 @@ public class MainActivity extends AppCompatActivity implements MainMvpView {
         });
         AdRequest ar = new AdRequest.Builder().build();
         mInterstitialAd.loadAd(ar);
+    }
+
+    private void initColorWheel() {
+
+        // Add a tree observer so the color wheel can
+        // be updated once is ready, that is all its
+        // dimensions are available
+        color_wheel.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                color_wheel.getViewTreeObserver().removeOnGlobalLayoutListener(this); // avoid more than one call
+                if(!onActivityResultCalled) {
+                    mPresenter.loadPreviousResults(MainActivity.this);
+                }
+            }
+        });
+
+        color_wheel.addOnColorsChangedListener(new OnColorsChangedListener() {
+            @Override
+            public void onColorsChanged(List<ColorElement> colors) {
+                int[] numColors = new int[colors.size()];
+
+                for(int i = 0; i < colors.size(); i++) {
+                    numColors[i] = colors.get(i).getColor();
+                }
+
+                plt_combination.setColors(numColors);
+
+                plt_combination.setVisibility(View.VISIBLE);
+            }
+        });
+
     }
 
     private void displayCamera() {

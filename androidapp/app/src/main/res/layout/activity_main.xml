@@ -7,6 +7,7 @@
     android:layout_height="match_parent">
 
     <LinearLayout
+        android:id="@+id/ll_body"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
@@ -46,6 +47,21 @@
             app:wheelType="ARC"
             app:innerRadiusRatio=".75"
             app:colorSelection="TRIAD"
+            />
+
+        <com.keemsa.colorpalette.ColorPalette
+            android:id="@+id/plt_combination"
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginStart="@dimen/surface_horizontal_margin"
+            android:layout_marginEnd="@dimen/surface_horizontal_margin"
+            android:layout_marginBottom="@dimen/surface_vertical_margin"
+            android:background="#fff"
+            android:elevation="@dimen/surface_elevation"
+            android:visibility="gone"
+            app:spectrum_autoPadding="true"
+            app:spectrum_checkable="false"
             />
 
     </LinearLayout>
