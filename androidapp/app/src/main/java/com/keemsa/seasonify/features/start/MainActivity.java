@@ -111,13 +111,7 @@ public class MainActivity extends AppCompatActivity implements MainMvpView {
 
         setSupportActionBar(tb);
 
-        if(mPresenter.hasPreviousResults(this)) {
-            ll_just_started.setVisibility(View.GONE);
-            ll_main.setVisibility(View.VISIBLE);
-        } else {
-            ll_just_started.setVisibility(View.VISIBLE);
-            ll_main.setVisibility(View.GONE);
-        }
+        initLayoutElements();
 
         initAd();
 
@@ -270,6 +264,16 @@ public class MainActivity extends AppCompatActivity implements MainMvpView {
                 imv_analogous_sel,
                 imv_quad_sel
         };
+    }
+
+    private void initLayoutElements() {
+        if(mPresenter.hasPreviousResults(this)) {
+            ll_just_started.setVisibility(View.GONE);
+            ll_main.setVisibility(View.VISIBLE);
+        } else {
+            ll_just_started.setVisibility(View.VISIBLE);
+            ll_main.setVisibility(View.GONE);
+        }
     }
 
     private void updateColorsPalette(List<ColorElement> colors) {
