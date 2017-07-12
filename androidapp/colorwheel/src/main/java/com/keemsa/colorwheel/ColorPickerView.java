@@ -336,5 +336,22 @@ public class ColorPickerView extends View {
                     return SINGLE;
             }
         }
+
+        public static int indexOf(COLOR_SELECTION colorSelection) {
+            switch (colorSelection) {
+                case SINGLE:
+                    return 0;
+                case COMPLEMENTARY:
+                    return 1;
+                case TRIAD:
+                    return 2;
+                case ANALOGOUS:
+                    return 3;
+                case SQUARE:
+                    return 4;
+                default:
+                    return 0;
+            }
+        }
     }
 }
