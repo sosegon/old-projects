@@ -10,6 +10,8 @@
     <string name="lbl_about">About</string>
     <string name="lbl_share">Share</string>
 
+    <string name="msg_start_here">Start here!</string>
+
     <!--About -->
     <string name="about">
         Seasonify is an application aimed to determine

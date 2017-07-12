@@ -5,6 +5,7 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
@@ -15,6 +16,7 @@ import android.view.ViewTreeObserver;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.ViewFlipper;
 
 import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
@@ -24,7 +26,6 @@ import com.keemsa.colorpalette.ColorPalette;
 import com.keemsa.colorwheel.ColorElement;
 import com.keemsa.colorwheel.OnCenterSelectedListener;
 import com.keemsa.colorwheel.OnColorsChangedListener;
-import com.keemsa.colorwheel.OnColorsSelectedListener;
 import com.keemsa.seasonify.R;
 import com.keemsa.seasonify.features.about.AboutActivity;
 import com.keemsa.colorwheel.ColorPickerView;
@@ -75,6 +76,21 @@ public class MainActivity extends AppCompatActivity implements MainMvpView {
     @BindView(R.id.imv_quad_sel)
     ImageView imv_quad_sel;
 
+    @BindView(R.id.ll_main)
+    LinearLayout ll_main;
+
+    @BindView(R.id.ll_just_started)
+    LinearLayout ll_just_started;
+
+    @OnClick(R.id.imv_camera)
+    public void launchCamera() {
+        if(mInterstitialAd != null && mInterstitialAd.isLoaded()) {
+            mInterstitialAd.show();
+        } else {
+            displayCamera();
+        }
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -86,6 +102,14 @@ public class MainActivity extends AppCompatActivity implements MainMvpView {
         ButterKnife.bind(this);
 
         setSupportActionBar(tb);
+
+        if(mPresenter.hasPreviousResults(this)) {
+            ll_just_started.setVisibility(View.GONE);
+            ll_main.setVisibility(View.VISIBLE);
+        } else {
+            ll_just_started.setVisibility(View.VISIBLE);
+            ll_main.setVisibility(View.GONE);
+        }
 
         initAd();
 
@@ -157,16 +181,13 @@ public class MainActivity extends AppCompatActivity implements MainMvpView {
     }
 
     @Override
-    public void updateColorWheel(final int[] colors, Bitmap bitmap) {
+    public void updateColorWheel(@NonNull final int[] colors, @NonNull Bitmap bitmap) {
 
-        if(colors.length != 0) {
-            color_wheel.updateColors(colors);
-        }
+        color_wheel.updateColors(colors);
+        color_wheel.updateCenter(bitmap);
 
-        if(bitmap != null){
-            color_wheel.updateCenter(bitmap);
-        }
-
+        ll_just_started.setVisibility(View.GONE);
+        ll_main.setVisibility(View.VISIBLE);
     }
 
     private void initAd() {
@@ -208,11 +229,7 @@ public class MainActivity extends AppCompatActivity implements MainMvpView {
         color_wheel.addOnCenterSelectedListener(new OnCenterSelectedListener() {
             @Override
             public void onCenterSelected() {
-                if(mInterstitialAd != null && mInterstitialAd.isLoaded()) {
-                    mInterstitialAd.show();
-                } else {
-                    displayCamera();
-                }
+                launchCamera();
             }
         });
 

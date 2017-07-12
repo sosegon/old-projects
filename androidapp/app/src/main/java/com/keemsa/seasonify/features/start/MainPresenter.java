@@ -106,6 +106,14 @@ public class MainPresenter extends BasePresenter<MainMvpView> implements BitmapL
         mFacePhotoStorageReference = mFirebaseStorage.getReference().child("face_photos");
     }
 
+    public boolean hasPreviousResults(Context context) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        String result = preferences.getString(mPrfPrevPredictionKey, "");
+        String path = preferences.getString(mPrfPrevPhotoKey, "");
+
+        return !(result.equals("") && path.equals(""));
+    }
+
     public void classifyImage(Context context, File photoFile) {
         BitmapLoaderAsyncTask task = new BitmapLoaderAsyncTask(context, this, INPUT_SIZE, 0);
         task.execute(photoFile.getAbsolutePath());
