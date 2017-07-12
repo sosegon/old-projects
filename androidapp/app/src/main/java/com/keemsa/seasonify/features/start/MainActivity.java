@@ -28,6 +28,7 @@ import com.keemsa.colorpalette.ColorPalette;
 import com.keemsa.colorwheel.ColorElement;
 import com.keemsa.colorwheel.OnCenterSelectedListener;
 import com.keemsa.colorwheel.OnColorsChangedListener;
+import com.keemsa.colorwheel.OnColorsSelectedListener;
 import com.keemsa.seasonify.R;
 import com.keemsa.seasonify.features.about.AboutActivity;
 import com.keemsa.colorwheel.ColorPickerView;
@@ -36,6 +37,7 @@ import com.keemsa.seasonify.util.SeasonifyImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
+import java.util.StringTokenizer;
 
 import butterknife.BindString;
 import butterknife.BindView;
@@ -56,6 +58,9 @@ public class MainActivity extends AppCompatActivity implements MainMvpView {
 
     @BindString(R.string.prf_prev_selection_type)
     String mPrfPrevSelectionType;
+
+    @BindString(R.string.prf_prev_color_coords)
+    String mPrfPrevColorCoords;
 
     @BindView(R.id.txt_season)
     TextView txt_season;
@@ -190,6 +195,14 @@ public class MainActivity extends AppCompatActivity implements MainMvpView {
 
         ll_just_started.setVisibility(View.GONE);
         ll_main.setVisibility(View.VISIBLE);
+
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+        String coords = preferences.getString(mPrfPrevColorCoords, "0;0");
+        StringTokenizer st = new StringTokenizer(coords, ";");
+        float x = Float.parseFloat(st.nextToken());
+        float y = Float.parseFloat(st.nextToken());
+        color_wheel.selectColors(x, y);
+        updateColorsPalette(color_wheel.getCurrentColorElements());
     }
 
     @Override
@@ -245,6 +258,25 @@ public class MainActivity extends AppCompatActivity implements MainMvpView {
             @Override
             public void onCenterSelected() {
                 launchCamera();
+            }
+        });
+
+        color_wheel.addOnColorsSelectedListener(new OnColorsSelectedListener() {
+            @Override
+            public void onColorsSelected(List<ColorElement> colors) {
+                updateColorsPalette(colors);
+                try {
+                    ColorElement main = colors.get(0);
+                    float x = main.getX();
+                    float y = main.getY();
+                    String coords = String.valueOf(x) + ";" + String.valueOf(y);
+                    SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
+                    SharedPreferences.Editor editor = preferences.edit();
+                    editor.putString(mPrfPrevColorCoords, coords);
+                    editor.apply();
+                } catch (IndexOutOfBoundsException e) {
+                    Log.e(LOG_TAG, e.getMessage());
+                }
             }
         });
 
