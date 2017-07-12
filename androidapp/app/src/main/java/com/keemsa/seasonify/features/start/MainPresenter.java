@@ -19,6 +19,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
+import com.keemsa.colorwheel.ColorPickerView;
 import com.keemsa.seasonify.BuildConfig;
 import com.keemsa.seasonify.R;
 import com.keemsa.seasonify.base.BasePresenter;
@@ -85,6 +86,9 @@ public class MainPresenter extends BasePresenter<MainMvpView> implements BitmapL
 
     @BindString(R.string.prf_prev_prediction)
     String mPrfPrevPredictionKey;
+
+    @BindString(R.string.prf_prev_selection_type)
+    String mPrfPrevSelectionType;
 
     @BindArray(R.array.autumn_colors)
     int[] autumn_colors;
@@ -165,8 +169,7 @@ public class MainPresenter extends BasePresenter<MainMvpView> implements BitmapL
 
         if (isViewAttached()) {
             if (bitmap != null && !result.equals("")) {
-                getMvpView().updateResult(result);
-                getMvpView().updateColorWheel(getSeasonalColors(result), bitmap);
+                updateViewUponResult(context, result, bitmap);
             }
         }
     }
@@ -191,8 +194,9 @@ public class MainPresenter extends BasePresenter<MainMvpView> implements BitmapL
                 String season = results.get(0).getTitle();
                 Uri photoUri = generateUri(context, new File(path)); // To update the view
                 Uri photoUri2 = Uri.fromFile(new File(faceOnlyPath)); // To store in firebase
-                getMvpView().updateResult(season);
-                getMvpView().updateColorWheel(getSeasonalColors(season), faceBitmap);
+
+                updateViewUponResult(context, season, faceBitmap);
+
                 storeResults(context, faceOnlyPath, season);
 
                 final int seasonInt = getPredictionAsInteger(season);
@@ -363,5 +367,14 @@ public class MainPresenter extends BasePresenter<MainMvpView> implements BitmapL
         }
 
         return null;
+    }
+
+    private void updateViewUponResult(Context context, String result, Bitmap bitmap) {
+        getMvpView().updateResult(result);
+        getMvpView().updateColorWheel(getSeasonalColors(result), bitmap);
+
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        int selectionType = preferences.getInt(mPrfPrevSelectionType, 0);
+        getMvpView().updateColorSelection(selectionType);
     }
 }

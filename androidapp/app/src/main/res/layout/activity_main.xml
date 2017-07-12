@@ -54,23 +54,28 @@
                 <ImageView
                     android:id="@+id/imv_single_sel"
                     style="@style/ic_color_selection"
-                    android:background="@drawable/ic_single_color" />
+                    android:src="@drawable/ic_single_color"
+                    android:background="@drawable/color_selector_status" />
                 <ImageView
                     android:id="@+id/imv_complementary_sel"
                     style="@style/ic_color_selection"
-                    android:background="@drawable/ic_complementary_color" />
+                    android:src="@drawable/ic_complementary_color"
+                    android:background="@drawable/color_selector_status" />
                 <ImageView
                     android:id="@+id/imv_triad_sel"
                     style="@style/ic_color_selection"
-                    android:background="@drawable/ic_triad_color" />
+                    android:src="@drawable/ic_triad_color"
+                    android:background="@drawable/color_selector_status" />
                 <ImageView
                     android:id="@+id/imv_analogous_sel"
                     style="@style/ic_color_selection"
-                    android:background="@drawable/ic_analogous_color" />
+                    android:src="@drawable/ic_analogous_color"
+                    android:background="@drawable/color_selector_status" />
                 <ImageView
                     android:id="@+id/imv_quad_sel"
                     style="@style/ic_color_selection"
-                    android:background="@drawable/ic_quad_color" />
+                    android:src="@drawable/ic_quad_color"
+                    android:background="@drawable/color_selector_status" />
             </LinearLayout>
 
             <com.keemsa.colorwheel.ColorPickerView

@@ -5,6 +5,7 @@
     <!--Keys for previous photo and prediction stored in shared preferences-->
     <string name="prf_prev_photo" translatable="false">prev_photo</string>
     <string name="prf_prev_prediction" translatable="false">prev_prediction</string>
+    <string name="prf_prev_selection_type" translatable="false">prev_selection_type</string>
 
     <string name="lbl_w_season">Seasonify widget</string>
     <string name="lbl_about">About</string>

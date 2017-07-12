@@ -1,13 +1,16 @@
 package com.keemsa.seasonify.features.start;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
@@ -16,7 +19,6 @@ import android.view.ViewTreeObserver;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.ViewFlipper;
 
 import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
@@ -35,6 +37,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
+import butterknife.BindString;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -48,6 +51,11 @@ public class MainActivity extends AppCompatActivity implements MainMvpView {
     private InterstitialAd mInterstitialAd;
 
     private MainPresenter mPresenter;
+
+    private ImageView[] selectionIcons;
+
+    @BindString(R.string.prf_prev_selection_type)
+    String mPrfPrevSelectionType;
 
     @BindView(R.id.txt_season)
     TextView txt_season;
@@ -190,6 +198,19 @@ public class MainActivity extends AppCompatActivity implements MainMvpView {
         ll_main.setVisibility(View.VISIBLE);
     }
 
+    @Override
+    public void updateColorSelection(int index) {
+        for(ImageView selector : selectionIcons) {
+            selector.setSelected(false);
+        }
+
+        try {
+            selectionIcons[index].setSelected(true);
+        } catch (IndexOutOfBoundsException e) {
+            Log.e(LOG_TAG, e.getMessage());
+        }
+    }
+
     private void initAd() {
         MobileAds.initialize(this, getString(R.string.id_admob));
         mInterstitialAd = new InterstitialAd(this);
@@ -241,6 +262,14 @@ public class MainActivity extends AppCompatActivity implements MainMvpView {
         imv_triad_sel.setOnTouchListener(createColorSelectionListener(ColorPickerView.COLOR_SELECTION.TRIAD));
         imv_analogous_sel.setOnTouchListener(createColorSelectionListener(ColorPickerView.COLOR_SELECTION.ANALOGOUS));
         imv_quad_sel.setOnTouchListener(createColorSelectionListener(ColorPickerView.COLOR_SELECTION.SQUARE));
+
+        selectionIcons = new ImageView[]{
+                imv_single_sel,
+                imv_complementary_sel,
+                imv_triad_sel,
+                imv_analogous_sel,
+                imv_quad_sel
+        };
     }
 
     private void updateColorsPalette(List<ColorElement> colors) {
@@ -261,6 +290,15 @@ public class MainActivity extends AppCompatActivity implements MainMvpView {
             public boolean onTouch(View v, MotionEvent event) {
                 color_wheel.setColorSelection(colorSelection);
                 updateColorsPalette(color_wheel.getCurrentColorElements());
+
+                SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
+                SharedPreferences.Editor editor = preferences.edit();
+                int index = ColorPickerView.COLOR_SELECTION.indexOf(colorSelection);
+                editor.putInt(mPrfPrevSelectionType, index);
+                editor.apply();
+
+                updateColorSelection(index);
+
                 return false;
             }
         };
