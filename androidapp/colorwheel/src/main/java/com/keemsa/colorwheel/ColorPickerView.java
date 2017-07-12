@@ -145,6 +145,11 @@ public class ColorPickerView extends View {
         return true;
     }
 
+    public void selectColors(float x, float y) {
+        currentColorElements = renderer.getColorElements(colorSelection, x, y);
+        invalidate();
+    }
+
     protected void callOnColorChangedListeners(List<ColorElement> oldColors, List<ColorElement> newColors) {
         if (colorChangedListeners != null && !oldColors.equals(newColors)) {
             for (OnColorsChangedListener listener : colorChangedListeners) {
