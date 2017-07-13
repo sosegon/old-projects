@@ -5,11 +5,16 @@
     android:viewportWidth="26"
     android:viewportHeight="26">
 
-    <path
-        android:fillColor="#000000"
-        android:strokeColor="#000000"
-        android:strokeWidth="1"
-        android:pathData="M 13 2 C 13.5522847498 2 14 2.44771525017 14 3 C 14 3.55228474983 13.5522847498 4 13 4 C 12.4477152502 4 12 3.55228474983 12 3 C 12 2.44771525017 12.4477152502 2 13 2 Z" />
+    <group
+        android:name="rotation"
+        android:pivotX="13"
+        android:pivotY="13">
+        <path
+            android:fillColor="#000000"
+            android:strokeColor="#000000"
+            android:strokeWidth="1"
+            android:pathData="M 13 2 C 13.5522847498 2 14 2.44771525017 14 3 C 14 3.55228474983 13.5522847498 4 13 4 C 12.4477152502 4 12 3.55228474983 12 3 C 12 2.44771525017 12.4477152502 2 13 2 Z" />
+    </group>
     <path
         android:strokeColor="#000000"
         android:strokeWidth="1"

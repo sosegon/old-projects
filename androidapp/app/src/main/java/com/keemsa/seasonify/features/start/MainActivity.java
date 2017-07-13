@@ -2,6 +2,7 @@ package com.keemsa.seasonify.features.start;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.drawable.AnimatedVectorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -87,6 +88,8 @@ public class MainActivity extends AppCompatActivity implements MainMvpView {
     @BindView(R.id.ll_just_started)
     LinearLayout ll_just_started;
 
+    AnimatedVectorDrawable avd_single, avd_complementary, avd_triad, avd_analogous, avd_quad;
+
     @OnClick(R.id.imv_camera)
     public void launchCamera() {
         if(mInterstitialAd != null && mInterstitialAd.isLoaded()) {
@@ -113,6 +116,8 @@ public class MainActivity extends AppCompatActivity implements MainMvpView {
         initAd();
 
         initColorWheel();
+
+        initAnimatables();  // before initColorSelection() to make use of them
 
         initColorSelection();
     }
@@ -270,11 +275,11 @@ public class MainActivity extends AppCompatActivity implements MainMvpView {
     }
 
     private void initColorSelection() {
-        imv_single_sel.setOnTouchListener(createColorSelectionListener(ColorPickerView.COLOR_SELECTION.SINGLE));
-        imv_complementary_sel.setOnTouchListener(createColorSelectionListener(ColorPickerView.COLOR_SELECTION.COMPLEMENTARY));
-        imv_triad_sel.setOnTouchListener(createColorSelectionListener(ColorPickerView.COLOR_SELECTION.TRIAD));
-        imv_analogous_sel.setOnTouchListener(createColorSelectionListener(ColorPickerView.COLOR_SELECTION.ANALOGOUS));
-        imv_quad_sel.setOnTouchListener(createColorSelectionListener(ColorPickerView.COLOR_SELECTION.SQUARE));
+        imv_single_sel.setOnTouchListener(createColorSelectionListener(ColorPickerView.COLOR_SELECTION.SINGLE, avd_single));
+        imv_complementary_sel.setOnTouchListener(createColorSelectionListener(ColorPickerView.COLOR_SELECTION.COMPLEMENTARY, avd_complementary));
+        imv_triad_sel.setOnTouchListener(createColorSelectionListener(ColorPickerView.COLOR_SELECTION.TRIAD, avd_triad));
+        imv_analogous_sel.setOnTouchListener(createColorSelectionListener(ColorPickerView.COLOR_SELECTION.ANALOGOUS, avd_analogous));
+        imv_quad_sel.setOnTouchListener(createColorSelectionListener(ColorPickerView.COLOR_SELECTION.SQUARE, avd_quad));
 
         selectionIcons = new ImageView[]{
                 imv_single_sel,
@@ -295,6 +300,14 @@ public class MainActivity extends AppCompatActivity implements MainMvpView {
         }
     }
 
+    private void initAnimatables() {
+        avd_single        = (AnimatedVectorDrawable) getDrawable(R.drawable.ic_anim_sel_single);
+        avd_complementary = (AnimatedVectorDrawable) getDrawable(R.drawable.ic_anim_sel_complementary);
+        avd_triad         = (AnimatedVectorDrawable) getDrawable(R.drawable.ic_anim_sel_triad);
+        avd_analogous     = (AnimatedVectorDrawable) getDrawable(R.drawable.ic_anim_sel_analogous);
+        avd_quad          = (AnimatedVectorDrawable) getDrawable(R.drawable.ic_anim_sel_quad);
+    }
+
     private void updateColorsPalette(List<ColorElement> colors) {
         int[] numColors = new int[colors.size()];
 
@@ -307,7 +320,7 @@ public class MainActivity extends AppCompatActivity implements MainMvpView {
         plt_combination.setVisibility(View.VISIBLE);
     }
 
-    private View.OnTouchListener createColorSelectionListener(final ColorPickerView.COLOR_SELECTION colorSelection) {
+    private View.OnTouchListener createColorSelectionListener(final ColorPickerView.COLOR_SELECTION colorSelection, final AnimatedVectorDrawable anim) {
         return new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
@@ -315,6 +328,8 @@ public class MainActivity extends AppCompatActivity implements MainMvpView {
                 updateColorsPalette(color_wheel.getCurrentColorElements());
                 int index = mPresenter.updateColorSelectionType(MainActivity.this, colorSelection);
                 updateColorSelection(index);
+                ((ImageView) v).setImageDrawable(anim);
+                anim.start();
 
                 return false;
             }
