@@ -101,7 +101,7 @@
                         app:wheelType="ARC"
                         app:innerRadiusRatio=".75"
                         app:centerRadiusRatio="0.5"
-                        app:colorSelection="TRIAD" />
+                        />
 
                 </LinearLayout>
 

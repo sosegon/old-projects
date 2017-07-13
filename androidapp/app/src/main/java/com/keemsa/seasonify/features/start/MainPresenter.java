@@ -290,6 +290,11 @@ public class MainPresenter extends BasePresenter<MainMvpView> implements BitmapL
         return result;
     }
 
+    public int getPreviousColorSelection(Context context) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        return preferences.getInt(mPrfPrevSelectionType, 0);
+    }
+
     private void storeResults(Context context, String path, String prediction) {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = preferences.edit();

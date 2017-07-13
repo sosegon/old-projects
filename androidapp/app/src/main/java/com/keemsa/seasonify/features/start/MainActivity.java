@@ -237,6 +237,9 @@ public class MainActivity extends AppCompatActivity implements MainMvpView {
 
     private void initColorWheel() {
 
+        int indexSelection = mPresenter.getPreviousColorSelection(this);
+        color_wheel.setColorSelection(ColorPickerView.COLOR_SELECTION.indexOf(indexSelection));
+
         // Add a tree observer so the color wheel can
         // be updated once is ready, that is all its
         // dimensions are available
@@ -327,6 +330,7 @@ public class MainActivity extends AppCompatActivity implements MainMvpView {
                 color_wheel.setColorSelection(colorSelection);
                 updateColorsPalette(color_wheel.getCurrentColorElements());
                 int index = mPresenter.updateColorSelectionType(MainActivity.this, colorSelection);
+                Log.e(LOG_TAG, "selection type: " + index);
                 updateColorSelection(index);
                 ((ImageView) v).setImageDrawable(anim);
                 anim.start();
