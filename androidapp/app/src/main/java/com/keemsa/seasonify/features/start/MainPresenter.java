@@ -83,17 +83,17 @@ public class MainPresenter extends BasePresenter<MainMvpView> implements BitmapL
     private CascadeClassifier mJavaDetector;
     private File mCascadeFile;
 
-    @BindString(R.string.prf_prev_photo)
-    String mPrfPrevPhotoKey;
+    @BindString(R.string.prf_photo_path)
+    String mStoredPhotoKey;
 
-    @BindString(R.string.prf_prev_prediction)
-    String mPrfPrevPredictionKey;
+    @BindString(R.string.prf_prediction)
+    String mStoredPredictionKey;
 
-    @BindString(R.string.prf_prev_selection_type)
-    String mPrfPrevSelectionType;
+    @BindString(R.string.prf_selection_type)
+    String mStoredSelectionTypeKey;
 
-    @BindString(R.string.prf_prev_color_coords)
-    String mPrfPrevColorCoords;
+    @BindString(R.string.prf_color_coords)
+    String mStoredSelectedColorCoordsKey;
 
     @BindArray(R.array.autumn_colors)
     int[] autumn_colors;
@@ -115,12 +115,12 @@ public class MainPresenter extends BasePresenter<MainMvpView> implements BitmapL
         mFacePhotoStorageReference = mFirebaseStorage.getReference().child("face_photos");
     }
 
-    public boolean hasPreviousResults(Context context) {
+    public boolean hasStoredPrediction(Context context) {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-        String result = preferences.getString(mPrfPrevPredictionKey, "");
-        String path = preferences.getString(mPrfPrevPhotoKey, "");
+        String predictedSeason = preferences.getString(mStoredPredictionKey, "");
+        String photoPath = preferences.getString(mStoredPhotoKey, "");
 
-        return !(result.equals("") && path.equals(""));
+        return !(predictedSeason.equals("") && photoPath.equals(""));
     }
 
     public void classifyImage(Context context, File photoFile) {
@@ -170,11 +170,11 @@ public class MainPresenter extends BasePresenter<MainMvpView> implements BitmapL
     @Override
     public void load(Context context, Bitmap bitmap) {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-        String result = preferences.getString(mPrfPrevPredictionKey, "");
+        String predictedSeason = preferences.getString(mStoredPredictionKey, "");
 
         if (isViewAttached()) {
-            if (bitmap != null && !result.equals("")) {
-                updateViewUponResult(context, result, bitmap);
+            if (bitmap != null && !predictedSeason.equals("")) {
+                updateViewUponPrediction(context, predictedSeason, bitmap);
             }
         }
     }
@@ -201,9 +201,9 @@ public class MainPresenter extends BasePresenter<MainMvpView> implements BitmapL
                 Uri photoUri = generateUri(context, new File(path)); // To update the view
                 Uri photoUri2 = Uri.fromFile(new File(faceOnlyPath)); // To store in firebase
 
-                updateViewUponResult(context, season, faceBitmap);
+                updateViewUponPrediction(context, season, faceBitmap);
 
-                storeResults(context, faceOnlyPath, season);
+                storePredictionAndPhotoPath(context, faceOnlyPath, season);
 
                 final int seasonInt = getPredictionAsInteger(season);
                 StorageReference facePhotoRef = mFacePhotoStorageReference.child(photoUri2.getLastPathSegment());
@@ -240,26 +240,26 @@ public class MainPresenter extends BasePresenter<MainMvpView> implements BitmapL
         );
     }
 
-    public void loadPreviousResults(Context context) {
+    public void loadStoredPrediction(Context context) {
 
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-        String path = preferences.getString(mPrfPrevPhotoKey, "");
+        String photoPath = preferences.getString(mStoredPhotoKey, "");
 
         BitmapLoaderAsyncTask task = new BitmapLoaderAsyncTask(context, this, INPUT_SIZE, 1);
-        task.execute(path);
+        task.execute(photoPath);
     }
 
-    public int updateColorSelectionType(Context context, ColorPickerView.COLOR_SELECTION colorSelection) {
+    public int storeColorSelectionType(Context context, ColorPickerView.COLOR_SELECTION colorSelection) {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = preferences.edit();
         int index = ColorPickerView.COLOR_SELECTION.indexOf(colorSelection);
-        editor.putInt(mPrfPrevSelectionType, index);
+        editor.putInt(mStoredSelectionTypeKey, index);
         editor.apply();
 
         return index;
     }
 
-    public void updateSelectedColorCoords(Context context, List<ColorElement> colors) {
+    public void storeSelectedColorCoords(Context context, List<ColorElement> colors) {
         try {
             ColorElement main = colors.get(0);
             float x = main.getX();
@@ -267,16 +267,16 @@ public class MainPresenter extends BasePresenter<MainMvpView> implements BitmapL
             String coords = String.valueOf(x) + ";" + String.valueOf(y);
             SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
             SharedPreferences.Editor editor = preferences.edit();
-            editor.putString(mPrfPrevColorCoords, coords);
+            editor.putString(mStoredSelectedColorCoordsKey, coords);
             editor.apply();
         } catch (IndexOutOfBoundsException e) {
             Log.e(LOG_TAG, e.getMessage());
         }
     }
 
-    public float[] getPreviousSelectedColorCoords(Context context) {
+    public float[] getStoredSelectedColorCoords(Context context) {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-        String coords = preferences.getString(mPrfPrevColorCoords, "0;0");
+        String coords = preferences.getString(mStoredSelectedColorCoordsKey, "0;0");
         StringTokenizer st = new StringTokenizer(coords, ";");
         float x = Float.parseFloat(st.nextToken());
         float y = Float.parseFloat(st.nextToken());
@@ -284,22 +284,22 @@ public class MainPresenter extends BasePresenter<MainMvpView> implements BitmapL
         return new float[]{x, y};
     }
 
-    public String getPreviousResult(Context context) {
+    public String getStoredPrediction(Context context) {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-        String result = preferences.getString(mPrfPrevPredictionKey, "");
+        String result = preferences.getString(mStoredPredictionKey, "");
         return result;
     }
 
-    public int getPreviousColorSelection(Context context) {
+    public int getStoredColorSelectionType(Context context) {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-        return preferences.getInt(mPrfPrevSelectionType, 0);
+        return preferences.getInt(mStoredSelectionTypeKey, 0);
     }
 
-    private void storeResults(Context context, String path, String prediction) {
+    private void storePredictionAndPhotoPath(Context context, String path, String prediction) {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = preferences.edit();
-        editor.putString(mPrfPrevPhotoKey, path);
-        editor.putString(mPrfPrevPredictionKey, prediction);
+        editor.putString(mStoredPhotoKey, path);
+        editor.putString(mStoredPredictionKey, prediction);
         editor.apply();
     }
 
@@ -421,12 +421,12 @@ public class MainPresenter extends BasePresenter<MainMvpView> implements BitmapL
         return null;
     }
 
-    private void updateViewUponResult(Context context, String result, Bitmap bitmap) {
-        getMvpView().updateResult(result);
-        getMvpView().updateColorWheel(getSeasonalColors(result), bitmap);
+    private void updateViewUponPrediction(Context context, String prediction, Bitmap bitmap) {
+        getMvpView().updateResult(prediction);
+        getMvpView().updateColorWheel(getSeasonalColors(prediction), bitmap);
 
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-        int selectionType = preferences.getInt(mPrfPrevSelectionType, 0);
+        int selectionType = preferences.getInt(mStoredSelectionTypeKey, 0);
         getMvpView().updateColorSelection(selectionType);
     }
 }

@@ -168,7 +168,7 @@ public class MainActivity extends AppCompatActivity implements MainMvpView {
             case R.id.act_share:
                 Intent shareIntent = new Intent();
                 shareIntent.setAction(Intent.ACTION_SEND);
-                shareIntent.putExtra(Intent.EXTRA_TEXT, getString(R.string.msg_share, mPresenter.getPreviousResult(this)));
+                shareIntent.putExtra(Intent.EXTRA_TEXT, getString(R.string.msg_share, mPresenter.getStoredPrediction(this)));
                 shareIntent.setType("text/plain");
 
                 startActivity(Intent.createChooser(shareIntent, getString(R.string.lbl_share)));
@@ -198,7 +198,7 @@ public class MainActivity extends AppCompatActivity implements MainMvpView {
         ll_just_started.setVisibility(View.GONE);
         ll_main.setVisibility(View.VISIBLE);
 
-        float[] coords = mPresenter.getPreviousSelectedColorCoords(this);
+        float[] coords = mPresenter.getStoredSelectedColorCoords(this);
         color_wheel.selectColors(coords[0], coords[1]);
         updateColorsPalette(color_wheel.getCurrentColorElements());
     }
@@ -237,7 +237,7 @@ public class MainActivity extends AppCompatActivity implements MainMvpView {
 
     private void initColorWheel() {
 
-        int indexSelection = mPresenter.getPreviousColorSelection(this);
+        int indexSelection = mPresenter.getStoredColorSelectionType(this);
         color_wheel.setColorSelection(ColorPickerView.COLOR_SELECTION.indexOf(indexSelection));
 
         // Add a tree observer so the color wheel can
@@ -248,7 +248,7 @@ public class MainActivity extends AppCompatActivity implements MainMvpView {
             public void onGlobalLayout() {
                 color_wheel.getViewTreeObserver().removeOnGlobalLayoutListener(this); // avoid more than one call
                 if(!onActivityResultCalled) {
-                    mPresenter.loadPreviousResults(MainActivity.this);
+                    mPresenter.loadStoredPrediction(MainActivity.this);
                 }
             }
         });
@@ -271,7 +271,7 @@ public class MainActivity extends AppCompatActivity implements MainMvpView {
             @Override
             public void onColorsSelected(List<ColorElement> colors) {
                 updateColorsPalette(colors);
-                mPresenter.updateSelectedColorCoords(MainActivity.this, colors);
+                mPresenter.storeSelectedColorCoords(MainActivity.this, colors);
             }
         });
 
@@ -294,7 +294,7 @@ public class MainActivity extends AppCompatActivity implements MainMvpView {
     }
 
     private void initLayoutElements() {
-        if(mPresenter.hasPreviousResults(this)) {
+        if(mPresenter.hasStoredPrediction(this)) {
             ll_just_started.setVisibility(View.GONE);
             ll_main.setVisibility(View.VISIBLE);
         } else {
@@ -329,7 +329,7 @@ public class MainActivity extends AppCompatActivity implements MainMvpView {
             public boolean onTouch(View v, MotionEvent event) {
                 color_wheel.setColorSelection(colorSelection);
                 updateColorsPalette(color_wheel.getCurrentColorElements());
-                int index = mPresenter.updateColorSelectionType(MainActivity.this, colorSelection);
+                int index = mPresenter.storeColorSelectionType(MainActivity.this, colorSelection);
                 Log.e(LOG_TAG, "selection type: " + index);
                 updateColorSelection(index);
                 ((ImageView) v).setImageDrawable(anim);

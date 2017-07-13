@@ -1,6 +1,5 @@
 package com.keemsa.seasonify.features.widget;
 
-import android.annotation.TargetApi;
 import android.app.IntentService;
 import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
@@ -9,20 +8,13 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.net.Uri;
-import android.os.Build;
-import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.v4.content.FileProvider;
-import android.util.DisplayMetrics;
 import android.util.Log;
-import android.util.TypedValue;
 import android.widget.RemoteViews;
 
 import com.keemsa.seasonify.R;
 import com.keemsa.seasonify.features.start.MainActivity;
 
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -43,8 +35,8 @@ public class SeasonWidgetIntentService extends IntentService {
     protected void onHandleIntent(Intent intent) {
         SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
 
-        String predicton = pref.getString(getResources().getString(R.string.prf_prev_prediction), "");
-        String path = pref.getString(getResources().getString(R.string.prf_prev_photo), "");
+        String predicton = pref.getString(getResources().getString(R.string.prf_prediction), "");
+        String path = pref.getString(getResources().getString(R.string.prf_photo_path), "");
 
         AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(this);
         int[] appWidgetIds = appWidgetManager.getAppWidgetIds(new ComponentName(this, SeasonWidgetProvider.class));
