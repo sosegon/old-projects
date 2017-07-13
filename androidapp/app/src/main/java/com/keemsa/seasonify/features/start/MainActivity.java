@@ -162,8 +162,7 @@ public class MainActivity extends AppCompatActivity implements MainMvpView {
             case R.id.act_share:
                 Intent shareIntent = new Intent();
                 shareIntent.setAction(Intent.ACTION_SEND);
-                // TODO: Get the season correctly
-                shareIntent.putExtra(Intent.EXTRA_TEXT, getString(R.string.msg_share, txt_season.getText()));
+                shareIntent.putExtra(Intent.EXTRA_TEXT, getString(R.string.msg_share, mPresenter.getPreviousResult(this)));
                 shareIntent.setType("text/plain");
 
                 startActivity(Intent.createChooser(shareIntent, getString(R.string.lbl_share)));

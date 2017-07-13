@@ -283,6 +283,12 @@ public class MainPresenter extends BasePresenter<MainMvpView> implements BitmapL
         return new float[]{x, y};
     }
 
+    public String getPreviousResult(Context context) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        String result = preferences.getString(mPrfPrevPredictionKey, "");
+        return result;
+    }
+
     private void storeResults(Context context, String path, String prediction) {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = preferences.edit();
