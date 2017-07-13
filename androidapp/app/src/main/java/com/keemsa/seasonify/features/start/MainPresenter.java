@@ -226,7 +226,7 @@ public class MainPresenter extends BasePresenter<MainMvpView> implements BitmapL
                 });
             }
         } else {
-            // TODO Display message when no face is detected
+            getMvpView().showToastMessage(context.getString(R.string.msg_face_no_detected));
         }
 
     }

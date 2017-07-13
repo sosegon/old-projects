@@ -18,6 +18,7 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
@@ -208,6 +209,11 @@ public class MainActivity extends AppCompatActivity implements MainMvpView {
         } catch (IndexOutOfBoundsException e) {
             Log.e(LOG_TAG, e.getMessage());
         }
+    }
+
+    @Override
+    public void showToastMessage(String message) {
+        Toast.makeText(this, message, Toast.LENGTH_LONG).show();
     }
 
     private void initAd() {

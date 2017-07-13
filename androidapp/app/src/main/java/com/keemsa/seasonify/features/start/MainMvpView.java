@@ -17,4 +17,5 @@ public interface MainMvpView extends MvpView {
     void updateResult(String result);
     void updateColorWheel(int colors[], Bitmap bitmap);
     void updateColorSelection(int index);
+    void showToastMessage(String message);
 }

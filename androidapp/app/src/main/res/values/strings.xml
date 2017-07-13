@@ -13,6 +13,7 @@
     <string name="lbl_share">Share</string>
 
     <string name="msg_start_here">Start here!</string>
+    <string name="msg_face_no_detected">No face was detected. Try again.</string>
 
     <!--About -->
     <string name="about">
