@@ -1,11 +1,9 @@
 package com.keemsa.seasonify.features.start;
 
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
@@ -38,9 +36,7 @@ import com.keemsa.seasonify.util.SeasonifyImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
-import java.util.StringTokenizer;
 
-import butterknife.BindString;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -56,12 +52,6 @@ public class MainActivity extends AppCompatActivity implements MainMvpView {
     private MainPresenter mPresenter;
 
     private ImageView[] selectionIcons;
-
-    @BindString(R.string.prf_prev_selection_type)
-    String mPrfPrevSelectionType;
-
-    @BindString(R.string.prf_prev_color_coords)
-    String mPrfPrevColorCoords;
 
     @BindView(R.id.txt_season)
     TextView txt_season;
@@ -203,12 +193,8 @@ public class MainActivity extends AppCompatActivity implements MainMvpView {
         ll_just_started.setVisibility(View.GONE);
         ll_main.setVisibility(View.VISIBLE);
 
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
-        String coords = preferences.getString(mPrfPrevColorCoords, "0;0");
-        StringTokenizer st = new StringTokenizer(coords, ";");
-        float x = Float.parseFloat(st.nextToken());
-        float y = Float.parseFloat(st.nextToken());
-        color_wheel.selectColors(x, y);
+        float[] coords = mPresenter.getPreviousSelectedColorCoords(this);
+        color_wheel.selectColors(coords[0], coords[1]);
         updateColorsPalette(color_wheel.getCurrentColorElements());
     }
 
@@ -272,18 +258,7 @@ public class MainActivity extends AppCompatActivity implements MainMvpView {
             @Override
             public void onColorsSelected(List<ColorElement> colors) {
                 updateColorsPalette(colors);
-                try {
-                    ColorElement main = colors.get(0);
-                    float x = main.getX();
-                    float y = main.getY();
-                    String coords = String.valueOf(x) + ";" + String.valueOf(y);
-                    SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
-                    SharedPreferences.Editor editor = preferences.edit();
-                    editor.putString(mPrfPrevColorCoords, coords);
-                    editor.apply();
-                } catch (IndexOutOfBoundsException e) {
-                    Log.e(LOG_TAG, e.getMessage());
-                }
+                mPresenter.updateSelectedColorCoords(MainActivity.this, colors);
             }
         });
 
@@ -333,13 +308,7 @@ public class MainActivity extends AppCompatActivity implements MainMvpView {
             public boolean onTouch(View v, MotionEvent event) {
                 color_wheel.setColorSelection(colorSelection);
                 updateColorsPalette(color_wheel.getCurrentColorElements());
-
-                SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
-                SharedPreferences.Editor editor = preferences.edit();
-                int index = ColorPickerView.COLOR_SELECTION.indexOf(colorSelection);
-                editor.putInt(mPrfPrevSelectionType, index);
-                editor.apply();
-
+                int index = mPresenter.updateColorSelectionType(MainActivity.this, colorSelection);
                 updateColorSelection(index);
 
                 return false;

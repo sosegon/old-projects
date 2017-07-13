@@ -19,6 +19,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
+import com.keemsa.colorwheel.ColorElement;
 import com.keemsa.colorwheel.ColorPickerView;
 import com.keemsa.seasonify.BuildConfig;
 import com.keemsa.seasonify.R;
@@ -35,6 +36,7 @@ import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.StringTokenizer;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
@@ -89,6 +91,9 @@ public class MainPresenter extends BasePresenter<MainMvpView> implements BitmapL
 
     @BindString(R.string.prf_prev_selection_type)
     String mPrfPrevSelectionType;
+
+    @BindString(R.string.prf_prev_color_coords)
+    String mPrfPrevColorCoords;
 
     @BindArray(R.array.autumn_colors)
     int[] autumn_colors;
@@ -241,6 +246,41 @@ public class MainPresenter extends BasePresenter<MainMvpView> implements BitmapL
 
         BitmapLoaderAsyncTask task = new BitmapLoaderAsyncTask(context, this, INPUT_SIZE, 1);
         task.execute(path);
+    }
+
+    public int updateColorSelectionType(Context context, ColorPickerView.COLOR_SELECTION colorSelection) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = preferences.edit();
+        int index = ColorPickerView.COLOR_SELECTION.indexOf(colorSelection);
+        editor.putInt(mPrfPrevSelectionType, index);
+        editor.apply();
+
+        return index;
+    }
+
+    public void updateSelectedColorCoords(Context context, List<ColorElement> colors) {
+        try {
+            ColorElement main = colors.get(0);
+            float x = main.getX();
+            float y = main.getY();
+            String coords = String.valueOf(x) + ";" + String.valueOf(y);
+            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+            SharedPreferences.Editor editor = preferences.edit();
+            editor.putString(mPrfPrevColorCoords, coords);
+            editor.apply();
+        } catch (IndexOutOfBoundsException e) {
+            Log.e(LOG_TAG, e.getMessage());
+        }
+    }
+
+    public float[] getPreviousSelectedColorCoords(Context context) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        String coords = preferences.getString(mPrfPrevColorCoords, "0;0");
+        StringTokenizer st = new StringTokenizer(coords, ";");
+        float x = Float.parseFloat(st.nextToken());
+        float y = Float.parseFloat(st.nextToken());
+
+        return new float[]{x, y};
     }
 
     private void storeResults(Context context, String path, String prediction) {
