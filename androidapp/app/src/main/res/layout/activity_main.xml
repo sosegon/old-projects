@@ -14,6 +14,7 @@
         android:layout_height="?attr/actionBarSize"
         android:title="@string/app_name"
         android:background="@color/colorPrimary"
+        android:elevation="2dp"
         tools:text="Seasonify">
     </android.support.v7.widget.Toolbar>
 
@@ -25,36 +26,33 @@
             android:id="@+id/ll_main"
             android:layout_gravity="center_vertical"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/surface_horizontal_margin"
+            android:layout_marginEnd="@dimen/surface_horizontal_margin"
+            android:background="#fff"
+            android:elevation="@dimen/surface_elevation"
+            >
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:orientation="vertical"
-                android:layout_gravity="center_vertical">
+                android:showDividers="middle"
+                android:divider="@drawable/horizontal_divider">
 
                 <TextView
                     android:id="@+id/txt_season"
                     android:layout_width="match_parent"
                     android:layout_height="48dp"
                     android:textSize="24sp"
-                    android:layout_marginTop="@dimen/surface_vertical_margin"
-                    android:layout_marginStart="@dimen/surface_horizontal_margin"
-                    android:layout_marginEnd="@dimen/surface_horizontal_margin"
-                    android:layout_marginBottom="@dimen/surface_vertical_margin"
                     android:gravity="center"
                     tools:text="Season"
-                    android:background="#fff"
                     android:elevation="@dimen/surface_elevation"/>
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/surface_horizontal_margin"
-                    android:layout_marginEnd="@dimen/surface_horizontal_margin"
-                    android:layout_marginBottom="@dimen/surface_vertical_margin"
                     android:orientation="horizontal"
-                    android:background="#fff"
                     android:showDividers="middle"
                     android:divider="@drawable/vertical_divider"
                     android:elevation="@dimen/surface_elevation">
@@ -112,12 +110,6 @@
                     android:layout_height="wrap_content"
                     android:layout_width="match_parent"
                     android:layout_gravity="center_horizontal"
-                    android:layout_marginStart="@dimen/surface_horizontal_margin"
-                    android:layout_marginEnd="@dimen/surface_horizontal_margin"
-                    android:layout_marginBottom="@dimen/surface_vertical_margin"
-                    android:background="#fff"
-                    android:elevation="@dimen/surface_elevation"
-                    android:visibility="visible"
                     app:spectrum_autoPadding="true"
                     app:spectrum_checkable="false"
                     />
