@@ -115,6 +115,8 @@ public class MainActivity extends AppCompatActivity implements MainMvpView {
 
         initAd();
 
+        initTxtPrediction();
+
         initColorWheel();
 
         initAnimatables();  // before initColorSelection() to make use of them
@@ -179,7 +181,7 @@ public class MainActivity extends AppCompatActivity implements MainMvpView {
     }
 
     @Override
-    public void updateResult(String result) {
+    public void updatePrediction(String result) {
         try {
             String upperString = result.substring(0, 1).toUpperCase() + result.substring(1);
             txt_season.setText(upperString);
@@ -235,6 +237,10 @@ public class MainActivity extends AppCompatActivity implements MainMvpView {
         mInterstitialAd.loadAd(ar);
     }
 
+    private void initTxtPrediction() {
+        txt_season.setText(mPresenter.getStoredPrediction(this));
+    }
+
     private void initColorWheel() {
 
         int indexSelection = mPresenter.getStoredColorSelectionType(this);
@@ -248,7 +254,7 @@ public class MainActivity extends AppCompatActivity implements MainMvpView {
             public void onGlobalLayout() {
                 color_wheel.getViewTreeObserver().removeOnGlobalLayoutListener(this); // avoid more than one call
                 if(!onActivityResultCalled) {
-                    mPresenter.loadStoredPrediction(MainActivity.this);
+                    mPresenter.loadSavedPhoto(MainActivity.this);
                 }
             }
         });

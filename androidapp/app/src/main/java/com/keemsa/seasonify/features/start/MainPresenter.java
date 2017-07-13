@@ -169,8 +169,7 @@ public class MainPresenter extends BasePresenter<MainMvpView> implements BitmapL
 
     @Override
     public void load(Context context, Bitmap bitmap) {
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-        String predictedSeason = preferences.getString(mStoredPredictionKey, "");
+        String predictedSeason = getStoredPrediction(context);
 
         if (isViewAttached()) {
             if (bitmap != null && !predictedSeason.equals("")) {
@@ -203,7 +202,8 @@ public class MainPresenter extends BasePresenter<MainMvpView> implements BitmapL
 
                 updateViewUponPrediction(context, season, faceBitmap);
 
-                storePredictionAndPhotoPath(context, faceOnlyPath, season);
+                storePrediction(context, season);
+                storePhotoPath(context, faceOnlyPath);
 
                 final int seasonInt = getPredictionAsInteger(season);
                 StorageReference facePhotoRef = mFacePhotoStorageReference.child(photoUri2.getLastPathSegment());
@@ -240,13 +240,38 @@ public class MainPresenter extends BasePresenter<MainMvpView> implements BitmapL
         );
     }
 
-    public void loadStoredPrediction(Context context) {
-
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-        String photoPath = preferences.getString(mStoredPhotoKey, "");
-
+    public void loadSavedPhoto(Context context) {
         BitmapLoaderAsyncTask task = new BitmapLoaderAsyncTask(context, this, INPUT_SIZE, 1);
-        task.execute(photoPath);
+        task.execute(getStoredPhotoPath(context));
+    }
+
+    public String getStoredPhotoPath(Context context) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        return preferences.getString(mStoredPhotoKey, "");
+    }
+
+    public void storePhotoPath(Context context, String path) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putString(mStoredPhotoKey, path);
+        editor.apply();
+    }
+
+    public String getStoredPrediction(Context context) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        return preferences.getString(mStoredPredictionKey, "");
+    }
+
+    public void storePrediction(Context context, String prediction) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putString(mStoredPredictionKey, prediction);
+        editor.apply();
+    }
+
+    public int getStoredColorSelectionType(Context context) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        return preferences.getInt(mStoredSelectionTypeKey, 0);
     }
 
     public int storeColorSelectionType(Context context, ColorPickerView.COLOR_SELECTION colorSelection) {
@@ -257,6 +282,16 @@ public class MainPresenter extends BasePresenter<MainMvpView> implements BitmapL
         editor.apply();
 
         return index;
+    }
+
+    public float[] getStoredSelectedColorCoords(Context context) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        String coords = preferences.getString(mStoredSelectedColorCoordsKey, "0;0");
+        StringTokenizer st = new StringTokenizer(coords, ";");
+        float x = Float.parseFloat(st.nextToken());
+        float y = Float.parseFloat(st.nextToken());
+
+        return new float[]{x, y};
     }
 
     public void storeSelectedColorCoords(Context context, List<ColorElement> colors) {
@@ -272,35 +307,6 @@ public class MainPresenter extends BasePresenter<MainMvpView> implements BitmapL
         } catch (IndexOutOfBoundsException e) {
             Log.e(LOG_TAG, e.getMessage());
         }
-    }
-
-    public float[] getStoredSelectedColorCoords(Context context) {
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-        String coords = preferences.getString(mStoredSelectedColorCoordsKey, "0;0");
-        StringTokenizer st = new StringTokenizer(coords, ";");
-        float x = Float.parseFloat(st.nextToken());
-        float y = Float.parseFloat(st.nextToken());
-
-        return new float[]{x, y};
-    }
-
-    public String getStoredPrediction(Context context) {
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-        String result = preferences.getString(mStoredPredictionKey, "");
-        return result;
-    }
-
-    public int getStoredColorSelectionType(Context context) {
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-        return preferences.getInt(mStoredSelectionTypeKey, 0);
-    }
-
-    private void storePredictionAndPhotoPath(Context context, String path, String prediction) {
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-        SharedPreferences.Editor editor = preferences.edit();
-        editor.putString(mStoredPhotoKey, path);
-        editor.putString(mStoredPredictionKey, prediction);
-        editor.apply();
     }
 
     private int[] getSeasonalColors(String season) {
@@ -422,11 +428,8 @@ public class MainPresenter extends BasePresenter<MainMvpView> implements BitmapL
     }
 
     private void updateViewUponPrediction(Context context, String prediction, Bitmap bitmap) {
-        getMvpView().updateResult(prediction);
+        getMvpView().updatePrediction(prediction);
         getMvpView().updateColorWheel(getSeasonalColors(prediction), bitmap);
-
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-        int selectionType = preferences.getInt(mStoredSelectionTypeKey, 0);
-        getMvpView().updateColorSelection(selectionType);
+        getMvpView().updateColorSelection(getStoredColorSelectionType(context));
     }
 }
