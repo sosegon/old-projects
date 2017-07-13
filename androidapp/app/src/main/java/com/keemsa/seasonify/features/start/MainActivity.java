@@ -16,6 +16,7 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewTreeObserver;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -90,7 +91,7 @@ public class MainActivity extends AppCompatActivity implements MainMvpView {
     ImageView imv_quad_sel;
 
     @BindView(R.id.ll_main)
-    LinearLayout ll_main;
+    FrameLayout ll_main;
 
     @BindView(R.id.ll_just_started)
     LinearLayout ll_just_started;

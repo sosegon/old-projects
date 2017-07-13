@@ -19,95 +19,112 @@
 
     <ViewFlipper
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
-        <LinearLayout
+        android:layout_height="match_parent"
+        >
+        <FrameLayout
             android:id="@+id/ll_main"
-            android:orientation="vertical"
+            android:layout_gravity="center_vertical"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
-            <TextView
-                android:id="@+id/txt_season"
-                android:layout_width="match_parent"
-                android:layout_height="36dp"
-                android:textSize="24sp"
-                android:layout_marginTop="@dimen/surface_vertical_margin"
-                android:layout_marginStart="@dimen/surface_horizontal_margin"
-                android:layout_marginEnd="@dimen/surface_horizontal_margin"
-                android:layout_marginBottom="@dimen/surface_vertical_margin"
-                android:gravity="center"
-                tools:text="Season"
-                android:background="#fff"
-                android:elevation="@dimen/surface_elevation"/>
-
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/surface_horizontal_margin"
-                android:layout_marginEnd="@dimen/surface_horizontal_margin"
-                android:layout_marginBottom="@dimen/surface_vertical_margin"
-                android:background="#fff"
-                android:elevation="@dimen/surface_elevation"
-                android:gravity="center"
-                android:orientation="horizontal">
-                <ImageView
-                    android:id="@+id/imv_single_sel"
-                    style="@style/ic_color_selection"
-                    android:src="@drawable/ic_single_color"
-                    android:background="@drawable/color_selector_status" />
-                <ImageView
-                    android:id="@+id/imv_complementary_sel"
-                    style="@style/ic_color_selection"
-                    android:src="@drawable/ic_complementary_color"
-                    android:background="@drawable/color_selector_status" />
-                <ImageView
-                    android:id="@+id/imv_triad_sel"
-                    style="@style/ic_color_selection"
-                    android:src="@drawable/ic_triad_color"
-                    android:background="@drawable/color_selector_status" />
-                <ImageView
-                    android:id="@+id/imv_analogous_sel"
-                    style="@style/ic_color_selection"
-                    android:src="@drawable/ic_analogous_color"
-                    android:background="@drawable/color_selector_status" />
-                <ImageView
-                    android:id="@+id/imv_quad_sel"
-                    style="@style/ic_color_selection"
-                    android:src="@drawable/ic_quad_color"
-                    android:background="@drawable/color_selector_status" />
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:layout_gravity="center_vertical">
+
+                <TextView
+                    android:id="@+id/txt_season"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:textSize="24sp"
+                    android:layout_marginTop="@dimen/surface_vertical_margin"
+                    android:layout_marginStart="@dimen/surface_horizontal_margin"
+                    android:layout_marginEnd="@dimen/surface_horizontal_margin"
+                    android:layout_marginBottom="@dimen/surface_vertical_margin"
+                    android:gravity="center"
+                    tools:text="Season"
+                    android:background="#fff"
+                    android:elevation="@dimen/surface_elevation"/>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/surface_horizontal_margin"
+                    android:layout_marginEnd="@dimen/surface_horizontal_margin"
+                    android:layout_marginBottom="@dimen/surface_vertical_margin"
+                    android:orientation="horizontal"
+                    android:background="#fff"
+                    android:showDividers="middle"
+                    android:divider="@drawable/vertical_divider"
+                    android:elevation="@dimen/surface_elevation">
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:gravity="center"
+                        android:orientation="vertical">
+
+                        <ImageView
+                            android:id="@+id/imv_single_sel"
+                            style="@style/ic_color_selection"
+                            android:src="@drawable/ic_single_color"
+                            android:background="@drawable/color_selector_status" />
+                        <ImageView
+                            android:id="@+id/imv_complementary_sel"
+                            style="@style/ic_color_selection"
+                            android:src="@drawable/ic_complementary_color"
+                            android:background="@drawable/color_selector_status" />
+                        <ImageView
+                            android:id="@+id/imv_triad_sel"
+                            style="@style/ic_color_selection"
+                            android:src="@drawable/ic_triad_color"
+                            android:background="@drawable/color_selector_status" />
+                        <ImageView
+                            android:id="@+id/imv_analogous_sel"
+                            style="@style/ic_color_selection"
+                            android:src="@drawable/ic_analogous_color"
+                            android:background="@drawable/color_selector_status" />
+                        <ImageView
+                            android:id="@+id/imv_quad_sel"
+                            style="@style/ic_color_selection"
+                            android:layout_marginBottom="@dimen/icon_margin"
+                            android:src="@drawable/ic_quad_color"
+                            android:background="@drawable/color_selector_status" />
+                    </LinearLayout>
+
+                    <com.keemsa.colorwheel.ColorPickerView
+                        android:layout_gravity="center_vertical"
+                        android:id="@+id/color_wheel"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_marginStart="@dimen/surface_horizontal_margin"
+                        android:layout_marginEnd="@dimen/surface_horizontal_margin"
+                        app:wheelType="ARC"
+                        app:innerRadiusRatio=".75"
+                        app:centerRadiusRatio="0.5"
+                        app:colorSelection="TRIAD" />
+
+                </LinearLayout>
+
+                <com.keemsa.colorpalette.ColorPalette
+                    android:id="@+id/plt_combination"
+                    android:layout_height="wrap_content"
+                    android:layout_width="match_parent"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginStart="@dimen/surface_horizontal_margin"
+                    android:layout_marginEnd="@dimen/surface_horizontal_margin"
+                    android:layout_marginBottom="@dimen/surface_vertical_margin"
+                    android:background="#fff"
+                    android:elevation="@dimen/surface_elevation"
+                    android:visibility="visible"
+                    app:spectrum_autoPadding="true"
+                    app:spectrum_checkable="false"
+                    />
+
             </LinearLayout>
 
-            <com.keemsa.colorwheel.ColorPickerView
-                android:id="@+id/color_wheel"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/surface_horizontal_margin"
-                android:layout_marginEnd="@dimen/surface_horizontal_margin"
-                android:layout_marginBottom="@dimen/surface_vertical_margin"
-                android:background="#fff"
-                android:elevation="@dimen/surface_elevation"
-                app:wheelType="ARC"
-                app:innerRadiusRatio=".75"
-                app:centerRadiusRatio="0.5"
-                app:colorSelection="TRIAD"
-                />
-
-            <com.keemsa.colorpalette.ColorPalette
-                android:id="@+id/plt_combination"
-                android:layout_height="wrap_content"
-                android:layout_width="match_parent"
-                android:layout_gravity="center_horizontal"
-                android:layout_marginStart="@dimen/surface_horizontal_margin"
-                android:layout_marginEnd="@dimen/surface_horizontal_margin"
-                android:layout_marginBottom="@dimen/surface_vertical_margin"
-                android:background="#fff"
-                android:elevation="@dimen/surface_elevation"
-                android:visibility="gone"
-                app:spectrum_autoPadding="true"
-                app:spectrum_checkable="false"
-                />
-        </LinearLayout>
+        </FrameLayout>
 
         <LinearLayout
             android:id="@+id/ll_just_started"
