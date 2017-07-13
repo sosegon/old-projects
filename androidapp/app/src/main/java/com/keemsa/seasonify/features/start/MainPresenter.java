@@ -188,6 +188,7 @@ public class MainPresenter extends BasePresenter<MainMvpView> implements BitmapL
             String faceOnlyPath = SeasonifyUtils.getFileNameNoExtension(path) + "_faceOnly.jpg";
             SeasonifyImage.saveImage(faceBitmap, faceOnlyPath);
 
+            // TODO: Check this when releasing the app
             if (BuildConfig.DEBUG) {
                 SeasonifyImage.addImageToGallery(context, faceOnlyPath);
             }

@@ -9,6 +9,7 @@
         android:id="@+id/act_share"
         bwq:showAsAction="ifRoom"
         android:title="@string/lbl_share"
+        android:icon="@drawable/ic_share"
         android:actionProviderClass="android.widget.ShareActionProvider">
     </item>
 </menu>
