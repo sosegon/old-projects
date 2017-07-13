@@ -185,7 +185,13 @@ public class MainActivity extends AppCompatActivity implements MainMvpView {
 
     @Override
     public void updateResult(String result) {
-        txt_season.setText(result);
+        try {
+            String upperString = result.substring(0, 1).toUpperCase() + result.substring(1);
+            txt_season.setText(upperString);
+        } catch (StringIndexOutOfBoundsException e) {
+            Log.e(LOG_TAG, e.getMessage());
+            txt_season.setText(result);
+        }
     }
 
     @Override
