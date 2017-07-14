@@ -19,7 +19,7 @@ public class DataManager {
         mPreferencesHelper = preferencesHelper;
     }
 
-    public PreferencesHelper getmPreferencesHelper() {
+    public PreferencesHelper getPreferencesHelper() {
         return mPreferencesHelper;
     }
 }

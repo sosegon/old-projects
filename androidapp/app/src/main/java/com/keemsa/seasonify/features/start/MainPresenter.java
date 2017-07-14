@@ -1,13 +1,10 @@
 package com.keemsa.seasonify.features.start;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.ContextWrapper;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.net.Uri;
-import android.preference.PreferenceManager;
 import android.support.annotation.ColorInt;
 import android.support.annotation.NonNull;
 import android.support.v4.content.FileProvider;
@@ -25,6 +22,8 @@ import com.keemsa.colorwheel.ColorPickerView;
 import com.keemsa.seasonify.BuildConfig;
 import com.keemsa.seasonify.R;
 import com.keemsa.seasonify.base.BasePresenter;
+import com.keemsa.seasonify.data.DataManager;
+import com.keemsa.seasonify.injection.ConfigPersistent;
 import com.keemsa.seasonify.model.Prediction;
 import com.keemsa.seasonify.util.Cluster;
 import com.keemsa.seasonify.util.SeasonifyImage;
@@ -35,20 +34,10 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
-import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
-import java.util.StringTokenizer;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
-
-import butterknife.BindArray;
-import butterknife.BindString;
-import butterknife.ButterKnife;
 
 import org.opencv.android.BaseLoaderCallback;
 import org.opencv.android.OpenCVLoader;
@@ -61,15 +50,20 @@ import org.opencv.imgcodecs.Imgcodecs;
 import org.opencv.imgproc.Imgproc;
 import org.opencv.objdetect.CascadeClassifier;
 
+import javax.inject.Inject;
+
 /**
  * Created by sebastian on 3/27/17.
  */
 
+@ConfigPersistent
 public class MainPresenter extends BasePresenter<MainMvpView> implements BitmapLoaderAsyncTask.BitmapLoaderAsyncTaskReceiver {
 
     private final String LOG_TAG = MainPresenter.class.getSimpleName();
     private Classifier classifier;
     private Executor executor = Executors.newSingleThreadExecutor();
+
+    private final DataManager mDataManager;
 
     private static final int INPUT_SIZE = 128;
     private static final int IMAGE_MEAN = 117;
@@ -89,23 +83,10 @@ public class MainPresenter extends BasePresenter<MainMvpView> implements BitmapL
     private CascadeClassifier mJavaDetector;
     private File mCascadeFile;
 
-    @BindString(R.string.prf_photo_path)
-    String mStoredPhotoKey;
+    @Inject
+    public MainPresenter(DataManager dataManager) {
+        mDataManager = dataManager;
 
-    @BindString(R.string.prf_prediction)
-    String mStoredPredictionKey;
-
-    @BindString(R.string.prf_selection_type)
-    String mStoredSelectionTypeKey;
-
-    @BindString(R.string.prf_color_coords)
-    String mStoredSelectedColorCoordsKey;
-
-    @BindString(R.string.prf_color_combinations)
-    String mStoredColorCombinationsKey;
-
-    public MainPresenter(Activity activity) {
-        ButterKnife.bind(this, activity);
         mFirebaseDatabase = FirebaseDatabase.getInstance();
         mPredictionsDatabaseReference = mFirebaseDatabase.getReference().child("predictions");
         mFirebaseStorage = FirebaseStorage.getInstance();
@@ -113,9 +94,8 @@ public class MainPresenter extends BasePresenter<MainMvpView> implements BitmapL
     }
 
     public boolean hasStoredPrediction(Context context) {
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-        String predictedSeason = preferences.getString(mStoredPredictionKey, "");
-        String photoPath = preferences.getString(mStoredPhotoKey, "");
+        String predictedSeason = mDataManager.getPreferencesHelper().retrievePrediction();
+        String photoPath = mDataManager.getPreferencesHelper().retrievePhotoPath();
 
         return !(predictedSeason.equals("") && photoPath.equals(""));
     }
@@ -243,170 +223,51 @@ public class MainPresenter extends BasePresenter<MainMvpView> implements BitmapL
     }
 
     public String getStoredPhotoPath(Context context) {
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-        return preferences.getString(mStoredPhotoKey, "");
+        return mDataManager.getPreferencesHelper().retrievePhotoPath();
     }
 
     public void storePhotoPath(Context context, String path) {
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-        SharedPreferences.Editor editor = preferences.edit();
-        editor.putString(mStoredPhotoKey, path);
-        editor.apply();
+        mDataManager.getPreferencesHelper().storePhotoPath(path);
     }
 
     public String getStoredPrediction(Context context) {
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-        return preferences.getString(mStoredPredictionKey, "");
+        return mDataManager.getPreferencesHelper().retrievePrediction();
     }
 
     public void storePrediction(Context context, String prediction) {
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-        SharedPreferences.Editor editor = preferences.edit();
-        editor.putString(mStoredPredictionKey, prediction);
-        editor.apply();
+        mDataManager.getPreferencesHelper().storePrediction(prediction);
     }
 
     public int getStoredColorSelectionType(Context context) {
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-        return preferences.getInt(mStoredSelectionTypeKey, 0);
+        return mDataManager.getPreferencesHelper().retrieveColorSelectionType();
     }
 
     public int storeColorSelectionType(Context context, ColorPickerView.COLOR_SELECTION colorSelection) {
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-        SharedPreferences.Editor editor = preferences.edit();
-        int index = ColorPickerView.COLOR_SELECTION.indexOf(colorSelection);
-        editor.putInt(mStoredSelectionTypeKey, index);
-        editor.apply();
-
-        return index;
+        return mDataManager.getPreferencesHelper().storeColorSelectionType(colorSelection);
     }
 
     public float[] getStoredSelectedColorCoords(Context context) {
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-        String coords = preferences.getString(mStoredSelectedColorCoordsKey, "0;0");
-        StringTokenizer st = new StringTokenizer(coords, ";");
-        float x = Float.parseFloat(st.nextToken());
-        float y = Float.parseFloat(st.nextToken());
-
-        return new float[]{x, y};
+        return mDataManager.getPreferencesHelper().retrieveSelectedColorCoords();
     }
 
     public void storeSelectedColorCoords(Context context, List<ColorElement> colors) {
-        try {
-            ColorElement main = colors.get(0);
-            float x = main.getX();
-            float y = main.getY();
-            String coords = String.valueOf(x) + ";" + String.valueOf(y);
-            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-            SharedPreferences.Editor editor = preferences.edit();
-            editor.putString(mStoredSelectedColorCoordsKey, coords);
-            editor.apply();
-        } catch (IndexOutOfBoundsException e) {
-            Log.e(LOG_TAG, e.getMessage());
-        }
+        mDataManager.getPreferencesHelper().storeSelectedColorCoords(colors);
     }
 
     public void storeColorCombination(Context context, @ColorInt int[] colors) {
-        int[] iComb = Arrays.copyOf(colors, colors.length); // copy to avoid problems in the palette
-        Arrays.sort(iComb); // sort so when converting to string combinations are not repeated
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-        Set<String> sCombinations;
-        sCombinations = preferences.getStringSet(mStoredColorCombinationsKey, null);
-
-        if(sCombinations == null) {
-            sCombinations = new HashSet<>();
-        }
-
-        String sComb = "";
-        for(int color : iComb) {
-            sComb += String.valueOf(color) + ";";
-        }
-        sComb = sComb.substring(0, sComb.length() - 1);
-        sCombinations.add(sComb);
-
-        SharedPreferences.Editor editor = preferences.edit();
-        editor.putStringSet(mStoredColorCombinationsKey, sCombinations);
-        editor.apply();
+        mDataManager.getPreferencesHelper().addColorCombination(colors);
     }
 
     public List<int[]> getStoredColorCombinations(Context context) {
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-        Set<String> sCombinations = preferences.getStringSet(mStoredColorCombinationsKey, null);
-        List<int[]> listCombs = new ArrayList<>();
-
-        if(sCombinations !=  null) {
-            Iterator iter = sCombinations.iterator();
-            while(iter.hasNext()) {
-                String sCurrentComb = (String) iter.next();
-                StringTokenizer st = new StringTokenizer(sCurrentComb, ";");
-                int[] iCurrentComb = new int[st.countTokens()];
-                int i = 0;
-                while(st.hasMoreTokens()) {
-                    iCurrentComb[i] = Integer.valueOf(st.nextToken());
-                }
-                listCombs.add(iCurrentComb);
-            }
-        }
-
-        return listCombs;
+        return mDataManager.getPreferencesHelper().retrieveColorCombinations();
     }
 
     public boolean existColorCombination(Context context, int[] colors) {
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-        Set<String> sCombinations = preferences.getStringSet(mStoredColorCombinationsKey, null);
-
-        if(sCombinations != null) {
-
-            int[] iComb = Arrays.copyOf(colors, colors.length); // copy to avoid problems in the palette
-            Arrays.sort(iComb); // sort so when converting to string combinations are not repeated
-
-            String sComb = "";
-            for(int color : iComb) {
-                sComb += String.valueOf(color) + ";";
-            }
-            sComb = sComb.substring(0, sComb.length() - 1);
-
-            return sCombinations.contains(sComb);
-        }
-
-        return false;
+        return mDataManager.getPreferencesHelper().hasColorCombination(colors);
     }
 
     public boolean removeStoredColorCombination(Context context, int[] colors) {
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-        Set<String> sCombinations = preferences.getStringSet(mStoredColorCombinationsKey, null);
-
-        if(sCombinations != null) {
-            int[] iComb = Arrays.copyOf(colors, colors.length); // copy to avoid problems in the palette
-            Arrays.sort(iComb);
-
-            String sComb = "";
-            for(int color : iComb) {
-                sComb += String.valueOf(color) + ";";
-            }
-            sComb = sComb.substring(0, sComb.length() - 1);
-
-            int originalCount = sCombinations.size();
-            Iterator iter = sCombinations.iterator();
-            while(iter.hasNext()) {
-                String sCurrentComb = (String) iter.next();
-
-                if(sComb.equals(sCurrentComb)) {
-                    iter.remove();
-                    break;
-                }
-            }
-            int finalCount = sCombinations.size();
-
-            if(finalCount < originalCount) {
-                SharedPreferences.Editor editor = preferences.edit();
-                editor.putStringSet(mStoredColorCombinationsKey, sCombinations);
-                editor.apply();
-                return true;
-            }
-        }
-
-        return false;
+        return mDataManager.getPreferencesHelper().deleteColorCombination(colors);
     }
 
     private int getPredictionAsInteger(String season) {

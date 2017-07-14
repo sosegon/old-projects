@@ -7,7 +7,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
@@ -31,21 +30,23 @@ import com.keemsa.colorwheel.OnCenterSelectedListener;
 import com.keemsa.colorwheel.OnColorsChangedListener;
 import com.keemsa.colorwheel.OnColorsSelectedListener;
 import com.keemsa.seasonify.R;
+import com.keemsa.seasonify.base.BaseActivity;
 import com.keemsa.seasonify.features.about.AboutActivity;
 import com.keemsa.colorwheel.ColorPickerView;
 import com.keemsa.seasonify.util.SeasonifyImage;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.List;
+
+import javax.inject.Inject;
 
 import butterknife.BindArray;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class MainActivity extends AppCompatActivity implements MainMvpView {
+public class MainActivity extends BaseActivity implements MainMvpView {
 
     private static final String LOG_TAG = MainActivity.class.getSimpleName();
     private static final int REQUEST_IMAGE_CAPTURE = 1;
@@ -53,7 +54,8 @@ public class MainActivity extends AppCompatActivity implements MainMvpView {
     private File mPhotoFile;
     private InterstitialAd mInterstitialAd;
 
-    private MainPresenter mPresenter;
+    @Inject
+    MainPresenter mPresenter;
 
     private ImageView[] selectionIcons;
 
@@ -133,12 +135,12 @@ public class MainActivity extends AppCompatActivity implements MainMvpView {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        mPresenter = new MainPresenter(this);
-        mPresenter.initTensorFlowAndLoadModel(this);
-
+        activityComponent().inject(this);
         setContentView(R.layout.activity_main);
-
         ButterKnife.bind(this);
+
+        mPresenter.attachView(this);
+        mPresenter.initTensorFlowAndLoadModel(this);
 
         setSupportActionBar(tb);
 
