@@ -23,7 +23,7 @@ public class BitmapLoaderAsyncTask extends AsyncTask<String, Void, Bitmap> {
 
   interface BitmapLoaderAsyncTaskReceiver {
     void classify(Context context, String path, Bitmap bitmap);
-    void load(Context context, Bitmap bitmap);
+    void load(Bitmap bitmap);
   }
 
   public enum TASK_TYPE {
@@ -76,7 +76,7 @@ public class BitmapLoaderAsyncTask extends AsyncTask<String, Void, Bitmap> {
   protected void onPostExecute(Bitmap bitmap) {
     switch (mTaskType) {
       case LOAD:
-        mReceiver.load(mContext, bitmap);
+        mReceiver.load(bitmap);
         break;
       case CLASSIFY:
         mReceiver.classify(mContext, mPath, bitmap);

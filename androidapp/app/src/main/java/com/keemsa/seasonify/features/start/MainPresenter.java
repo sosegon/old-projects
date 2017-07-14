@@ -93,7 +93,7 @@ public class MainPresenter extends BasePresenter<MainMvpView> implements BitmapL
         mFacePhotoStorageReference = mFirebaseStorage.getReference().child("face_photos");
     }
 
-    public boolean hasStoredPrediction(Context context) {
+    public boolean hasStoredPrediction() {
         String predictedSeason = mDataManager.getPreferencesHelper().retrievePrediction();
         String photoPath = mDataManager.getPreferencesHelper().retrievePhotoPath();
 
@@ -145,12 +145,12 @@ public class MainPresenter extends BasePresenter<MainMvpView> implements BitmapL
     }
 
     @Override
-    public void load(Context context, Bitmap bitmap) {
-        String predictedSeason = getStoredPrediction(context);
+    public void load(Bitmap bitmap) {
+        String predictedSeason = getStoredPrediction();
 
         if (isViewAttached()) {
             if (bitmap != null && !predictedSeason.equals("")) {
-                updateViewUponPrediction(context, predictedSeason, bitmap);
+                updateViewUponPrediction(predictedSeason, bitmap);
             }
         }
     }
@@ -177,10 +177,10 @@ public class MainPresenter extends BasePresenter<MainMvpView> implements BitmapL
                 Uri photoUri = generateUri(context, new File(path)); // To update the view
                 Uri photoUri2 = Uri.fromFile(new File(faceOnlyPath)); // To store in firebase
 
-                updateViewUponPrediction(context, season, faceBitmap);
+                updateViewUponPrediction(season, faceBitmap);
 
-                storePrediction(context, season);
-                storePhotoPath(context, faceOnlyPath);
+                storePrediction(season);
+                storePhotoPath(faceOnlyPath);
 
                 final int seasonInt = getPredictionAsInteger(season);
                 StorageReference facePhotoRef = mFacePhotoStorageReference.child(photoUri2.getLastPathSegment());
@@ -219,54 +219,54 @@ public class MainPresenter extends BasePresenter<MainMvpView> implements BitmapL
 
     public void loadSavedPhoto(Context context) {
         BitmapLoaderAsyncTask task = new BitmapLoaderAsyncTask(context, this, INPUT_SIZE, 1);
-        task.execute(getStoredPhotoPath(context));
+        task.execute(getStoredPhotoPath());
     }
 
-    public String getStoredPhotoPath(Context context) {
+    public String getStoredPhotoPath() {
         return mDataManager.getPreferencesHelper().retrievePhotoPath();
     }
 
-    public void storePhotoPath(Context context, String path) {
+    public void storePhotoPath(String path) {
         mDataManager.getPreferencesHelper().storePhotoPath(path);
     }
 
-    public String getStoredPrediction(Context context) {
+    public String getStoredPrediction() {
         return mDataManager.getPreferencesHelper().retrievePrediction();
     }
 
-    public void storePrediction(Context context, String prediction) {
+    public void storePrediction(String prediction) {
         mDataManager.getPreferencesHelper().storePrediction(prediction);
     }
 
-    public int getStoredColorSelectionType(Context context) {
+    public int getStoredColorSelectionType() {
         return mDataManager.getPreferencesHelper().retrieveColorSelectionType();
     }
 
-    public int storeColorSelectionType(Context context, ColorPickerView.COLOR_SELECTION colorSelection) {
+    public int storeColorSelectionType(ColorPickerView.COLOR_SELECTION colorSelection) {
         return mDataManager.getPreferencesHelper().storeColorSelectionType(colorSelection);
     }
 
-    public float[] getStoredSelectedColorCoords(Context context) {
+    public float[] getStoredSelectedColorCoords() {
         return mDataManager.getPreferencesHelper().retrieveSelectedColorCoords();
     }
 
-    public void storeSelectedColorCoords(Context context, List<ColorElement> colors) {
+    public void storeSelectedColorCoords(List<ColorElement> colors) {
         mDataManager.getPreferencesHelper().storeSelectedColorCoords(colors);
     }
 
-    public void storeColorCombination(Context context, @ColorInt int[] colors) {
+    public void storeColorCombination(@ColorInt int[] colors) {
         mDataManager.getPreferencesHelper().addColorCombination(colors);
     }
 
-    public List<int[]> getStoredColorCombinations(Context context) {
+    public List<int[]> getStoredColorCombinations() {
         return mDataManager.getPreferencesHelper().retrieveColorCombinations();
     }
 
-    public boolean existColorCombination(Context context, int[] colors) {
+    public boolean existColorCombination(int[] colors) {
         return mDataManager.getPreferencesHelper().hasColorCombination(colors);
     }
 
-    public boolean removeStoredColorCombination(Context context, int[] colors) {
+    public boolean removeStoredColorCombination(int[] colors) {
         return mDataManager.getPreferencesHelper().deleteColorCombination(colors);
     }
 
@@ -374,9 +374,9 @@ public class MainPresenter extends BasePresenter<MainMvpView> implements BitmapL
         return null;
     }
 
-    private void updateViewUponPrediction(Context context, String prediction, Bitmap bitmap) {
+    private void updateViewUponPrediction(String prediction, Bitmap bitmap) {
         getMvpView().updatePrediction(prediction);
         getMvpView().updateColorWheel(prediction, bitmap);
-        getMvpView().updateColorSelection(getStoredColorSelectionType(context));
+        getMvpView().updateColorSelection(getStoredColorSelectionType());
     }
 }

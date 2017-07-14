@@ -122,11 +122,11 @@ public class MainActivity extends BaseActivity implements MainMvpView {
     public void favCombination() {
         int[] colors = plt_combination.getColors();
 
-        if(mPresenter.existColorCombination(this, colors)){
-            mPresenter.removeStoredColorCombination(this, colors);
+        if(mPresenter.existColorCombination(colors)){
+            mPresenter.removeStoredColorCombination(colors);
             imv_fav.setSelected(false);
         } else {
-            mPresenter.storeColorCombination(this, colors);
+            mPresenter.storeColorCombination(colors);
             imv_fav.setSelected(true);
         }
     }
@@ -203,7 +203,7 @@ public class MainActivity extends BaseActivity implements MainMvpView {
             case R.id.act_share:
                 Intent shareIntent = new Intent();
                 shareIntent.setAction(Intent.ACTION_SEND);
-                shareIntent.putExtra(Intent.EXTRA_TEXT, getString(R.string.msg_share, mPresenter.getStoredPrediction(this)));
+                shareIntent.putExtra(Intent.EXTRA_TEXT, getString(R.string.msg_share, mPresenter.getStoredPrediction()));
                 shareIntent.setType("text/plain");
 
                 startActivity(Intent.createChooser(shareIntent, getString(R.string.lbl_share)));
@@ -234,7 +234,7 @@ public class MainActivity extends BaseActivity implements MainMvpView {
         ll_just_started.setVisibility(View.GONE);
         ll_main.setVisibility(View.VISIBLE);
 
-        float[] coords = mPresenter.getStoredSelectedColorCoords(this);
+        float[] coords = mPresenter.getStoredSelectedColorCoords();
         color_wheel.selectColors(coords[0], coords[1]);
         updateColorsPalette(color_wheel.getCurrentColorElements());
     }
@@ -272,12 +272,12 @@ public class MainActivity extends BaseActivity implements MainMvpView {
     }
 
     private void initTxtPrediction() {
-        txt_season.setText(mPresenter.getStoredPrediction(this));
+        txt_season.setText(mPresenter.getStoredPrediction());
     }
 
     private void initColorWheel() {
 
-        int indexSelection = mPresenter.getStoredColorSelectionType(this);
+        int indexSelection = mPresenter.getStoredColorSelectionType();
         color_wheel.setColorSelection(ColorPickerView.COLOR_SELECTION.indexOf(indexSelection));
 
         // Add a tree observer so the color wheel can
@@ -311,7 +311,7 @@ public class MainActivity extends BaseActivity implements MainMvpView {
             @Override
             public void onColorsSelected(List<ColorElement> colors) {
                 updateColorsPalette(colors);
-                mPresenter.storeSelectedColorCoords(MainActivity.this, colors);
+                mPresenter.storeSelectedColorCoords(colors);
             }
         });
 
@@ -334,7 +334,7 @@ public class MainActivity extends BaseActivity implements MainMvpView {
     }
 
     private void initLayoutElements() {
-        if(mPresenter.hasStoredPrediction(this)) {
+        if(mPresenter.hasStoredPrediction()) {
             ll_just_started.setVisibility(View.GONE);
             ll_main.setVisibility(View.VISIBLE);
         } else {
@@ -362,7 +362,7 @@ public class MainActivity extends BaseActivity implements MainMvpView {
 
         plt_combination.setVisibility(View.VISIBLE);
 
-        boolean existCombination = mPresenter.existColorCombination(this, numColors);
+        boolean existCombination = mPresenter.existColorCombination(numColors);
         imv_fav.setSelected(existCombination);
     }
 
@@ -372,7 +372,7 @@ public class MainActivity extends BaseActivity implements MainMvpView {
             public boolean onTouch(View v, MotionEvent event) {
                 color_wheel.setColorSelection(colorSelection);
                 updateColorsPalette(color_wheel.getCurrentColorElements());
-                int index = mPresenter.storeColorSelectionType(MainActivity.this, colorSelection);
+                int index = mPresenter.storeColorSelectionType(colorSelection);
                 Log.e(LOG_TAG, "selection type: " + index);
                 updateColorSelection(index);
                 ((ImageView) v).setImageDrawable(anim);
