@@ -5,19 +5,23 @@ import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
 import android.content.ComponentName;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.preference.PreferenceManager;
 import android.util.Log;
 import android.widget.RemoteViews;
 
 import com.keemsa.seasonify.R;
+import com.keemsa.seasonify.SeasonifyApplication;
+import com.keemsa.seasonify.data.DataManager;
 import com.keemsa.seasonify.features.start.MainActivity;
+import com.keemsa.seasonify.injection.component.DaggerServiceComponent;
+import com.keemsa.seasonify.injection.component.ServiceComponent;
 
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+
+import javax.inject.Inject;
 
 /**
  * Created by sebastian on 4/6/17.
@@ -27,16 +31,35 @@ public class SeasonWidgetIntentService extends IntentService {
 
     public final static String LOG_TAG = SeasonWidgetIntentService.class.getSimpleName();
 
+    private ServiceComponent mServiceComponent;
+
+    @Inject
+    DataManager mDataManager;
+
     public SeasonWidgetIntentService() {
         super(SeasonWidgetIntentService.class.getName());
     }
 
+    public ServiceComponent getServiceComponent() {
+        if(mServiceComponent == null) {
+            mServiceComponent = DaggerServiceComponent.builder()
+                                .applicationComponent(SeasonifyApplication.get(this).getComponent())
+                                .build();
+        }
+
+        return mServiceComponent;
+    }
+
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        getServiceComponent().inject(this);
+    }
+
     @Override
     protected void onHandleIntent(Intent intent) {
-        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
-
-        String predicton = pref.getString(getResources().getString(R.string.prf_prediction), "");
-        String path = pref.getString(getResources().getString(R.string.prf_photo_path), "");
+        String predicton = mDataManager.getPreferencesHelper().retrievePrediction();
+        String path = mDataManager.getPreferencesHelper().retrievePhotoPath();
 
         AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(this);
         int[] appWidgetIds = appWidgetManager.getAppWidgetIds(new ComponentName(this, SeasonWidgetProvider.class));
