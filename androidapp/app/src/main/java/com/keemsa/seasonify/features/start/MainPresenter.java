@@ -12,9 +12,6 @@ import android.util.Log;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.keemsa.colorwheel.ColorElement;
@@ -29,16 +26,6 @@ import com.keemsa.seasonify.util.Cluster;
 import com.keemsa.seasonify.util.SeasonifyImage;
 import com.keemsa.seasonify.util.SeasonifyUtils;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.List;
-import java.util.concurrent.Executor;
-import java.util.concurrent.Executors;
-
 import org.opencv.android.BaseLoaderCallback;
 import org.opencv.android.OpenCVLoader;
 import org.opencv.android.Utils;
@@ -49,6 +36,16 @@ import org.opencv.core.Size;
 import org.opencv.imgcodecs.Imgcodecs;
 import org.opencv.imgproc.Imgproc;
 import org.opencv.objdetect.CascadeClassifier;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.List;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 
 import javax.inject.Inject;
 
@@ -75,22 +72,12 @@ public class MainPresenter extends BasePresenter<MainMvpView> implements BitmapL
     private static final String MODEL_FILE = "file:///android_asset/seasonify.pb";
     private static final String LABEL_FILE = "file:///android_asset/seasonify.txt";
 
-    private FirebaseDatabase mFirebaseDatabase;
-    private DatabaseReference mPredictionsDatabaseReference;
-    private FirebaseStorage mFirebaseStorage;
-    private StorageReference mFacePhotoStorageReference;
-
     private CascadeClassifier mJavaDetector;
     private File mCascadeFile;
 
     @Inject
     public MainPresenter(DataManager dataManager) {
         mDataManager = dataManager;
-
-        mFirebaseDatabase = FirebaseDatabase.getInstance();
-        mPredictionsDatabaseReference = mFirebaseDatabase.getReference().child("predictions");
-        mFirebaseStorage = FirebaseStorage.getInstance();
-        mFacePhotoStorageReference = mFirebaseStorage.getReference().child("face_photos");
     }
 
     public boolean hasStoredPrediction() {
@@ -183,13 +170,13 @@ public class MainPresenter extends BasePresenter<MainMvpView> implements BitmapL
                 storePhotoPath(faceOnlyPath);
 
                 final int seasonInt = getPredictionAsInteger(season);
-                StorageReference facePhotoRef = mFacePhotoStorageReference.child(photoUri2.getLastPathSegment());
+                StorageReference facePhotoRef = mDataManager.getFirebaseHelper().getFacePhotoReference(photoUri2.getLastPathSegment());
                 facePhotoRef.putFile(photoUri2).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                     @Override
                     public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                         Uri downloadUrl = taskSnapshot.getDownloadUrl();
                         Prediction prediction = new Prediction(seasonInt, downloadUrl.toString());
-                        mPredictionsDatabaseReference.push().setValue(prediction);
+                        mDataManager.getFirebaseHelper().storePrediction(prediction);
 
                         // Send broadcast to update the widgets
                         Intent updateIntent = new Intent(ACTION_DATA_UPDATED);
