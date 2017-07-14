@@ -100,6 +100,10 @@ public class ColorPalette extends LinearLayout {
         createPaletteView();
     }
 
+    public @ColorInt int[] getColors() {
+        return mColors;
+    }
+
     /**
      * Sets the currently selected color. This should be one of the colors specified via
      * {@link #setColors(int[])}; behavior is undefined if {@code color} is not among those colors.
