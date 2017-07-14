@@ -104,18 +104,6 @@ public class MainPresenter extends BasePresenter<MainMvpView> implements BitmapL
     @BindString(R.string.prf_color_combinations)
     String mStoredColorCombinationsKey;
 
-    @BindArray(R.array.autumn_colors)
-    int[] autumn_colors;
-
-    @BindArray(R.array.spring_colors)
-    int[] spring_colors;
-
-    @BindArray(R.array.summer_colors)
-    int[] summer_colors;
-
-    @BindArray(R.array.winter_colors)
-    int[] winter_colors;
-
     public MainPresenter(Activity activity) {
         ButterKnife.bind(this, activity);
         mFirebaseDatabase = FirebaseDatabase.getInstance();
@@ -421,20 +409,6 @@ public class MainPresenter extends BasePresenter<MainMvpView> implements BitmapL
         return false;
     }
 
-    private int[] getSeasonalColors(String season) {
-        if (season.equals("autumn")) {
-            return autumn_colors;
-        } else if (season.equals("spring")) {
-            return spring_colors;
-        } else if (season.equals("summer")) {
-            return summer_colors;
-        } else if (season.equals("winter")) {
-            return winter_colors;
-        }
-
-        return new int[]{};
-    }
-
     private int getPredictionAsInteger(String season) {
         if (season.equals("autumn")) {
             return 0;
@@ -541,7 +515,7 @@ public class MainPresenter extends BasePresenter<MainMvpView> implements BitmapL
 
     private void updateViewUponPrediction(Context context, String prediction, Bitmap bitmap) {
         getMvpView().updatePrediction(prediction);
-        getMvpView().updateColorWheel(getSeasonalColors(prediction), bitmap);
+        getMvpView().updateColorWheel(prediction, bitmap);
         getMvpView().updateColorSelection(getStoredColorSelectionType(context));
     }
 }

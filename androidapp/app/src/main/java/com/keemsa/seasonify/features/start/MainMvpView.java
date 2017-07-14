@@ -14,8 +14,8 @@ import java.io.File;
 
 public interface MainMvpView extends MvpView {
 
-    void updatePrediction(String result);
-    void updateColorWheel(int colors[], Bitmap bitmap);
+    void updatePrediction(String prediction);
+    void updateColorWheel(String prediction, Bitmap bitmap);
     void updateColorSelection(int index);
     void showToastMessage(String message);
 }

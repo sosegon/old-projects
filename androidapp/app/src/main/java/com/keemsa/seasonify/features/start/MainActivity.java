@@ -40,6 +40,7 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
+import butterknife.BindArray;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -91,6 +92,18 @@ public class MainActivity extends AppCompatActivity implements MainMvpView {
 
     @BindView(R.id.imv_fav)
     ImageView imv_fav;
+
+    @BindArray(R.array.autumn_colors)
+    int[] autumn_colors;
+
+    @BindArray(R.array.spring_colors)
+    int[] spring_colors;
+
+    @BindArray(R.array.summer_colors)
+    int[] summer_colors;
+
+    @BindArray(R.array.winter_colors)
+    int[] winter_colors;
 
     AnimatedVectorDrawable avd_single, avd_complementary, avd_triad, avd_analogous, avd_quad;
 
@@ -199,19 +212,20 @@ public class MainActivity extends AppCompatActivity implements MainMvpView {
     }
 
     @Override
-    public void updatePrediction(String result) {
+    public void updatePrediction(String prediction) {
         try {
-            String upperString = result.substring(0, 1).toUpperCase() + result.substring(1);
+            String upperString = prediction.substring(0, 1).toUpperCase() + prediction.substring(1);
             txt_season.setText(upperString);
         } catch (StringIndexOutOfBoundsException e) {
             Log.e(LOG_TAG, e.getMessage());
-            txt_season.setText(result);
+            txt_season.setText(prediction);
         }
     }
 
     @Override
-    public void updateColorWheel(@NonNull final int[] colors, @NonNull Bitmap bitmap) {
+    public void updateColorWheel(@NonNull String prediction, @NonNull Bitmap bitmap) {
 
+        int[] colors = getSeasonalColors(prediction);
         color_wheel.updateColors(colors);
         color_wheel.updateCenter(bitmap);
 
@@ -385,4 +399,19 @@ public class MainActivity extends AppCompatActivity implements MainMvpView {
             }
         }
     }
+
+    private int[] getSeasonalColors(String season) {
+        if (season.equals("autumn")) {
+            return autumn_colors;
+        } else if (season.equals("spring")) {
+            return spring_colors;
+        } else if (season.equals("summer")) {
+            return summer_colors;
+        } else if (season.equals("winter")) {
+            return winter_colors;
+        }
+
+        return new int[]{};
+    }
+
 }
