@@ -37,6 +37,7 @@ import com.keemsa.seasonify.util.SeasonifyImage;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.List;
 
 import butterknife.BindView;
@@ -88,6 +89,9 @@ public class MainActivity extends AppCompatActivity implements MainMvpView {
     @BindView(R.id.ll_just_started)
     LinearLayout ll_just_started;
 
+    @BindView(R.id.imv_fav)
+    ImageView imv_fav;
+
     AnimatedVectorDrawable avd_single, avd_complementary, avd_triad, avd_analogous, avd_quad;
 
     @OnClick(R.id.imv_camera)
@@ -99,6 +103,19 @@ public class MainActivity extends AppCompatActivity implements MainMvpView {
         }
     }
 
+    @OnClick(R.id.imv_fav)
+    public void favCombination() {
+        int[] colors = plt_combination.getColors();
+
+        if(mPresenter.existColorCombination(this, colors)){
+            mPresenter.removeStoredColorCombination(this, colors);
+            imv_fav.setSelected(false);
+        } else {
+            mPresenter.storeColorCombination(this, colors);
+            imv_fav.setSelected(true);
+        }
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -107,6 +124,7 @@ public class MainActivity extends AppCompatActivity implements MainMvpView {
         mPresenter.initTensorFlowAndLoadModel(this);
 
         setContentView(R.layout.activity_main);
+
         ButterKnife.bind(this);
 
         setSupportActionBar(tb);
@@ -327,6 +345,9 @@ public class MainActivity extends AppCompatActivity implements MainMvpView {
         plt_combination.setColors(numColors);
 
         plt_combination.setVisibility(View.VISIBLE);
+
+        boolean existCombination = mPresenter.existColorCombination(this, numColors);
+        imv_fav.setSelected(existCombination);
     }
 
     private View.OnTouchListener createColorSelectionListener(final ColorPickerView.COLOR_SELECTION colorSelection, final AnimatedVectorDrawable anim) {

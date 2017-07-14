@@ -7,6 +7,7 @@
     <string name="prf_prediction" translatable="false">prf_prediction</string>
     <string name="prf_selection_type" translatable="false">prf_selection_type</string>
     <string name="prf_color_coords" translatable="false">prf_color_coords</string>
+    <string name="prf_color_combinations" translatable="false">prf_color_combinations</string>
 
     <string name="lbl_w_season">Seasonify widget</string>
     <string name="lbl_about">About</string>

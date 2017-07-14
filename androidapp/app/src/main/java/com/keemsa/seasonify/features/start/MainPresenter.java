@@ -8,6 +8,7 @@ import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.preference.PreferenceManager;
+import android.support.annotation.ColorInt;
 import android.support.annotation.NonNull;
 import android.support.v4.content.FileProvider;
 import android.util.Log;
@@ -34,8 +35,13 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
@@ -94,6 +100,9 @@ public class MainPresenter extends BasePresenter<MainMvpView> implements BitmapL
 
     @BindString(R.string.prf_color_coords)
     String mStoredSelectedColorCoordsKey;
+
+    @BindString(R.string.prf_color_combinations)
+    String mStoredColorCombinationsKey;
 
     @BindArray(R.array.autumn_colors)
     int[] autumn_colors;
@@ -307,6 +316,109 @@ public class MainPresenter extends BasePresenter<MainMvpView> implements BitmapL
         } catch (IndexOutOfBoundsException e) {
             Log.e(LOG_TAG, e.getMessage());
         }
+    }
+
+    public void storeColorCombination(Context context, @ColorInt int[] colors) {
+        int[] iComb = Arrays.copyOf(colors, colors.length); // copy to avoid problems in the palette
+        Arrays.sort(iComb); // sort so when converting to string combinations are not repeated
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        Set<String> sCombinations;
+        sCombinations = preferences.getStringSet(mStoredColorCombinationsKey, null);
+
+        if(sCombinations == null) {
+            sCombinations = new HashSet<>();
+        }
+
+        String sComb = "";
+        for(int color : iComb) {
+            sComb += String.valueOf(color) + ";";
+        }
+        sComb = sComb.substring(0, sComb.length() - 1);
+        sCombinations.add(sComb);
+
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putStringSet(mStoredColorCombinationsKey, sCombinations);
+        editor.apply();
+    }
+
+    public List<int[]> getStoredColorCombinations(Context context) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        Set<String> sCombinations = preferences.getStringSet(mStoredColorCombinationsKey, null);
+        List<int[]> listCombs = new ArrayList<>();
+
+        if(sCombinations !=  null) {
+            Iterator iter = sCombinations.iterator();
+            while(iter.hasNext()) {
+                String sCurrentComb = (String) iter.next();
+                StringTokenizer st = new StringTokenizer(sCurrentComb, ";");
+                int[] iCurrentComb = new int[st.countTokens()];
+                int i = 0;
+                while(st.hasMoreTokens()) {
+                    iCurrentComb[i] = Integer.valueOf(st.nextToken());
+                }
+                listCombs.add(iCurrentComb);
+            }
+        }
+
+        return listCombs;
+    }
+
+    public boolean existColorCombination(Context context, int[] colors) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        Set<String> sCombinations = preferences.getStringSet(mStoredColorCombinationsKey, null);
+
+        if(sCombinations != null) {
+
+            int[] iComb = Arrays.copyOf(colors, colors.length); // copy to avoid problems in the palette
+            Arrays.sort(iComb); // sort so when converting to string combinations are not repeated
+
+            String sComb = "";
+            for(int color : iComb) {
+                sComb += String.valueOf(color) + ";";
+            }
+            sComb = sComb.substring(0, sComb.length() - 1);
+
+            return sCombinations.contains(sComb);
+        }
+
+        return false;
+    }
+
+    public boolean removeStoredColorCombination(Context context, int[] colors) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        Set<String> sCombinations = preferences.getStringSet(mStoredColorCombinationsKey, null);
+
+        if(sCombinations != null) {
+            int[] iComb = Arrays.copyOf(colors, colors.length); // copy to avoid problems in the palette
+            Arrays.sort(iComb);
+
+            String sComb = "";
+            for(int color : iComb) {
+                sComb += String.valueOf(color) + ";";
+            }
+            sComb = sComb.substring(0, sComb.length() - 1);
+
+            int originalCount = sCombinations.size();
+            Iterator iter = sCombinations.iterator();
+            while(iter.hasNext()) {
+                String sCurrentComb = (String) iter.next();
+
+                if(sComb.equals(sCurrentComb)) {
+                    iter.remove();
+                    break;
+                }
+            }
+            int finalCount = sCombinations.size();
+
+            if(finalCount < originalCount) {
+                SharedPreferences.Editor editor = preferences.edit();
+                editor.putStringSet(mStoredColorCombinationsKey, sCombinations);
+                editor.apply();
+                return true;
+            }
+        }
+
+        return false;
     }
 
     private int[] getSeasonalColors(String season) {
