@@ -7,6 +7,7 @@ import android.media.ExifInterface;
 
 import com.keemsa.seasonify.data.local.PreferencesHelper;
 import com.keemsa.seasonify.data.remote.FirebaseHelper;
+import com.keemsa.seasonify.util.RxEventBus;
 import com.keemsa.seasonify.util.SeasonifyImage;
 
 import java.io.FileInputStream;
@@ -31,12 +32,14 @@ public class DataManager {
 
     private final PreferencesHelper mPreferencesHelper;
     private final FirebaseHelper mFirebaseHelper;
+    private final RxEventBus mEventBus;
 
     @Inject
-    public DataManager(PreferencesHelper preferencesHelper) {
+    public DataManager(PreferencesHelper preferencesHelper, RxEventBus eventBus) {
         mPreferencesHelper = preferencesHelper;
         mFirebaseHelper = new FirebaseHelper(); // Does not depend on anything
-        }
+        mEventBus = eventBus;
+    }
 
     public PreferencesHelper getPreferencesHelper() {
         return mPreferencesHelper;
@@ -59,4 +62,6 @@ public class DataManager {
                 .observeOn(AndroidSchedulers.mainThread());
 
     }
+
+    
 }

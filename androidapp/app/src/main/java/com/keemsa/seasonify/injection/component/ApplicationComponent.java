@@ -10,6 +10,7 @@ import com.keemsa.seasonify.processing.ImageClassifierHelper;
 import com.keemsa.seasonify.processing.ImageProcessingHelper;
 import com.keemsa.seasonify.injection.ApplicationContext;
 import com.keemsa.seasonify.injection.module.ApplicationModule;
+import com.keemsa.seasonify.util.RxEventBus;
 
 import javax.inject.Singleton;
 
@@ -33,4 +34,6 @@ public interface ApplicationComponent {
     ImageClassifierHelper imageClassifierHelper();
 
     ImageProcessingHelper imageProcessingHelper();
+
+    RxEventBus eventBus();
 }
