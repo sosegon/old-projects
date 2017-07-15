@@ -1,7 +1,6 @@
 package com.keemsa.seasonify.features.start;
 
 import android.content.Context;
-import android.content.ContextWrapper;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
@@ -22,30 +21,17 @@ import com.keemsa.seasonify.base.BasePresenter;
 import com.keemsa.seasonify.data.DataManager;
 import com.keemsa.seasonify.injection.ConfigPersistent;
 import com.keemsa.seasonify.model.Prediction;
-import com.keemsa.seasonify.util.Cluster;
+import com.keemsa.seasonify.processing.Classifier;
+import com.keemsa.seasonify.processing.ImageClassifierHelper;
+import com.keemsa.seasonify.processing.ImageProcessingHelper;
 import com.keemsa.seasonify.util.SeasonifyImage;
 import com.keemsa.seasonify.util.SeasonifyUtils;
 
-import org.opencv.android.BaseLoaderCallback;
-import org.opencv.android.OpenCVLoader;
-import org.opencv.android.Utils;
-import org.opencv.core.Mat;
-import org.opencv.core.MatOfRect;
-import org.opencv.core.Rect;
-import org.opencv.core.Size;
-import org.opencv.imgcodecs.Imgcodecs;
-import org.opencv.imgproc.Imgproc;
-import org.opencv.objdetect.CascadeClassifier;
-
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
-import java.util.concurrent.Executor;
-import java.util.concurrent.Executors;
 
 import javax.inject.Inject;
 
@@ -63,13 +49,15 @@ public class MainPresenter extends BasePresenter<MainMvpView> {
 
     private final DataManager mDataManager;
     private final ImageClassifierHelper mImageClassifierHelper;
+    private final ImageProcessingHelper mImageProcesssingHelper;
 
     public static final String ACTION_DATA_UPDATED = "com.keemsa.seasonify.ACTION_DATA_UPDATED";
 
     @Inject
-    public MainPresenter(DataManager dataManager, ImageClassifierHelper imageClassifierHelper) {
+    public MainPresenter(DataManager dataManager, ImageClassifierHelper imageClassifierHelper, ImageProcessingHelper imageProcessingHelper) {
         mDataManager = dataManager;
         mImageClassifierHelper = imageClassifierHelper;
+        mImageProcesssingHelper = imageProcessingHelper;
     }
 
     public boolean hasStoredPrediction() {
@@ -136,7 +124,7 @@ public class MainPresenter extends BasePresenter<MainMvpView> {
     }
 
     private void classify(final Context context, String path, Bitmap bitmap) {
-        Bitmap faceBitmap = mImageClassifierHelper.detectFace(path);
+        Bitmap faceBitmap = mImageProcesssingHelper.detectFace(path, mImageClassifierHelper.INPUT_SIZE);
 
         if (faceBitmap != null) {
 

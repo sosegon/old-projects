@@ -14,7 +14,7 @@
  *    limitations under the License.
  */
 
-package com.keemsa.seasonify.features.start;
+package com.keemsa.seasonify.processing;
 
 import android.graphics.Bitmap;
 import android.graphics.RectF;

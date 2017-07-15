@@ -1,4 +1,4 @@
-package com.keemsa.seasonify.features.start;
+package com.keemsa.seasonify.processing;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -27,8 +27,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
-import java.util.concurrent.Executor;
-import java.util.concurrent.Executors;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -38,46 +36,29 @@ import javax.inject.Singleton;
  */
 
 @Singleton
-public class ImageClassifierHelper {
+public class ImageProcessingHelper {
 
-    private static final String LOG_TAG = ImageClassifierHelper.class.getSimpleName();
+    private static final String LOG_TAG = ImageProcessingHelper.class.getSimpleName();
 
     private final Context mContext;
-    private Executor executor;
-    private Classifier mClassifier;
     private CascadeClassifier mJavaDetector;
     private File mCascadeFile;
-
-    public static final int INPUT_SIZE = 128;
-    private static final int IMAGE_MEAN = 117;
-    private static final float IMAGE_STD = 1;
-    private static final String INPUT_NAME = "input_images_input";
-    private static final String OUTPUT_NAME = "output_labels/Softmax";
-    public static final String ACTION_DATA_UPDATED = "com.keemsa.seasonify.ACTION_DATA_UPDATED";
-
-    private static final String MODEL_FILE = "file:///android_asset/seasonify.pb";
-    private static final String LABEL_FILE = "file:///android_asset/seasonify.txt";
+    private BaseLoaderCallback mBaseLoaderCallback;
 
     @Inject
-    public ImageClassifierHelper(@ApplicationContext Context context) {
+    public ImageProcessingHelper(@ApplicationContext Context context) {
         mContext = context;
-        executor = Executors.newSingleThreadExecutor();
-        initTensorFlowAndLoadModel();
+        initBaseLoaderCallback();
     }
 
-    public List<Classifier.Recognition> classifyImage(Bitmap bitmap) {
-        return mClassifier.recognizeImage(bitmap);
-    }
-
-    public Bitmap detectFace(String path) {
-        BaseLoaderCallback loaderCallback = generateLoaderCallback(mContext);
+    public Bitmap detectFace(String path, int frameSize) {
 
         if (!OpenCVLoader.initDebug()) {
             Log.d(LOG_TAG, "Internal OpenCV library not found. Using OpenCV Manager for initialization");
-            OpenCVLoader.initAsync(OpenCVLoader.OPENCV_VERSION_3_0_0, mContext, loaderCallback);
+            OpenCVLoader.initAsync(OpenCVLoader.OPENCV_VERSION_3_0_0, mContext, mBaseLoaderCallback);
         } else {
             Log.d(LOG_TAG, "OpenCV library found inside package. Using it!");
-            loaderCallback.onManagerConnected(BaseLoaderCallback.SUCCESS);
+            mBaseLoaderCallback.onManagerConnected(BaseLoaderCallback.SUCCESS);
         }
 
         Mat imgMAT = Imgcodecs.imread(path, Imgcodecs.CV_LOAD_IMAGE_COLOR);
@@ -92,7 +73,7 @@ public class ImageClassifierHelper {
             Mat faceMAT = imgMAT.submat(facesArray[0]);
             Mat nFaceMAT = faceMAT.clone();
 
-            Imgproc.resize(faceMAT, nFaceMAT, new Size(INPUT_SIZE, INPUT_SIZE)); // resize to pass to mClassifier
+            Imgproc.resize(faceMAT, nFaceMAT, new Size(frameSize, frameSize)); // resize to pass to mClassifier
             Imgproc.cvtColor(nFaceMAT, nFaceMAT, Imgproc.COLOR_RGB2BGR); // bitmap is BGR
 
             if(BuildConfig.DEBUG){
@@ -116,8 +97,8 @@ public class ImageClassifierHelper {
     }
 
     // based on https://github.com/joaopedronardari/OpenCV-AndroidSamples/blob/master/app/src/main/java/com/jnardari/opencv_androidsamples/activities/FaceDetectionActivity.java#L62
-    private BaseLoaderCallback generateLoaderCallback(final Context context) {
-        return new BaseLoaderCallback(context) {
+    private void initBaseLoaderCallback() {
+        mBaseLoaderCallback = new BaseLoaderCallback(mContext) {
             @Override
             public void onManagerConnected(int status) {
                 switch (status) {
@@ -125,8 +106,8 @@ public class ImageClassifierHelper {
                         try {
 
                             // load cascade file from application resources
-                            InputStream is = context.getResources().openRawResource(R.raw.haarcascade_frontalface_default);
-                            File cascadeDir = context.getDir("cascade", Context.MODE_PRIVATE);
+                            InputStream is = mContext.getResources().openRawResource(R.raw.haarcascade_frontalface_default);
+                            File cascadeDir = mContext.getDir("cascade", Context.MODE_PRIVATE);
                             mCascadeFile = new File(cascadeDir, "haarcascade_frontalface_default.xml");
                             FileOutputStream os = new FileOutputStream(mCascadeFile);
 
@@ -158,25 +139,5 @@ public class ImageClassifierHelper {
                 }
             }
         };
-    }
-    private void initTensorFlowAndLoadModel() {
-        executor.execute(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    mClassifier = TensorFlowImageClassifier.create(
-                            mContext.getAssets(),
-                            MODEL_FILE,
-                            LABEL_FILE,
-                            INPUT_SIZE,
-                            IMAGE_MEAN,
-                            IMAGE_STD,
-                            INPUT_NAME,
-                            OUTPUT_NAME);
-                } catch (final Exception e) {
-                    throw new RuntimeException("Error initializing TensorFlow!", e);
-                }
-            }
-        });
     }
 }
