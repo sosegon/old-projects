@@ -32,6 +32,7 @@ import com.keemsa.colorwheel.OnColorsSelectedListener;
 import com.keemsa.seasonify.R;
 import com.keemsa.seasonify.base.BaseActivity;
 import com.keemsa.seasonify.features.about.AboutActivity;
+import com.keemsa.seasonify.util.RxEventBus;
 import com.keemsa.seasonify.util.SeasonifyImage;
 
 import java.io.File;
@@ -55,6 +56,9 @@ public class MainActivity extends BaseActivity implements MainMvpView {
 
     @Inject
     MainPresenter mPresenter;
+
+    @Inject
+    RxEventBus mEventBus;
 
     private ImageView[] selectionIcons;
 
@@ -291,36 +295,17 @@ public class MainActivity extends BaseActivity implements MainMvpView {
             }
         });
 
-        color_wheel.addOnColorsChangedListener(new OnColorsChangedListener() {
-            @Override
-            public void onColorsChanged(List<ColorElement> colors) {
-                updateColorsPalette(colors);
-            }
-        });
-
-        color_wheel.addOnCenterSelectedListener(new OnCenterSelectedListener() {
-            @Override
-            public void onCenterSelected() {
-                launchCamera();
-            }
-        });
-
-        color_wheel.addOnColorsSelectedListener(new OnColorsSelectedListener() {
-            @Override
-            public void onColorsSelected(List<ColorElement> colors) {
-                updateColorsPalette(colors);
-                mPresenter.storeSelectedColorCoords(colors);
-            }
-        });
-
+        color_wheel.addOnColorsChangedListener((colors -> updateColorsPalette(colors)));
+        color_wheel.addOnCenterSelectedListener(() -> launchCamera() );
+        color_wheel.addOnColorsSelectedListener((colors) -> {updateColorsPalette(colors); mPresenter.storeSelectedColorCoords(colors);});
     }
 
     private void initColorSelection() {
-        imv_single_sel.setOnTouchListener(createColorSelectionListener(ColorPickerView.COLOR_SELECTION.SINGLE, avd_single));
-        imv_complementary_sel.setOnTouchListener(createColorSelectionListener(ColorPickerView.COLOR_SELECTION.COMPLEMENTARY, avd_complementary));
-        imv_triad_sel.setOnTouchListener(createColorSelectionListener(ColorPickerView.COLOR_SELECTION.TRIAD, avd_triad));
-        imv_analogous_sel.setOnTouchListener(createColorSelectionListener(ColorPickerView.COLOR_SELECTION.ANALOGOUS, avd_analogous));
-        imv_quad_sel.setOnTouchListener(createColorSelectionListener(ColorPickerView.COLOR_SELECTION.SQUARE, avd_quad));
+        imv_single_sel.setOnClickListener(v -> clickColorSelection(imv_single_sel, ColorPickerView.COLOR_SELECTION.SINGLE, avd_single));
+        imv_complementary_sel.setOnClickListener(v -> clickColorSelection(imv_complementary_sel, ColorPickerView.COLOR_SELECTION.COMPLEMENTARY, avd_complementary));
+        imv_triad_sel.setOnClickListener(v -> clickColorSelection(imv_triad_sel, ColorPickerView.COLOR_SELECTION.TRIAD, avd_triad));
+        imv_analogous_sel.setOnClickListener(v -> clickColorSelection(imv_analogous_sel, ColorPickerView.COLOR_SELECTION.ANALOGOUS, avd_analogous));
+        imv_quad_sel.setOnClickListener(v -> clickColorSelection(imv_quad_sel, ColorPickerView.COLOR_SELECTION.SQUARE, avd_quad));
 
         selectionIcons = new ImageView[]{
                 imv_single_sel,
@@ -364,20 +349,15 @@ public class MainActivity extends BaseActivity implements MainMvpView {
         imv_fav.setSelected(existCombination);
     }
 
-    private View.OnTouchListener createColorSelectionListener(final ColorPickerView.COLOR_SELECTION colorSelection, final AnimatedVectorDrawable anim) {
-        return new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                color_wheel.setColorSelection(colorSelection);
-                updateColorsPalette(color_wheel.getCurrentColorElements());
-                int index = mPresenter.storeColorSelectionType(colorSelection);
-                updateColorSelection(index);
-                ((ImageView) v).setImageDrawable(anim);
-                anim.start();
+    private boolean clickColorSelection(View v, ColorPickerView.COLOR_SELECTION colorSelection, AnimatedVectorDrawable anim) {
+        color_wheel.setColorSelection(colorSelection);
+        updateColorsPalette(color_wheel.getCurrentColorElements());
+        int index = mPresenter.storeColorSelectionType(colorSelection);
+        updateColorSelection(index);
+        ((ImageView) v).setImageDrawable(anim);
+        anim.start();
 
-                return false;
-            }
-        };
+        return false;
     }
 
     private void displayCamera() {
