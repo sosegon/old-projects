@@ -14,7 +14,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicLong;
 
-//import timber.log.Timber;
+import timber.log.Timber;
 
 /**
  * Abstract activity that every other Activity in this application must implement. It handles
@@ -40,13 +40,13 @@ public class BaseActivity extends AppCompatActivity {
                 savedInstanceState.getLong(KEY_ACTIVITY_ID) : NEXT_ID.getAndIncrement();
         ConfigPersistentComponent configPersistentComponent;
         if (!sComponentsMap.containsKey(mActivityId)) {
-            //Timber.i("Creating new ConfigPersistentComponent id=%d", mActivityId);
+            Timber.i("Creating new ConfigPersistentComponent id=%d", mActivityId);
             configPersistentComponent = DaggerConfigPersistentComponent.builder()
                     .applicationComponent(SeasonifyApplication.get(this).getComponent())
                     .build();
             sComponentsMap.put(mActivityId, configPersistentComponent);
         } else {
-            //Timber.i("Reusing ConfigPersistentComponent id=%d", mActivityId);
+            Timber.i("Reusing ConfigPersistentComponent id=%d", mActivityId);
             configPersistentComponent = sComponentsMap.get(mActivityId);
         }
         mActivityComponent = configPersistentComponent.activityComponent(new ActivityModule(this));

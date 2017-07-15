@@ -4,7 +4,6 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.provider.MediaStore;
-import android.util.Log;
 
 import org.opencv.android.Utils;
 import org.opencv.core.Mat;
@@ -13,13 +12,13 @@ import org.opencv.imgproc.Imgproc;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
+import timber.log.Timber;
+
 /**
  * Created by sebastian on 4/26/17.
  */
 
 public class SeasonifyImage {
-
-    private static final String LOG_TAG = SeasonifyImage.class.getSimpleName();
 
     public static void addImageToGallery(final Context context, final String filePath) {
 
@@ -39,7 +38,7 @@ public class SeasonifyImage {
             out.flush();
             out.close();
         } catch (IOException e) {
-            Log.e(LOG_TAG, "Error saving face bitmap: " + e.getMessage());
+            Timber.e("Error saving face bitmap: " + e.getMessage());
         }
     }
 

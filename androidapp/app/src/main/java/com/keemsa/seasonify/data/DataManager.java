@@ -4,7 +4,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.media.ExifInterface;
-import android.util.Log;
 
 import com.keemsa.seasonify.data.local.PreferencesHelper;
 import com.keemsa.seasonify.data.remote.FirebaseHelper;
@@ -20,6 +19,7 @@ import javax.inject.Singleton;
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
+import timber.log.Timber;
 
 
 /**
@@ -79,7 +79,7 @@ public class DataManager {
                 Bitmap bitmap = BitmapFactory.decodeStream(input, null, bounds);
 
                 int rotationAngle = getCameraPhotoOrientation(path);
-                Log.e("ASync", "Rotate angle: " + rotationAngle);
+                Timber.e("Rotate angle: " + rotationAngle);
                 Matrix matrix = new Matrix();
                 matrix.postRotate(rotationAngle, (float) bitmap.getWidth() / 2, (float) bitmap.getHeight() / 2);
 

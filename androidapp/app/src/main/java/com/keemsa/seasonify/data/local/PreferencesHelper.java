@@ -20,14 +20,14 @@ import java.util.StringTokenizer;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import timber.log.Timber;
+
 /**
  * Created by sebastian on 14/07/17.
  */
 
 @Singleton
 public class PreferencesHelper {
-
-    private final String LOG_TAG = PreferencesHelper.class.getName();
 
     public static final String PREF_FILE_NAME = "seasonify_pref_file";
 
@@ -91,7 +91,7 @@ public class PreferencesHelper {
             String coords = String.valueOf(x) + ";" + String.valueOf(y);
             mPref.edit().putString(KEY_COLOR_COORDS, coords).apply();
         } catch (IndexOutOfBoundsException e) {
-            Log.e(LOG_TAG, e.getMessage());
+            Timber.e(e.getMessage());
         }
     }
 

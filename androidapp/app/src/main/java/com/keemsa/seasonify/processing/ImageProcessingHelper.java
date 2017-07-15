@@ -2,7 +2,6 @@ package com.keemsa.seasonify.processing;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.util.Log;
 
 import com.keemsa.seasonify.BuildConfig;
 import com.keemsa.seasonify.R;
@@ -31,14 +30,14 @@ import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import timber.log.Timber;
+
 /**
  * Created by sebastian on 14/07/17.
  */
 
 @Singleton
 public class ImageProcessingHelper {
-
-    private static final String LOG_TAG = ImageProcessingHelper.class.getSimpleName();
 
     private final Context mContext;
     private CascadeClassifier mJavaDetector;
@@ -54,10 +53,10 @@ public class ImageProcessingHelper {
     public Bitmap detectFace(String path, int frameSize) {
 
         if (!OpenCVLoader.initDebug()) {
-            Log.d(LOG_TAG, "Internal OpenCV library not found. Using OpenCV Manager for initialization");
+            Timber.d("Internal OpenCV library not found. Using OpenCV Manager for initialization");
             OpenCVLoader.initAsync(OpenCVLoader.OPENCV_VERSION_3_0_0, mContext, mBaseLoaderCallback);
         } else {
-            Log.d(LOG_TAG, "OpenCV library found inside package. Using it!");
+            Timber.d("OpenCV library found inside package. Using it!");
             mBaseLoaderCallback.onManagerConnected(BaseLoaderCallback.SUCCESS);
         }
 
@@ -121,14 +120,14 @@ public class ImageProcessingHelper {
 
                             mJavaDetector = new CascadeClassifier(mCascadeFile.getAbsolutePath());
                             if (mJavaDetector.empty()) {
-                                Log.e(LOG_TAG, "Failed to load cascade mClassifier");
+                                Timber.e("Failed to load cascade mClassifier");
                                 mJavaDetector = null;
                             } else
-                                Log.i(LOG_TAG, "Loaded cascade mClassifier from " + mCascadeFile.getAbsolutePath());
+                                Timber.i("Loaded cascade mClassifier from " + mCascadeFile.getAbsolutePath());
 
                             cascadeDir.delete();
                         } catch (IOException e) {
-                            Log.e(LOG_TAG, "Failed to load cascade: + " + e.getMessage());
+                            Timber.e("Failed to load cascade: + " + e.getMessage());
                         }
                     }
                     break;

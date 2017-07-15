@@ -8,7 +8,6 @@ import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
@@ -45,10 +44,10 @@ import butterknife.BindArray;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import timber.log.Timber;
 
 public class MainActivity extends BaseActivity implements MainMvpView {
 
-    private static final String LOG_TAG = MainActivity.class.getSimpleName();
     private static final int REQUEST_IMAGE_CAPTURE = 1;
     private boolean onActivityResultCalled = false;
     private File mPhotoFile;
@@ -218,7 +217,7 @@ public class MainActivity extends BaseActivity implements MainMvpView {
             String upperString = prediction.substring(0, 1).toUpperCase() + prediction.substring(1);
             txt_season.setText(upperString);
         } catch (StringIndexOutOfBoundsException e) {
-            Log.e(LOG_TAG, e.getMessage());
+            Timber.e(e.getMessage());
             txt_season.setText(prediction);
         }
     }
@@ -247,7 +246,7 @@ public class MainActivity extends BaseActivity implements MainMvpView {
         try {
             selectionIcons[index].setSelected(true);
         } catch (IndexOutOfBoundsException e) {
-            Log.e(LOG_TAG, e.getMessage());
+            Timber.e(e.getMessage());
         }
     }
 
@@ -372,7 +371,6 @@ public class MainActivity extends BaseActivity implements MainMvpView {
                 color_wheel.setColorSelection(colorSelection);
                 updateColorsPalette(color_wheel.getCurrentColorElements());
                 int index = mPresenter.storeColorSelectionType(colorSelection);
-                Log.e(LOG_TAG, "selection type: " + index);
                 updateColorSelection(index);
                 ((ImageView) v).setImageDrawable(anim);
                 anim.start();

@@ -19,7 +19,6 @@ package com.keemsa.seasonify.processing;
 import android.content.res.AssetManager;
 import android.graphics.Bitmap;
 import android.os.Trace;
-import android.util.Log;
 
 import org.tensorflow.contrib.android.TensorFlowInferenceInterface;
 
@@ -32,6 +31,8 @@ import java.util.List;
 import java.util.PriorityQueue;
 import java.util.Vector;
 
+import timber.log.Timber;
+
 /**
  * Created by amitshekhar on 06/03/17.
  */
@@ -40,8 +41,6 @@ import java.util.Vector;
  * A classifier specialized to label images using TensorFlow.
  */
 public class TensorFlowImageClassifier implements Classifier {
-
-    private static final String TAG = "TensorFlowImageClassifier";
 
     // Only return this many results with at least this confidence.
     private static final int MAX_RESULTS = 3;
@@ -96,7 +95,7 @@ public class TensorFlowImageClassifier implements Classifier {
         // Read the label names into memory.
         // TODO(andrewharp): make this handle non-assets.
         String actualFilename = labelFilename.split("file:///android_asset/")[1];
-        Log.i(TAG, "Reading labels from: " + actualFilename);
+        Timber.i("Reading labels from: " + actualFilename);
         BufferedReader br = null;
         br = new BufferedReader(new InputStreamReader(assetManager.open(actualFilename)));
         String line;
@@ -113,7 +112,7 @@ public class TensorFlowImageClassifier implements Classifier {
 //        int numClasses = 4;
         int numClasses =
                 (int) c.inferenceInterface.graph().operation(outputName).output(0).shape().size(1);
-        Log.i(TAG, "Read " + c.labels.size() + " labels, output layer size is " + numClasses);
+        Timber.i("Read " + c.labels.size() + " labels, output layer size is " + numClasses);
 
         // Ideally, inputSize could have been retrieved from the shape of the input operation.  Alas,
         // the placeholder node for input in the graphdef typically used does not specify a shape, so it

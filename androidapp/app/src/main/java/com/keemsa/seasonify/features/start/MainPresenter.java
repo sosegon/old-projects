@@ -7,7 +7,6 @@ import android.net.Uri;
 import android.support.annotation.ColorInt;
 import android.support.annotation.NonNull;
 import android.support.v4.content.FileProvider;
-import android.util.Log;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -37,6 +36,7 @@ import javax.inject.Inject;
 
 import io.reactivex.Observer;
 import io.reactivex.disposables.Disposable;
+import timber.log.Timber;
 
 /**
  * Created by sebastian on 3/27/17.
@@ -44,8 +44,6 @@ import io.reactivex.disposables.Disposable;
 
 @ConfigPersistent
 public class MainPresenter extends BasePresenter<MainMvpView> {
-
-    private final String LOG_TAG = MainPresenter.class.getSimpleName();
 
     private final DataManager mDataManager;
     private final ImageClassifierHelper mImageClassifierHelper;
@@ -166,7 +164,7 @@ public class MainPresenter extends BasePresenter<MainMvpView> {
                 }).addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
-                        Log.e(LOG_TAG, "Error when storing file: " + e.getMessage());
+                        Timber.e("Error when storing file: " + e.getMessage());
                     }
                 });
             }

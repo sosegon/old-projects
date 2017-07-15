@@ -17,8 +17,6 @@ import javax.inject.Singleton;
 @Singleton
 public class ImageClassifierHelper {
 
-    private static final String LOG_TAG = ImageClassifierHelper.class.getSimpleName();
-
     private final Context mContext;
     private Classifier mClassifier;
 

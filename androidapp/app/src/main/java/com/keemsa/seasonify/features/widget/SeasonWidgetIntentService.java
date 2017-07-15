@@ -7,7 +7,6 @@ import android.content.ComponentName;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.util.Log;
 import android.widget.RemoteViews;
 
 import com.keemsa.seasonify.R;
@@ -23,13 +22,13 @@ import java.io.InputStream;
 
 import javax.inject.Inject;
 
+import timber.log.Timber;
+
 /**
  * Created by sebastian on 4/6/17.
  */
 
 public class SeasonWidgetIntentService extends IntentService {
-
-    public final static String LOG_TAG = SeasonWidgetIntentService.class.getSimpleName();
 
     private ServiceComponent mServiceComponent;
 
@@ -77,7 +76,7 @@ public class SeasonWidgetIntentService extends IntentService {
 
                 views.setImageViewBitmap(R.id.imv_w_face, bitmap);
             } catch (IOException e) {
-                Log.e(LOG_TAG, e.getMessage());
+                Timber.e(e.getMessage());
             }
 
             Intent launchIntent = new Intent(this, MainActivity.class);
