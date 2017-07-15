@@ -8,15 +8,20 @@ import android.graphics.Matrix;
 import android.media.ExifInterface;
 import android.provider.MediaStore;
 
+import com.keemsa.seasonify.R;
+
 import org.opencv.android.Utils;
 import org.opencv.core.Mat;
 import org.opencv.imgproc.Imgproc;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import timber.log.Timber;
 
@@ -25,6 +30,24 @@ import timber.log.Timber;
  */
 
 public class SeasonifyImage {
+
+    public static File createImageFile(Context context) throws IOException {
+
+        // The directory for the picture
+        final String appName = context.getResources().getString(R.string.app_name);
+        File storageDir = context.getExternalFilesDir(appName);
+
+        // Create an image file name
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        String imageFileName = "JPEG_" + timeStamp + "_";
+        File image = File.createTempFile(
+                imageFileName,  /* prefix */
+                ".jpg",         /* suffix */
+                storageDir      /* directory */
+        );
+
+        return image;
+    }
 
     public static void addImageToGallery(final Context context, final String filePath) {
 

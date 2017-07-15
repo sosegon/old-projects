@@ -30,6 +30,7 @@ import com.keemsa.seasonify.base.BaseActivity;
 import com.keemsa.seasonify.features.about.AboutActivity;
 import com.keemsa.seasonify.util.RxEventBus;
 import com.keemsa.seasonify.util.SeasonifyImage;
+import com.keemsa.seasonify.util.SeasonifyUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -44,14 +45,14 @@ import butterknife.OnClick;
 import io.reactivex.functions.Consumer;
 import timber.log.Timber;
 
+import static com.keemsa.colorwheel.ColorPickerView.COLOR_SELECTION;
+import static com.keemsa.colorwheel.ColorPickerView.COLOR_SELECTION.ANALOGOUS;
+import static com.keemsa.colorwheel.ColorPickerView.COLOR_SELECTION.COMPLEMENTARY;
+import static com.keemsa.colorwheel.ColorPickerView.COLOR_SELECTION.SINGLE;
+import static com.keemsa.colorwheel.ColorPickerView.COLOR_SELECTION.SQUARE;
+import static com.keemsa.colorwheel.ColorPickerView.COLOR_SELECTION.TRIAD;
 import static com.keemsa.seasonify.util.RxEventBus.RX_BUS_EVENTS.COLOR_SELECTED;
 import static com.keemsa.seasonify.util.RxEventBus.RX_BUS_EVENTS.COLOR_SELECTION_CHANGED;
-import static com.keemsa.colorwheel.ColorPickerView.COLOR_SELECTION.SINGLE;
-import static com.keemsa.colorwheel.ColorPickerView.COLOR_SELECTION.COMPLEMENTARY;
-import static com.keemsa.colorwheel.ColorPickerView.COLOR_SELECTION.TRIAD;
-import static com.keemsa.colorwheel.ColorPickerView.COLOR_SELECTION.ANALOGOUS;
-import static com.keemsa.colorwheel.ColorPickerView.COLOR_SELECTION.SQUARE;
-import static com.keemsa.colorwheel.ColorPickerView.COLOR_SELECTION;
 
 public class MainActivity extends BaseActivity implements MainMvpView {
 
@@ -394,13 +395,13 @@ public class MainActivity extends BaseActivity implements MainMvpView {
         if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
             // Create the File where the photo should go
             try {
-                mPhotoFile = mPresenter.createImageFile(this);
+                mPhotoFile = SeasonifyImage.createImageFile(this);
             } catch (IOException ex) {
                 // Error occurred while creating the File
             }
             // Continue only if the File was successfully created
             if (mPhotoFile != null) {
-                Uri uriPhoto = mPresenter.generateUri(this, mPhotoFile);
+                Uri uriPhoto = SeasonifyUtils.generateUri(this, mPhotoFile);
                 takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, uriPhoto);
                 startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
             }
