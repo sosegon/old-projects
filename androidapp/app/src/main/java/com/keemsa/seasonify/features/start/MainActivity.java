@@ -10,7 +10,6 @@ import android.support.annotation.NonNull;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewTreeObserver;
 import android.widget.FrameLayout;
@@ -26,9 +25,6 @@ import com.google.android.gms.ads.MobileAds;
 import com.keemsa.colorpalette.ColorPalette;
 import com.keemsa.colorwheel.ColorElement;
 import com.keemsa.colorwheel.ColorPickerView;
-import com.keemsa.colorwheel.OnCenterSelectedListener;
-import com.keemsa.colorwheel.OnColorsChangedListener;
-import com.keemsa.colorwheel.OnColorsSelectedListener;
 import com.keemsa.seasonify.R;
 import com.keemsa.seasonify.base.BaseActivity;
 import com.keemsa.seasonify.features.about.AboutActivity;
@@ -45,7 +41,17 @@ import butterknife.BindArray;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import io.reactivex.functions.Consumer;
 import timber.log.Timber;
+
+import static com.keemsa.seasonify.util.RxEventBus.RX_BUS_EVENTS.COLOR_SELECTED;
+import static com.keemsa.seasonify.util.RxEventBus.RX_BUS_EVENTS.COLOR_SELECTION_CHANGED;
+import static com.keemsa.colorwheel.ColorPickerView.COLOR_SELECTION.SINGLE;
+import static com.keemsa.colorwheel.ColorPickerView.COLOR_SELECTION.COMPLEMENTARY;
+import static com.keemsa.colorwheel.ColorPickerView.COLOR_SELECTION.TRIAD;
+import static com.keemsa.colorwheel.ColorPickerView.COLOR_SELECTION.ANALOGOUS;
+import static com.keemsa.colorwheel.ColorPickerView.COLOR_SELECTION.SQUARE;
+import static com.keemsa.colorwheel.ColorPickerView.COLOR_SELECTION;
 
 public class MainActivity extends BaseActivity implements MainMvpView {
 
@@ -153,6 +159,8 @@ public class MainActivity extends BaseActivity implements MainMvpView {
         initTxtPrediction();
 
         initColorWheel();
+
+        initPalette();
 
         initAnimatables();  // before initColorSelection() to make use of them
 
@@ -295,17 +303,37 @@ public class MainActivity extends BaseActivity implements MainMvpView {
             }
         });
 
-        color_wheel.addOnColorsChangedListener((colors -> updateColorsPalette(colors)));
+        color_wheel.addOnColorsChangedListener((colors) -> mEventBus.post(COLOR_SELECTED));
         color_wheel.addOnCenterSelectedListener(() -> launchCamera() );
-        color_wheel.addOnColorsSelectedListener((colors) -> {updateColorsPalette(colors); mPresenter.storeSelectedColorCoords(colors);});
+        color_wheel.addOnColorsSelectedListener((colors) -> {mEventBus.post(COLOR_SELECTED); mPresenter.storeSelectedColorCoords(colors);});
+
+        Consumer<Object> colorWheelConsumer = (y) ->
+        {
+            if(y == COLOR_SELECTION_CHANGED) {
+                COLOR_SELECTION cs = COLOR_SELECTION.indexOf(mPresenter.getStoredColorSelectionType());
+                color_wheel.setColorSelection(cs);
+                mEventBus.post(COLOR_SELECTED);
+            }
+        };
+        mEventBus.observable().subscribe(colorWheelConsumer);
+    }
+
+    private void initPalette() {
+        Consumer<Object> paletteConsumer = (y) ->
+        {
+            if(y == COLOR_SELECTED) {
+                updateColorsPalette(color_wheel.getCurrentColorElements());
+            }
+        };
+        mEventBus.observable().subscribe(paletteConsumer);
     }
 
     private void initColorSelection() {
-        imv_single_sel.setOnClickListener(v -> clickColorSelection(imv_single_sel, ColorPickerView.COLOR_SELECTION.SINGLE, avd_single));
-        imv_complementary_sel.setOnClickListener(v -> clickColorSelection(imv_complementary_sel, ColorPickerView.COLOR_SELECTION.COMPLEMENTARY, avd_complementary));
-        imv_triad_sel.setOnClickListener(v -> clickColorSelection(imv_triad_sel, ColorPickerView.COLOR_SELECTION.TRIAD, avd_triad));
-        imv_analogous_sel.setOnClickListener(v -> clickColorSelection(imv_analogous_sel, ColorPickerView.COLOR_SELECTION.ANALOGOUS, avd_analogous));
-        imv_quad_sel.setOnClickListener(v -> clickColorSelection(imv_quad_sel, ColorPickerView.COLOR_SELECTION.SQUARE, avd_quad));
+        imv_single_sel.setOnClickListener(v -> clickColorSelection(imv_single_sel, SINGLE, avd_single));
+        imv_complementary_sel.setOnClickListener(v -> clickColorSelection(imv_complementary_sel, COMPLEMENTARY, avd_complementary));
+        imv_triad_sel.setOnClickListener(v -> clickColorSelection(imv_triad_sel, TRIAD, avd_triad));
+        imv_analogous_sel.setOnClickListener(v -> clickColorSelection(imv_analogous_sel, ANALOGOUS, avd_analogous));
+        imv_quad_sel.setOnClickListener(v -> clickColorSelection(imv_quad_sel, SQUARE, avd_quad));
 
         selectionIcons = new ImageView[]{
                 imv_single_sel,
@@ -350,12 +378,12 @@ public class MainActivity extends BaseActivity implements MainMvpView {
     }
 
     private boolean clickColorSelection(View v, ColorPickerView.COLOR_SELECTION colorSelection, AnimatedVectorDrawable anim) {
-        color_wheel.setColorSelection(colorSelection);
-        updateColorsPalette(color_wheel.getCurrentColorElements());
         int index = mPresenter.storeColorSelectionType(colorSelection);
         updateColorSelection(index);
         ((ImageView) v).setImageDrawable(anim);
         anim.start();
+
+        mEventBus.post(COLOR_SELECTION_CHANGED);
 
         return false;
     }
