@@ -5,11 +5,8 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.support.annotation.ColorInt;
-import android.support.annotation.NonNull;
 import android.support.v4.content.FileProvider;
 
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.keemsa.colorwheel.ColorElement;
@@ -34,9 +31,9 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import io.reactivex.Observer;
-import io.reactivex.disposables.Disposable;
 import timber.log.Timber;
+
+import static com.keemsa.seasonify.processing.ImageClassifierHelper.INPUT_SIZE;
 
 /**
  * Created by sebastian on 3/27/17.
@@ -65,32 +62,12 @@ public class MainPresenter extends BasePresenter<MainMvpView> {
         return !(predictedSeason.equals("") && photoPath.equals(""));
     }
 
-    public void classifyImage(final Context context, File photoFile) {
+    public void classifyImage(Context context, File photoFile) {
 
-        final String path = photoFile.getAbsolutePath();
+        String path = photoFile.getAbsolutePath();
 
         mDataManager.classifyImage(path, mImageClassifierHelper.INPUT_SIZE)
-                .subscribe(new Observer<Bitmap>() {
-                    @Override
-                    public void onSubscribe(@io.reactivex.annotations.NonNull Disposable d) {
-
-                    }
-
-                    @Override
-                    public void onNext(@io.reactivex.annotations.NonNull Bitmap bitmap) {
-                        classify(context, path, bitmap);
-                    }
-
-                    @Override
-                    public void onError(@io.reactivex.annotations.NonNull Throwable e) {
-
-                    }
-
-                    @Override
-                    public void onComplete() {
-
-                    }
-                });
+                    .subscribe((y) -> classify(context, path));
     }
 
     public File createImageFile(Context context) throws IOException {
@@ -121,8 +98,8 @@ public class MainPresenter extends BasePresenter<MainMvpView> {
         }
     }
 
-    private void classify(final Context context, String path, Bitmap bitmap) {
-        Bitmap faceBitmap = mImageProcesssingHelper.detectFace(path, mImageClassifierHelper.INPUT_SIZE);
+    private void classify(final Context context, String path) {
+        Bitmap faceBitmap = mImageProcesssingHelper.detectFace(path, INPUT_SIZE);
 
         if (faceBitmap != null) {
 
@@ -139,34 +116,18 @@ public class MainPresenter extends BasePresenter<MainMvpView> {
             if (isViewAttached()) {
 
                 String season = results.get(0).getTitle();
-                Uri photoUri = generateUri(context, new File(path)); // To update the view
                 Uri photoUri2 = Uri.fromFile(new File(faceOnlyPath)); // To store in firebase
 
                 updateViewUponPrediction(season, faceBitmap);
 
-                storePrediction(season);
-                storePhotoPath(faceOnlyPath);
+                mDataManager.getPreferencesHelper().storePrediction(season);
+                mDataManager.getPreferencesHelper().storePhotoPath(faceOnlyPath);
 
-                final int seasonInt = getPredictionAsInteger(season);
+                int seasonInt = getPredictionAsInteger(season);
                 StorageReference facePhotoRef = mDataManager.getFirebaseHelper().getFacePhotoReference(photoUri2.getLastPathSegment());
-                facePhotoRef.putFile(photoUri2).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                    @Override
-                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                        Uri downloadUrl = taskSnapshot.getDownloadUrl();
-                        Prediction prediction = new Prediction(seasonInt, downloadUrl.toString());
-                        mDataManager.getFirebaseHelper().storePrediction(prediction);
-
-                        // Send broadcast to update the widgets
-                        Intent updateIntent = new Intent(ACTION_DATA_UPDATED);
-                        updateIntent.setPackage(context.getPackageName());
-                        context.sendBroadcast(updateIntent);
-                    }
-                }).addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Timber.e("Error when storing file: " + e.getMessage());
-                    }
-                });
+                facePhotoRef.putFile(photoUri2)
+                            .addOnSuccessListener((y) -> onSuccessPutFile(context, y, seasonInt))
+                            .addOnFailureListener((y) -> Timber.e("Error when storing file: " + y.getMessage()));
             }
         } else {
             getMvpView().showToastMessage(context.getString(R.string.msg_face_no_detected));
@@ -183,44 +144,15 @@ public class MainPresenter extends BasePresenter<MainMvpView> {
     }
 
     public void loadSavedPhoto() {
-        mDataManager.loadImage(getStoredPhotoPath(), mImageClassifierHelper.INPUT_SIZE, mImageClassifierHelper.INPUT_SIZE)
-                    .subscribe(new Observer<Bitmap>() {
-                        @Override
-                        public void onSubscribe(@io.reactivex.annotations.NonNull Disposable d) {
-
-                        }
-
-                        @Override
-                        public void onNext(@io.reactivex.annotations.NonNull Bitmap bitmap) {
-                            load(bitmap);
-                        }
-
-                        @Override
-                        public void onError(@io.reactivex.annotations.NonNull Throwable e) {
-
-                        }
-
-                        @Override
-                        public void onComplete() {
-
-                        }
-                    });
-    }
-
-    public String getStoredPhotoPath() {
-        return mDataManager.getPreferencesHelper().retrievePhotoPath();
-    }
-
-    public void storePhotoPath(String path) {
-        mDataManager.getPreferencesHelper().storePhotoPath(path);
+        mDataManager.loadImage(
+                        mDataManager.getPreferencesHelper().retrievePhotoPath(),
+                        INPUT_SIZE,
+                        INPUT_SIZE)
+                    .subscribe((y) -> load(y));
     }
 
     public String getStoredPrediction() {
         return mDataManager.getPreferencesHelper().retrievePrediction();
-    }
-
-    public void storePrediction(String prediction) {
-        mDataManager.getPreferencesHelper().storePrediction(prediction);
     }
 
     public int getStoredColorSelectionType() {
@@ -253,6 +185,17 @@ public class MainPresenter extends BasePresenter<MainMvpView> {
 
     public boolean removeStoredColorCombination(int[] colors) {
         return mDataManager.getPreferencesHelper().deleteColorCombination(colors);
+    }
+
+    private void onSuccessPutFile(Context context, UploadTask.TaskSnapshot taskSnapshot, int seasonInt) {
+        Uri downloadUrl = taskSnapshot.getDownloadUrl();
+        Prediction prediction = new Prediction(seasonInt, downloadUrl.toString());
+        mDataManager.getFirebaseHelper().storePrediction(prediction);
+
+        // Send broadcast to update the widgets
+        Intent updateIntent = new Intent(ACTION_DATA_UPDATED);
+        updateIntent.setPackage(context.getPackageName());
+        context.sendBroadcast(updateIntent);
     }
 
     private int getPredictionAsInteger(String season) {
