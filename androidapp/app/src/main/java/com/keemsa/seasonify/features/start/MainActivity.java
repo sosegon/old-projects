@@ -140,7 +140,6 @@ public class MainActivity extends BaseActivity implements MainMvpView {
         ButterKnife.bind(this);
 
         mPresenter.attachView(this);
-        mPresenter.initTensorFlowAndLoadModel(this);
 
         setSupportActionBar(tb);
 

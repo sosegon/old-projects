@@ -6,6 +6,7 @@ import android.content.Context;
 import com.keemsa.seasonify.SeasonifyApplication;
 import com.keemsa.seasonify.data.DataManager;
 import com.keemsa.seasonify.data.local.PreferencesHelper;
+import com.keemsa.seasonify.features.start.ImageClassifierHelper;
 import com.keemsa.seasonify.injection.ApplicationContext;
 import com.keemsa.seasonify.injection.module.ApplicationModule;
 
@@ -27,4 +28,6 @@ public interface ApplicationComponent {
     PreferencesHelper preferencesHelper();
 
     DataManager dataManager();
+
+    ImageClassifierHelper imageClassifierHelper();
 }
