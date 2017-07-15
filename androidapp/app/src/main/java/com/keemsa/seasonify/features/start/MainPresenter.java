@@ -88,12 +88,8 @@ public class MainPresenter extends BasePresenter<MainMvpView> {
     }
 
     private void load(Bitmap bitmap) {
-        String predictedSeason = getStoredPrediction();
-
-        if (isViewAttached()) {
-            if (bitmap != null && !predictedSeason.equals("")) {
-                updateViewUponPrediction(predictedSeason, bitmap);
-            }
+        if (isViewAttached() && bitmap != null) {
+            getMvpView().updatePrediction(mDataManager.getPreferencesHelper().retrievePrediction(), bitmap, false);
         }
     }
 
@@ -117,7 +113,7 @@ public class MainPresenter extends BasePresenter<MainMvpView> {
                 String season = results.get(0).getTitle();
                 Uri photoUri2 = Uri.fromFile(new File(faceOnlyPath)); // To store in firebase
 
-                updateViewUponPrediction(season, faceBitmap);
+                getMvpView().updatePrediction(season, faceBitmap, true);
 
                 mDataManager.getPreferencesHelper().storePrediction(season);
                 mDataManager.getPreferencesHelper().storePhotoPath(faceOnlyPath);
@@ -159,11 +155,5 @@ public class MainPresenter extends BasePresenter<MainMvpView> {
             return 3;
         }
         return -1;
-    }
-
-    private void updateViewUponPrediction(String prediction, Bitmap bitmap) {
-        getMvpView().updatePrediction(prediction);
-        getMvpView().updateColorWheel(prediction, bitmap);
-        getMvpView().updateColorSelection(getStoredColorSelectionType());
     }
 }

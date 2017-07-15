@@ -58,6 +58,7 @@ import static com.keemsa.seasonify.util.RxEvent.RX_EVENT_TYPE.COLOR_COMBINATION_
 import static com.keemsa.seasonify.util.RxEvent.RX_EVENT_TYPE.COLOR_COORDS_SELECTED;
 import static com.keemsa.seasonify.util.RxEvent.RX_EVENT_TYPE.COLOR_SELECTION_SELECTED;
 import static com.keemsa.seasonify.util.RxEvent.RX_EVENT_TYPE.COLOR_SELECTION_UPDATED;
+import static com.keemsa.seasonify.util.RxEvent.RX_EVENT_TYPE.PREDICTION_CHANGED;
 
 public class MainActivity extends BaseActivity implements MainMvpView {
 
@@ -154,8 +155,6 @@ public class MainActivity extends BaseActivity implements MainMvpView {
 
         initAd();
 
-        initTxtPrediction();
-
         initColorWheel();
 
         initPalette();
@@ -224,33 +223,34 @@ public class MainActivity extends BaseActivity implements MainMvpView {
     }
 
     @Override
-    public void updatePrediction(String prediction) {
+    public void updatePrediction(@NonNull String prediction, @NonNull Bitmap bitmap, @NonNull boolean isNewPrediction) {
         try {
+            if(isNewPrediction) {
+                mEventBus.post(new RxEvent(PREDICTION_CHANGED, prediction));
+            }
+
             String upperString = prediction.substring(0, 1).toUpperCase() + prediction.substring(1);
             txt_season.setText(upperString);
+
+            int[] colors = getSeasonalColors(prediction);
+            color_wheel.updateColors(colors);
+            color_wheel.updateCenter(bitmap);
+
+            float[] coords = mPresenter.getStoredSelectedColorCoords();
+            color_wheel.selectColors(coords[0], coords[1]);
+
+            mEventBus.post(new RxEvent(COLOR_CHANGED, color_wheel.getCurrentColorElements()));
         } catch (StringIndexOutOfBoundsException e) {
             Timber.e(e.getMessage());
-            txt_season.setText(prediction);
         }
     }
 
     @Override
-    public void updateColorWheel(@NonNull String prediction, @NonNull Bitmap bitmap) {
-
-        int[] colors = getSeasonalColors(prediction);
-        color_wheel.updateColors(colors);
-        color_wheel.updateCenter(bitmap);
-
-        ll_just_started.setVisibility(View.GONE);
-        ll_main.setVisibility(View.VISIBLE);
-
-        float[] coords = mPresenter.getStoredSelectedColorCoords();
-        color_wheel.selectColors(coords[0], coords[1]);
-        updateColorsPalette(color_wheel.getCurrentColorElements());
+    public void showToastMessage(String message) {
+        Toast.makeText(this, message, Toast.LENGTH_LONG).show();
     }
 
-    @Override
-    public void updateColorSelection(int index) {
+    private void updateColorSelection(int index) {
         for(ImageView selector : selectionIcons) {
             selector.setSelected(false);
         }
@@ -260,11 +260,6 @@ public class MainActivity extends BaseActivity implements MainMvpView {
         } catch (IndexOutOfBoundsException e) {
             Timber.e(e.getMessage());
         }
-    }
-
-    @Override
-    public void showToastMessage(String message) {
-        Toast.makeText(this, message, Toast.LENGTH_LONG).show();
     }
 
     private void initAd() {
@@ -279,10 +274,6 @@ public class MainActivity extends BaseActivity implements MainMvpView {
         });
         AdRequest ar = new AdRequest.Builder().build();
         mInterstitialAd.loadAd(ar);
-    }
-
-    private void initTxtPrediction() {
-        txt_season.setText(mPresenter.getStoredPrediction());
     }
 
     private void initColorWheel() {
@@ -338,7 +329,7 @@ public class MainActivity extends BaseActivity implements MainMvpView {
         mEventBus.observable().subscribe(paletteConsumer);
     }
 
-    private void initFav() {
+    private void initFav() { // TODO update fav at start
         Consumer<Object> favConsumer = (y) ->
         {
             if(((RxEvent)y).getType() == COLOR_COMBINATION_UPDATED) {
@@ -381,6 +372,8 @@ public class MainActivity extends BaseActivity implements MainMvpView {
             }
         };
         mEventBus.observable().subscribe(selectionConsumer);
+
+        updateColorSelection(mPresenter.getStoredColorSelectionType());
     }
 
     private void initLayoutElements() {

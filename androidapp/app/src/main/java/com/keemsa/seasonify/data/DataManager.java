@@ -26,6 +26,10 @@ import static com.keemsa.seasonify.util.RxEvent.RX_EVENT_TYPE.COLOR_COORDS_SELEC
 import static com.keemsa.seasonify.util.RxEvent.RX_EVENT_TYPE.COLOR_SELECTION_SELECTED;
 import static com.keemsa.colorwheel.ColorPickerView.COLOR_SELECTION;
 import static com.keemsa.seasonify.util.RxEvent.RX_EVENT_TYPE.COLOR_SELECTION_UPDATED;
+import static com.keemsa.seasonify.util.RxEvent.RX_EVENT_TYPE.PREDICTION_QUERIED;
+import static com.keemsa.seasonify.util.RxEvent.RX_EVENT_TYPE.PREDICTION_REQUESTED;
+import static com.keemsa.seasonify.util.RxEvent.RX_EVENT_TYPE.PREDICTION_CHANGED;
+import static com.keemsa.seasonify.util.RxEvent.RX_EVENT_TYPE.PREDICTION_UPDATED;
 
 
 /**
@@ -110,5 +114,26 @@ public class DataManager {
             }
         } ;
         mEventBus.observable().subscribe(colorSelection);
+
+        // Prediction
+        Consumer<Object> predictionQuery = (y) -> {
+            if(((RxEvent)y).getType() == PREDICTION_REQUESTED) {
+                try {
+                    String prediction = mPreferencesHelper.retrievePrediction();
+                    mEventBus.post(new RxEvent(PREDICTION_QUERIED, prediction));
+                } catch(ClassCastException e) {
+                    Timber.e(e.getMessage());
+                }
+            } else if(((RxEvent)y).getType() == PREDICTION_CHANGED) {
+                try {
+                    String prediction = (String)(((RxEvent) y).getArgument());
+                    mPreferencesHelper.storePrediction(prediction);
+                    mEventBus.post(new RxEvent(PREDICTION_UPDATED, prediction));
+                } catch(ClassCastException e) {
+                    Timber.e(e.getMessage());
+                }
+            }
+        };
+        mEventBus.observable().subscribe(predictionQuery);
     }
 }
