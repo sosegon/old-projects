@@ -49,12 +49,15 @@ import java.util.concurrent.Executors;
 
 import javax.inject.Inject;
 
+import io.reactivex.Observer;
+import io.reactivex.disposables.Disposable;
+
 /**
  * Created by sebastian on 3/27/17.
  */
 
 @ConfigPersistent
-public class MainPresenter extends BasePresenter<MainMvpView> implements BitmapLoaderAsyncTask.BitmapLoaderAsyncTaskReceiver {
+public class MainPresenter extends BasePresenter<MainMvpView> {
 
     private final String LOG_TAG = MainPresenter.class.getSimpleName();
     private Classifier classifier;
@@ -87,9 +90,32 @@ public class MainPresenter extends BasePresenter<MainMvpView> implements BitmapL
         return !(predictedSeason.equals("") && photoPath.equals(""));
     }
 
-    public void classifyImage(Context context, File photoFile) {
-        BitmapLoaderAsyncTask task = new BitmapLoaderAsyncTask(context, this, INPUT_SIZE, 0);
-        task.execute(photoFile.getAbsolutePath());
+    public void classifyImage(final Context context, File photoFile) {
+
+        final String path = photoFile.getAbsolutePath();
+
+        mDataManager.classifyImage(path, INPUT_SIZE)
+                .subscribe(new Observer<Bitmap>() {
+                    @Override
+                    public void onSubscribe(@io.reactivex.annotations.NonNull Disposable d) {
+
+                    }
+
+                    @Override
+                    public void onNext(@io.reactivex.annotations.NonNull Bitmap bitmap) {
+                        classify(context, path, bitmap);
+                    }
+
+                    @Override
+                    public void onError(@io.reactivex.annotations.NonNull Throwable e) {
+
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
     }
 
     public File createImageFile(Context context) throws IOException {
@@ -131,8 +157,7 @@ public class MainPresenter extends BasePresenter<MainMvpView> implements BitmapL
         });
     }
 
-    @Override
-    public void load(Bitmap bitmap) {
+    private void load(Bitmap bitmap) {
         String predictedSeason = getStoredPrediction();
 
         if (isViewAttached()) {
@@ -142,8 +167,7 @@ public class MainPresenter extends BasePresenter<MainMvpView> implements BitmapL
         }
     }
 
-    @Override
-    public void classify(final Context context, String path, Bitmap bitmap) {
+    private void classify(final Context context, String path, Bitmap bitmap) {
         Bitmap faceBitmap = detectFace(context, path);
 
         if (faceBitmap != null) {
@@ -204,9 +228,29 @@ public class MainPresenter extends BasePresenter<MainMvpView> implements BitmapL
         );
     }
 
-    public void loadSavedPhoto(Context context) {
-        BitmapLoaderAsyncTask task = new BitmapLoaderAsyncTask(context, this, INPUT_SIZE, 1);
-        task.execute(getStoredPhotoPath());
+    public void loadSavedPhoto() {
+        mDataManager.loadImage(getStoredPhotoPath(), INPUT_SIZE, INPUT_SIZE)
+                    .subscribe(new Observer<Bitmap>() {
+                        @Override
+                        public void onSubscribe(@io.reactivex.annotations.NonNull Disposable d) {
+
+                        }
+
+                        @Override
+                        public void onNext(@io.reactivex.annotations.NonNull Bitmap bitmap) {
+                            load(bitmap);
+                        }
+
+                        @Override
+                        public void onError(@io.reactivex.annotations.NonNull Throwable e) {
+
+                        }
+
+                        @Override
+                        public void onComplete() {
+
+                        }
+                    });
     }
 
     public String getStoredPhotoPath() {

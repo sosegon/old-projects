@@ -26,13 +26,13 @@ import com.google.android.gms.ads.InterstitialAd;
 import com.google.android.gms.ads.MobileAds;
 import com.keemsa.colorpalette.ColorPalette;
 import com.keemsa.colorwheel.ColorElement;
+import com.keemsa.colorwheel.ColorPickerView;
 import com.keemsa.colorwheel.OnCenterSelectedListener;
 import com.keemsa.colorwheel.OnColorsChangedListener;
 import com.keemsa.colorwheel.OnColorsSelectedListener;
 import com.keemsa.seasonify.R;
 import com.keemsa.seasonify.base.BaseActivity;
 import com.keemsa.seasonify.features.about.AboutActivity;
-import com.keemsa.colorwheel.ColorPickerView;
 import com.keemsa.seasonify.util.SeasonifyImage;
 
 import java.io.File;
@@ -288,7 +288,7 @@ public class MainActivity extends BaseActivity implements MainMvpView {
             public void onGlobalLayout() {
                 color_wheel.getViewTreeObserver().removeOnGlobalLayoutListener(this); // avoid more than one call
                 if(!onActivityResultCalled) {
-                    mPresenter.loadSavedPhoto(MainActivity.this);
+                    mPresenter.loadSavedPhoto();
                 }
             }
         });
