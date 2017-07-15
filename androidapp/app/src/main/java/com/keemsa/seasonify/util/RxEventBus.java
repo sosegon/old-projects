@@ -42,9 +42,4 @@ public class RxEventBus {
         return mBusSubject.ofType(eventClass);
     }
 
-    public enum RX_BUS_EVENTS {
-        COLOR_SELECTION_CHANGED,
-        COLOR_SELECTED,
-        COLOR_COMBINATION_LIKED
-    }
 }

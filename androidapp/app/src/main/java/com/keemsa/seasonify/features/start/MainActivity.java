@@ -28,6 +28,7 @@ import com.keemsa.colorwheel.ColorPickerView;
 import com.keemsa.seasonify.R;
 import com.keemsa.seasonify.base.BaseActivity;
 import com.keemsa.seasonify.features.about.AboutActivity;
+import com.keemsa.seasonify.util.RxEvent;
 import com.keemsa.seasonify.util.RxEventBus;
 import com.keemsa.seasonify.util.SeasonifyImage;
 import com.keemsa.seasonify.util.SeasonifyUtils;
@@ -51,8 +52,12 @@ import static com.keemsa.colorwheel.ColorPickerView.COLOR_SELECTION.COMPLEMENTAR
 import static com.keemsa.colorwheel.ColorPickerView.COLOR_SELECTION.SINGLE;
 import static com.keemsa.colorwheel.ColorPickerView.COLOR_SELECTION.SQUARE;
 import static com.keemsa.colorwheel.ColorPickerView.COLOR_SELECTION.TRIAD;
-import static com.keemsa.seasonify.util.RxEventBus.RX_BUS_EVENTS.COLOR_SELECTED;
-import static com.keemsa.seasonify.util.RxEventBus.RX_BUS_EVENTS.COLOR_SELECTION_CHANGED;
+import static com.keemsa.seasonify.util.RxEvent.RX_EVENT_TYPE.COLOR_CHANGED;
+import static com.keemsa.seasonify.util.RxEvent.RX_EVENT_TYPE.COLOR_COMBINATION_LIKED;
+import static com.keemsa.seasonify.util.RxEvent.RX_EVENT_TYPE.COLOR_COMBINATION_UPDATED;
+import static com.keemsa.seasonify.util.RxEvent.RX_EVENT_TYPE.COLOR_COORDS_SELECTED;
+import static com.keemsa.seasonify.util.RxEvent.RX_EVENT_TYPE.COLOR_SELECTION_SELECTED;
+import static com.keemsa.seasonify.util.RxEvent.RX_EVENT_TYPE.COLOR_SELECTION_UPDATED;
 
 public class MainActivity extends BaseActivity implements MainMvpView {
 
@@ -130,15 +135,7 @@ public class MainActivity extends BaseActivity implements MainMvpView {
 
     @OnClick(R.id.imv_fav)
     public void favCombination() {
-        int[] colors = plt_combination.getColors();
-
-        if(mPresenter.existColorCombination(colors)){
-            mPresenter.removeStoredColorCombination(colors);
-            imv_fav.setSelected(false);
-        } else {
-            mPresenter.storeColorCombination(colors);
-            imv_fav.setSelected(true);
-        }
+        mEventBus.post(new RxEvent(COLOR_COMBINATION_LIKED, plt_combination.getColors()));
     }
 
     @Override
@@ -162,6 +159,8 @@ public class MainActivity extends BaseActivity implements MainMvpView {
         initColorWheel();
 
         initPalette();
+
+        initFav();
 
         initAnimatables();  // before initColorSelection() to make use of them
 
@@ -304,16 +303,21 @@ public class MainActivity extends BaseActivity implements MainMvpView {
             }
         });
 
-        color_wheel.addOnColorsChangedListener((colors) -> mEventBus.post(COLOR_SELECTED));
+        color_wheel.addOnColorsChangedListener((colors) -> mEventBus.post(new RxEvent(COLOR_CHANGED, colors)));
         color_wheel.addOnCenterSelectedListener(() -> launchCamera() );
-        color_wheel.addOnColorsSelectedListener((colors) -> {mEventBus.post(COLOR_SELECTED); mPresenter.storeSelectedColorCoords(colors);});
+        color_wheel.addOnColorsSelectedListener((colors) -> mEventBus.post(new RxEvent(COLOR_COORDS_SELECTED, colors)));
 
         Consumer<Object> colorWheelConsumer = (y) ->
         {
-            if(y == COLOR_SELECTION_CHANGED) {
-                COLOR_SELECTION cs = COLOR_SELECTION.indexOf(mPresenter.getStoredColorSelectionType());
-                color_wheel.setColorSelection(cs);
-                mEventBus.post(COLOR_SELECTED);
+            if(((RxEvent)y).getType() == COLOR_SELECTION_UPDATED) {
+                try {
+                    int index = (int)(((RxEvent) y).getArgument());
+                    color_wheel.setColorSelection(COLOR_SELECTION.indexOf(index));
+                    List<ColorElement> colors = color_wheel.getCurrentColorElements();
+                    mEventBus.post(new RxEvent(COLOR_CHANGED, colors));
+                } catch(ClassCastException e) {
+                    Timber.e(e.getMessage());
+                }
             }
         };
         mEventBus.observable().subscribe(colorWheelConsumer);
@@ -322,19 +326,39 @@ public class MainActivity extends BaseActivity implements MainMvpView {
     private void initPalette() {
         Consumer<Object> paletteConsumer = (y) ->
         {
-            if(y == COLOR_SELECTED) {
-                updateColorsPalette(color_wheel.getCurrentColorElements());
+            if(((RxEvent)y).getType() == COLOR_CHANGED) {
+                try {
+                    List<ColorElement> colors = (List<ColorElement>)(((RxEvent) y).getArgument());
+                    updateColorsPalette(colors);
+                } catch(ClassCastException e) {
+                    Timber.e(e.getMessage());
+                }
             }
         };
         mEventBus.observable().subscribe(paletteConsumer);
     }
 
+    private void initFav() {
+        Consumer<Object> favConsumer = (y) ->
+        {
+            if(((RxEvent)y).getType() == COLOR_COMBINATION_UPDATED) {
+                try {
+                    boolean isFav = (boolean)(((RxEvent) y).getArgument());
+                    imv_fav.setSelected(isFav);
+                } catch(ClassCastException e) {
+                    Timber.e(e.getMessage());
+                }
+            }
+        };
+        mEventBus.observable().subscribe(favConsumer);
+    }
+
     private void initColorSelection() {
-        imv_single_sel.setOnClickListener(v -> clickColorSelection(imv_single_sel, SINGLE, avd_single));
-        imv_complementary_sel.setOnClickListener(v -> clickColorSelection(imv_complementary_sel, COMPLEMENTARY, avd_complementary));
-        imv_triad_sel.setOnClickListener(v -> clickColorSelection(imv_triad_sel, TRIAD, avd_triad));
-        imv_analogous_sel.setOnClickListener(v -> clickColorSelection(imv_analogous_sel, ANALOGOUS, avd_analogous));
-        imv_quad_sel.setOnClickListener(v -> clickColorSelection(imv_quad_sel, SQUARE, avd_quad));
+        imv_single_sel.setOnClickListener(v -> clickColorSelection(SINGLE));
+        imv_complementary_sel.setOnClickListener(v -> clickColorSelection(COMPLEMENTARY));
+        imv_triad_sel.setOnClickListener(v -> clickColorSelection(TRIAD));
+        imv_analogous_sel.setOnClickListener(v -> clickColorSelection(ANALOGOUS));
+        imv_quad_sel.setOnClickListener(v -> clickColorSelection(SQUARE));
 
         selectionIcons = new ImageView[]{
                 imv_single_sel,
@@ -343,6 +367,20 @@ public class MainActivity extends BaseActivity implements MainMvpView {
                 imv_analogous_sel,
                 imv_quad_sel
         };
+
+        Consumer<Object> selectionConsumer = (y) ->
+        {
+            if(((RxEvent)y).getType() == COLOR_SELECTION_UPDATED) {
+                try {
+                    int index = (int)(((RxEvent) y).getArgument());
+                    updateColorSelection(index);
+                    animateSelection(index);
+                } catch(ClassCastException e) {
+                    Timber.e(e.getMessage());
+                }
+            }
+        };
+        mEventBus.observable().subscribe(selectionConsumer);
     }
 
     private void initLayoutElements() {
@@ -378,15 +416,44 @@ public class MainActivity extends BaseActivity implements MainMvpView {
         imv_fav.setSelected(existCombination);
     }
 
-    private boolean clickColorSelection(View v, ColorPickerView.COLOR_SELECTION colorSelection, AnimatedVectorDrawable anim) {
-        int index = mPresenter.storeColorSelectionType(colorSelection);
-        updateColorSelection(index);
-        ((ImageView) v).setImageDrawable(anim);
-        anim.start();
-
-        mEventBus.post(COLOR_SELECTION_CHANGED);
-
+    private boolean clickColorSelection(ColorPickerView.COLOR_SELECTION colorSelection) {
+        mEventBus.post(new RxEvent(COLOR_SELECTION_SELECTED, colorSelection));
         return false;
+    }
+
+    private void animateSelection(int index) {
+        ImageView imv = null;
+        AnimatedVectorDrawable avd = null;
+
+        switch (index) {
+            case 0:
+                imv = imv_single_sel;
+                avd = avd_single;
+                break;
+            case 1:
+                imv = imv_complementary_sel;
+                avd = avd_complementary;
+                break;
+            case 2:
+                imv = imv_triad_sel;
+                avd = avd_triad;
+                break;
+            case 3:
+                imv = imv_analogous_sel;
+                avd = avd_analogous;
+                break;
+            case 4:
+                imv = imv_quad_sel;
+                avd = avd_quad;
+                break;
+        }
+
+        try {
+            imv.setImageDrawable(avd);
+            avd.start();
+        } catch(ExceptionInInitializerError e) {
+            Timber.e(e.getMessage());
+        }
     }
 
     private void displayCamera() {

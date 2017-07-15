@@ -4,12 +4,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
-import android.support.annotation.ColorInt;
 
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
-import com.keemsa.colorwheel.ColorElement;
-import com.keemsa.colorwheel.ColorPickerView;
 import com.keemsa.seasonify.BuildConfig;
 import com.keemsa.seasonify.R;
 import com.keemsa.seasonify.base.BasePresenter;
@@ -82,32 +79,12 @@ public class MainPresenter extends BasePresenter<MainMvpView> {
         return mDataManager.getPreferencesHelper().retrieveColorSelectionType();
     }
 
-    public int storeColorSelectionType(ColorPickerView.COLOR_SELECTION colorSelection) {
-        return mDataManager.getPreferencesHelper().storeColorSelectionType(colorSelection);
-    }
-
     public float[] getStoredSelectedColorCoords() {
         return mDataManager.getPreferencesHelper().retrieveSelectedColorCoords();
     }
 
-    public void storeSelectedColorCoords(List<ColorElement> colors) {
-        mDataManager.getPreferencesHelper().storeSelectedColorCoords(colors);
-    }
-
-    public void storeColorCombination(@ColorInt int[] colors) {
-        mDataManager.getPreferencesHelper().addColorCombination(colors);
-    }
-
-    public List<int[]> getStoredColorCombinations() {
-        return mDataManager.getPreferencesHelper().retrieveColorCombinations();
-    }
-
     public boolean existColorCombination(int[] colors) {
         return mDataManager.getPreferencesHelper().hasColorCombination(colors);
-    }
-
-    public boolean removeStoredColorCombination(int[] colors) {
-        return mDataManager.getPreferencesHelper().deleteColorCombination(colors);
     }
 
     private void load(Bitmap bitmap) {

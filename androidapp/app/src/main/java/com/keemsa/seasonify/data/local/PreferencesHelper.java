@@ -190,4 +190,12 @@ public class PreferencesHelper {
         return false;
     }
 
+    public void processColorCombination(int[] colors) {
+        if(hasColorCombination(colors)) {
+            deleteColorCombination(colors);
+        } else {
+            addColorCombination(colors);
+        }
+    }
+
 }
