@@ -70,7 +70,7 @@ public class PreferencesHelper {
 
     public int storeColorSelectionType(ColorPickerView.COLOR_SELECTION colorSelection) {
         int index = ColorPickerView.COLOR_SELECTION.indexOf(colorSelection);
-        mPref.edit().putInt(KEY_SELECTION_TYPE, index);
+        mPref.edit().putInt(KEY_SELECTION_TYPE, index).apply();
         return index;
     }
 
