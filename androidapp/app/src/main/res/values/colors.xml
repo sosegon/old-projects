@@ -34,49 +34,49 @@
         <item>#777368</item>
         <item>#261f27</item>
         <item>#75625e</item>
-        <item>#df7f8a</item>
-        <item>#d95779</item>
-        <item>#c5a783</item>
-        <item>#a9836b</item>
-        <item>#b1ac74</item>
-        <item>#8d8f60</item>
+        <!--<item>#df7f8a</item>-->
+        <!--<item>#d95779</item>-->
+        <!--<item>#c5a783</item>-->
+        <!--<item>#a9836b</item>-->
+        <!--<item>#b1ac74</item>-->
+        <!--<item>#8d8f60</item>-->
 
-        <item>#8e8631</item>
-        <item>#504533</item>
-        <item>#473741</item>
-        <item>#352e3e</item>
-        <item>#2d262d</item>
-        <item>#e7aa8e</item>
-        <item>#d8917f</item>
-        <item>#a9565e</item>
-        <item>#652535</item>
-        <item>#2d222a</item>
+        <!--<item>#8e8631</item>-->
+        <!--<item>#504533</item>-->
+        <!--<item>#473741</item>-->
+        <!--<item>#352e3e</item>-->
+        <!--<item>#2d262d</item>-->
+        <!--<item>#e7aa8e</item>-->
+        <!--<item>#d8917f</item>-->
+        <!--<item>#a9565e</item>-->
+        <!--<item>#652535</item>-->
+        <!--<item>#2d222a</item>-->
 
-        <item>#182c2b</item>
-        <item>#183833</item>
-        <item>#386637</item>
-        <item>#2d6c51</item>
-        <item>#80a963</item>
-        <item>#f0bc66</item>
-        <item>#eda55b</item>
-        <item>#d19b53</item>
-        <item>#8f5138</item>
-        <item>#583a38</item>
+        <!--<item>#182c2b</item>-->
+        <!--<item>#183833</item>-->
+        <!--<item>#386637</item>-->
+        <!--<item>#2d6c51</item>-->
+        <!--<item>#80a963</item>-->
+        <!--<item>#f0bc66</item>-->
+        <!--<item>#eda55b</item>-->
+        <!--<item>#d19b53</item>-->
+        <!--<item>#8f5138</item>-->
+        <!--<item>#583a38</item>-->
 
-        <item>#45b1bd</item>
-        <item>#1f6e7d</item>
-        <item>#4eb6d1</item>
-        <item>#1b6278</item>
-        <item>#173d50</item>
-        <item>#eb9d5d</item>
-        <item>#d4814b</item>
-        <item>#d75f47</item>
-        <item>#ac2d3e</item>
-        <item>#71202f</item>
+        <!--<item>#45b1bd</item>-->
+        <!--<item>#1f6e7d</item>-->
+        <!--<item>#4eb6d1</item>-->
+        <!--<item>#1b6278</item>-->
+        <!--<item>#173d50</item>-->
+        <!--<item>#eb9d5d</item>-->
+        <!--<item>#d4814b</item>-->
+        <!--<item>#d75f47</item>-->
+        <!--<item>#ac2d3e</item>-->
+        <!--<item>#71202f</item>-->
 
-        <item>#577fb2</item>
-        <item>#223671</item>
-        <item>#584a88</item>
+        <!--<item>#577fb2</item>-->
+        <!--<item>#223671</item>-->
+        <!--<item>#584a88</item>-->
     </array>
     <array name="spring_colors">
         <item>#f7e5d7</item>
@@ -105,7 +105,7 @@
         <item>#4bb73f</item>
         <item>#107f30</item>
         <item>#065e45</item>
-        <item>#045449</item>
+        <!--<item>#045449</item>
         <item>#432a26</item>
         <item>#5f4c3d</item>
         <item>#a38760</item>
@@ -147,7 +147,7 @@
 
         <item>#a586ca</item>
         <item>#7657b4</item>
-        <item>#24207f</item>
+        <item>#24207f</item>-->
     </array>
     <array name="summer_colors">
         <item>#e5e3d7</item>
@@ -247,48 +247,48 @@
         <item>#14b862</item>
         <item>#107b43</item>
         <item>#135c3e</item>
-        <item>#18c08d</item>
-        <item>#127b5d</item>
-        <item>#114b3d</item>
-        <item>#23adb7</item>
-        <item>#146672</item>
-        <item>#41b8d8</item>
+        <!--<item>#18c08d</item>-->
+        <!--<item>#127b5d</item>-->
+        <!--<item>#114b3d</item>-->
+        <!--<item>#23adb7</item>-->
+        <!--<item>#146672</item>-->
+        <!--<item>#41b8d8</item>-->
 
-        <item>#2299c3</item>
-        <item>#115f86</item>
-        <item>#2e85ca</item>
-        <item>#0b60b0</item>
-        <item>#ffc2eb</item>
-        <item>#ff97da</item>
-        <item>#fa77bb</item>
-        <item>#f964b5</item>
-        <item>#ab2a6a</item>
-        <item>#fe93c1</item>
+        <!--<item>#2299c3</item>-->
+        <!--<item>#115f86</item>-->
+        <!--<item>#2e85ca</item>-->
+        <!--<item>#0b60b0</item>-->
+        <!--<item>#ffc2eb</item>-->
+        <!--<item>#ff97da</item>-->
+        <!--<item>#fa77bb</item>-->
+        <!--<item>#f964b5</item>-->
+        <!--<item>#ab2a6a</item>-->
+        <!--<item>#fe93c1</item>-->
 
-        <item>#fd5b8d</item>
-        <item>#f75c9e</item>
-        <item>#a73269</item>
-        <item>#562239</item>
-        <item>#f79dd0</item>
-        <item>#dd5792</item>
-        <item>#a73269</item>
-        <item>#742544</item>
-        <item>#3a2230</item>
-        <item>#c982d2</item>
+        <!--<item>#fd5b8d</item>-->
+        <!--<item>#f75c9e</item>-->
+        <!--<item>#a73269</item>-->
+        <!--<item>#562239</item>-->
+        <!--<item>#f79dd0</item>-->
+        <!--<item>#dd5792</item>-->
+        <!--<item>#a73269</item>-->
+        <!--<item>#742544</item>-->
+        <!--<item>#3a2230</item>-->
+        <!--<item>#c982d2</item>-->
 
-        <item>#8a4fa1</item>
-        <item>#5e357b</item>
-        <item>#a157a4</item>
-        <item>#45295a</item>
-        <item>#7b356b</item>
-        <item>#5b3872</item>
-        <item>#38397a</item>
-        <item>#2f2c5b</item>
-        <item>#1f304e</item>
-        <item>#3b66b4</item>
+        <!--<item>#8a4fa1</item>-->
+        <!--<item>#5e357b</item>-->
+        <!--<item>#a157a4</item>-->
+        <!--<item>#45295a</item>-->
+        <!--<item>#7b356b</item>-->
+        <!--<item>#5b3872</item>-->
+        <!--<item>#38397a</item>-->
+        <!--<item>#2f2c5b</item>-->
+        <!--<item>#1f304e</item>-->
+        <!--<item>#3b66b4</item>-->
 
-        <item>#20418e</item>
-        <item>#212f54</item>
-        <item>#27221f</item>
+        <!--<item>#20418e</item>-->
+        <!--<item>#212f54</item>-->
+        <!--<item>#27221f</item>-->
     </array>
 </resources>
