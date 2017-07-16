@@ -27,6 +27,11 @@ dependencies {
     final DAGGER_VERSION = '2.5'
     final FIREBASE_VERSION = '9.6.1'
     final SUPPORT_LIBRARY_VERSION = '23.2.0'
+    final MOCKITO_VERSION = '2.6.2'
+
+    def jUnit = "junit:junit:4.12"
+    def mockito = "org.mockito:mockito-core:$MOCKITO_VERSION"
+
     compile fileTree(include: ['*.jar'], dir: 'libs')
 
     compile 'com.flurgle:camerakit:0.9.13'
@@ -61,7 +66,8 @@ dependencies {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
 
-    testCompile 'junit:junit:4.12'
+    testCompile jUnit
+    testCompile mockito
 }
 
 
