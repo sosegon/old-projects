@@ -35,6 +35,8 @@ public class RxEvent {
         COLOR_COORDS_SELECTED,
         COLOR_CHANGED,
         PREDICTION_CHANGED,
+        PROCESSING_STARTED,
+        PROCESSING_ENDED,
         // Events from Model
         COLOR_COMBINATION_UPDATED,
         COLOR_SELECTION_UPDATED,

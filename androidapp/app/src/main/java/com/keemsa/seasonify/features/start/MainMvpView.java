@@ -16,4 +16,5 @@ public interface MainMvpView extends MvpView {
 
     void updatePrediction(String prediction, Bitmap bitmap, boolean isNewPrediction);
     void showToastMessage(String message);
+    void endProcessing();
 }

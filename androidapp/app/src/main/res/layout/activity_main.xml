@@ -18,7 +18,15 @@
         tools:text="Seasonify">
     </android.support.v7.widget.Toolbar>
 
+    <ProgressBar
+        android:id="@+id/pgr"
+        android:layout_width="@dimen/icon_size"
+        android:layout_height="@dimen/icon_size"
+        android:layout_gravity="center"
+        android:visibility="gone"/>
+
     <ViewFlipper
+        android:id="@+id/vfl"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         >

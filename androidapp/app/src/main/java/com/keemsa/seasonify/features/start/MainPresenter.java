@@ -129,6 +129,7 @@ public class MainPresenter extends BasePresenter<MainMvpView> {
         } else {
             getMvpView().showToastMessage(context.getString(R.string.msg_face_no_detected));
         }
+        getMvpView().endProcessing();
     }
 
     private void onSuccessPutFile(Context context, UploadTask.TaskSnapshot taskSnapshot, int seasonInt) {

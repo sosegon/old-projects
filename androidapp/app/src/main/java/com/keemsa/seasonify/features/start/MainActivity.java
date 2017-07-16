@@ -15,8 +15,10 @@ import android.view.ViewTreeObserver;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.ViewFlipper;
 
 import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
@@ -59,6 +61,8 @@ import static com.keemsa.seasonify.util.RxEvent.RX_EVENT_TYPE.COLOR_COORDS_SELEC
 import static com.keemsa.seasonify.util.RxEvent.RX_EVENT_TYPE.COLOR_SELECTION_SELECTED;
 import static com.keemsa.seasonify.util.RxEvent.RX_EVENT_TYPE.COLOR_SELECTION_UPDATED;
 import static com.keemsa.seasonify.util.RxEvent.RX_EVENT_TYPE.PREDICTION_CHANGED;
+import static com.keemsa.seasonify.util.RxEvent.RX_EVENT_TYPE.PROCESSING_ENDED;
+import static com.keemsa.seasonify.util.RxEvent.RX_EVENT_TYPE.PROCESSING_STARTED;
 
 public class MainActivity extends BaseActivity implements MainMvpView {
 
@@ -110,6 +114,12 @@ public class MainActivity extends BaseActivity implements MainMvpView {
 
     @BindView(R.id.imv_fav)
     ImageView imv_fav;
+
+    @BindView(R.id.pgr)
+    ProgressBar pgr;
+
+    @BindView(R.id.vfl)
+    ViewFlipper vfl;
 
     @BindArray(R.array.autumn_colors)
     int[] autumn_colors;
@@ -164,6 +174,10 @@ public class MainActivity extends BaseActivity implements MainMvpView {
         initAnimatables();  // before initColorSelection() to make use of them
 
         initColorSelection();
+
+        initPgr();
+
+        initVfl();
     }
 
     @Override
@@ -188,6 +202,8 @@ public class MainActivity extends BaseActivity implements MainMvpView {
             mPresenter.classifyImage(this, mPhotoFile);
             SeasonifyImage.addImageToGallery(this, mPhotoFile.getAbsolutePath());
             onActivityResultCalled = true;
+
+            mEventBus.post(new RxEvent(PROCESSING_STARTED));
         }
     }
 
@@ -253,6 +269,11 @@ public class MainActivity extends BaseActivity implements MainMvpView {
         Toast.makeText(this, message, Toast.LENGTH_LONG).show();
     }
 
+    @Override
+    public void endProcessing() {
+        mEventBus.post(new RxEvent(PROCESSING_ENDED));
+    }
+
     private void updateColorSelection(int index) {
         for(ImageView selector : selectionIcons) {
             selector.setSelected(false);
@@ -277,6 +298,30 @@ public class MainActivity extends BaseActivity implements MainMvpView {
         });
         AdRequest ar = new AdRequest.Builder().build();
         mInterstitialAd.loadAd(ar);
+    }
+
+    private void initVfl() {
+        Consumer<Object> vflConsumer = (y) ->
+        {
+            if(((RxEvent)y).getType() == PROCESSING_STARTED) {
+                vfl.setVisibility(View.GONE);
+            } else if (((RxEvent)y).getType() == PROCESSING_ENDED) {
+                vfl.setVisibility(View.VISIBLE);
+            }
+        };
+        mEventBus.observable().subscribe(vflConsumer);
+    }
+
+    private void initPgr(){
+        Consumer<Object> pgrConsumer = (y) ->
+        {
+            if(((RxEvent)y).getType() == PROCESSING_STARTED) {
+                pgr.setVisibility(View.VISIBLE);
+            } else if (((RxEvent)y).getType() == PROCESSING_ENDED) {
+                pgr.setVisibility(View.GONE);
+            }
+        };
+        mEventBus.observable().subscribe(pgrConsumer);
     }
 
     private void initColorWheel() {
