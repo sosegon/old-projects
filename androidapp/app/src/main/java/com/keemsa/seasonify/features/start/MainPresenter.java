@@ -64,11 +64,13 @@ public class MainPresenter extends BasePresenter<MainMvpView> {
     }
 
     public void loadSavedPhoto() {
-        mDataManager.loadImage(
-                        mDataManager.getPreferencesHelper().retrievePhotoPath(),
-                        INPUT_SIZE,
-                        INPUT_SIZE)
+        if(hasStoredPrediction()){
+            mDataManager.loadImage(
+                    mDataManager.getPreferencesHelper().retrievePhotoPath(),
+                    INPUT_SIZE,
+                    INPUT_SIZE)
                     .subscribe((y) -> load(y));
+        }
     }
 
     public String getStoredPrediction() {

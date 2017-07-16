@@ -240,6 +240,9 @@ public class MainActivity extends BaseActivity implements MainMvpView {
             color_wheel.selectColors(coords[0], coords[1]);
 
             mEventBus.post(new RxEvent(COLOR_CHANGED, color_wheel.getCurrentColorElements()));
+
+            ll_just_started.setVisibility(View.GONE);
+            ll_main.setVisibility(View.VISIBLE);
         } catch (StringIndexOutOfBoundsException e) {
             Timber.e(e.getMessage());
         }
