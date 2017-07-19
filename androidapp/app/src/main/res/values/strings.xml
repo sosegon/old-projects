@@ -33,6 +33,15 @@
     <string name="id_admob">ca-app-pub-2537006732160548~6139664116</string>
     <string name="id_adunit">ca-app-pub-2537006732160548/9093130510</string>
 
+    <!--Descriptions-->
+    <string name="dsc_photo_face">Classified face</string>
+    <string name="dsc_single_combination">Select single color</string>
+    <string name="dsc_complementary_combination">Select complementary colors</string>
+    <string name="dsc_triad_combination">Select triad colors</string>
+    <string name="dsc_analogous_combination">Select analogous colors</string>
+    <string name="dsc_quad_combination">Select quad colors</string>
+    <string name="dsc_like_combination">Like color combination</string>
+    <string name="dsc_start_camera">Start camera</string>
 
 </resources>
 

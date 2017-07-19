@@ -1,4 +1,7 @@
 <resources>
     <string name="app_name">Spectrum</string>
     <string name="default_dialog_title">Select a color</string>
+
+    <!--Descriptions-->
+    <string name="dsc_check_mark">Check color</string>
 </resources>
