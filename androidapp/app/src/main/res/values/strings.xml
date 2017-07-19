@@ -12,6 +12,9 @@
     <string name="lbl_w_season">Seasonify widget</string>
     <string name="lbl_about">About</string>
     <string name="lbl_share">Share</string>
+    <string name="lbl_grant">Grant</string>
+    <string name="lbl_cancel">Cancel</string>
+    <string name="lbl_permission">Permission</string>
 
     <string name="msg_start_here">Start here!</string>
     <string name="msg_face_no_detected">No face was detected. Try again.</string>
@@ -28,6 +31,9 @@
         <!--TODO update app url-->
         My seasonal color is <xliff:g id="season">%1$s</xliff:g>. Find yours! <a href="https://"></a> #Seasonify
     </string>
+
+    <!--Camera permission-->
+    <string name="msg_seasonify_camera_permission">Seasonify needs camera permission</string>
 
     <!--Ads-->
     <string name="id_admob">ca-app-pub-2537006732160548~6139664116</string>

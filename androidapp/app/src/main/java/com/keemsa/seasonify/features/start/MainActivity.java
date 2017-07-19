@@ -1,12 +1,17 @@
 package com.keemsa.seasonify.features.start;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.drawable.AnimatedVectorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -27,6 +32,7 @@ import com.google.android.gms.ads.MobileAds;
 import com.keemsa.colorpalette.ColorPalette;
 import com.keemsa.colorwheel.ColorElement;
 import com.keemsa.colorwheel.ColorPickerView;
+import com.keemsa.seasonify.BuildConfig;
 import com.keemsa.seasonify.R;
 import com.keemsa.seasonify.base.BaseActivity;
 import com.keemsa.seasonify.features.about.AboutActivity;
@@ -67,9 +73,13 @@ import static com.keemsa.seasonify.util.RxEvent.RX_EVENT_TYPE.PROCESSING_STARTED
 public class MainActivity extends BaseActivity implements MainMvpView {
 
     private static final int REQUEST_IMAGE_CAPTURE = 1;
+    private static final int IMAGE_CAPTURE_PERMISSION_CONSTANT = 100;
+    private static final int REQUEST_PERMISSION_SETTING = 101;
+    private boolean sentToSettings = false;
     private boolean onActivityResultCalled = false;
     private File mPhotoFile;
     private InterstitialAd mInterstitialAd;
+    private SharedPreferences permissionStatus;
 
     @Inject
     MainPresenter mPresenter;
@@ -497,7 +507,56 @@ public class MainActivity extends BaseActivity implements MainMvpView {
         }
     }
 
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if(requestCode == IMAGE_CAPTURE_PERMISSION_CONSTANT) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                displayCameraWithPermission();
+            } else {
+                if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.CAMERA)) {
+                    requestPermissionWithMessage();
+                } else {
+                    Toast.makeText(getBaseContext(),"Unable to get Permission",Toast.LENGTH_LONG).show();
+                }
+            }
+        }
+    }
+
     private void displayCamera() {
+        permissionStatus = getSharedPreferences("permissionStatus",MODE_PRIVATE);
+
+        int cameraPermission = ActivityCompat.checkSelfPermission(this, Manifest.permission.CAMERA);
+        if(BuildConfig.DEBUG) {
+            cameraPermission = -1;
+        }
+
+        if (cameraPermission != PackageManager.PERMISSION_GRANTED) {
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.CAMERA)) {
+                requestPermissionWithMessage();
+            } else {
+                //just request the permission
+                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA}, IMAGE_CAPTURE_PERMISSION_CONSTANT);
+            }
+        } else {
+            displayCameraWithPermission();
+        }
+    }
+
+    private void requestPermissionWithMessage() {
+        new AlertDialog.Builder(this)
+                .setTitle(getString(R.string.lbl_permission))
+                .setMessage(getString(R.string.msg_seasonify_camera_permission))
+                .setPositiveButton(R.string.lbl_grant, (d, i) -> {
+                    d.cancel();
+                    ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.CAMERA}, IMAGE_CAPTURE_PERMISSION_CONSTANT);
+                })
+                .setNegativeButton(R.string.lbl_cancel, (d, i) -> {
+                    d.cancel();
+                })
+                .show();
+    }
+    private void displayCameraWithPermission() {
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         // Ensure that there's a camera activity to handle the intent
         if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
