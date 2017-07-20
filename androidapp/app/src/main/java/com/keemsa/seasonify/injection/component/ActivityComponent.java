@@ -1,6 +1,6 @@
 package com.keemsa.seasonify.injection.component;
 
-import com.keemsa.seasonify.features.start.MainActivity;
+import com.keemsa.seasonify.features.start.MainFragment;
 import com.keemsa.seasonify.injection.PerActivity;
 import com.keemsa.seasonify.injection.module.ActivityModule;
 
@@ -13,6 +13,6 @@ import dagger.Subcomponent;
 @Subcomponent(modules = ActivityModule.class)
 public interface ActivityComponent {
 
-    void inject(MainActivity mainActivity);
+    void inject(MainFragment mainFragment);
 
 }
