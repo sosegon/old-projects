@@ -16,6 +16,7 @@
     <string name="lbl_cancel">Cancel</string>
     <string name="lbl_permission">Permission</string>
     <string name="lbl_main">Main</string>
+    <string name="lbl_combinations">Combinations</string>
 
     <string name="msg_start_here">Start here!</string>
     <string name="msg_face_no_detected">No face was detected. Try again.</string>

@@ -10,6 +10,7 @@ import android.view.MenuItem;
 
 import com.keemsa.seasonify.R;
 import com.keemsa.seasonify.features.about.AboutActivity;
+import com.keemsa.seasonify.features.combinations.CombinationsFragment;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -37,6 +38,11 @@ public class MainActivity extends AppCompatActivity {
         tabHost.addTab(
                 tabHost.newTabSpec("main").setIndicator(getString(R.string.lbl_main), null),
                 MainFragment.class, savedInstanceState
+        );
+
+        tabHost.addTab(
+                tabHost.newTabSpec("combinations").setIndicator(getString(R.string.lbl_combinations), null),
+                CombinationsFragment.class, savedInstanceState
         );
     }
 
