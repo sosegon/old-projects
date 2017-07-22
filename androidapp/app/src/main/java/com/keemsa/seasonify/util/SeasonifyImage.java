@@ -21,6 +21,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Date;
 
 import timber.log.Timber;
@@ -158,5 +159,21 @@ public class SeasonifyImage {
         }
 
         return rotate;
+    }
+
+    public static int[] sortColors(int[] colors) {
+        int[] iComb = Arrays.copyOf(colors, colors.length); // copy to avoid problems in the palette
+        Arrays.sort(iComb); // sort so when converting to string combinations are not repeated
+        return iComb;
+    }
+
+    public static String colorsAsString(int[] colors) {
+        String sComb = "";
+        for(int color : colors) {
+            sComb += String.valueOf(color) + ";";
+        }
+        sComb = sComb.substring(0, sComb.length() - 1);
+
+        return sComb;
     }
 }

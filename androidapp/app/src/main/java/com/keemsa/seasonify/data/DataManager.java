@@ -157,8 +157,17 @@ public class DataManager {
             if(((RxEvent)y).getType() == COLOR_COMBINATION_LIKED) {
                 try {
                     int[] colors = (int[])(((RxEvent) y).getArgument());
-                    mPreferencesHelper.processColorCombination(colors);
-                    mEventBus.post(new RxEvent(COLOR_COMBINATION_UPDATED, mPreferencesHelper.hasColorCombination(colors)));
+                    int[] sortedColors = SeasonifyImage.sortColors(colors);
+                    String season = mPreferencesHelper.retrievePrediction();
+
+                    mPreferencesHelper.processColorCombination(sortedColors);
+                    boolean hasColorCombination = mPreferencesHelper.hasColorCombination(sortedColors);
+
+                    // firebase
+                    String userId = mPreferencesHelper.retrieveUserId();
+                    mFirebaseHelper.processColorCombination(userId, sortedColors, season, hasColorCombination);
+
+                    mEventBus.post(new RxEvent(COLOR_COMBINATION_UPDATED, hasColorCombination));
                 } catch(ClassCastException e) {
                     Timber.e(e.getMessage());
                 }

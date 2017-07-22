@@ -7,9 +7,9 @@ import android.support.annotation.ColorInt;
 import com.keemsa.colorwheel.ColorElement;
 import com.keemsa.colorwheel.ColorPickerView;
 import com.keemsa.seasonify.injection.ApplicationContext;
+import com.keemsa.seasonify.util.SeasonifyImage;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -133,39 +133,26 @@ public class PreferencesHelper {
         return listCombs;
     }
 
+    // colors has to be sorted
     public void addColorCombination(@ColorInt int[] colors) {
-        int[] iComb = Arrays.copyOf(colors, colors.length); // copy to avoid problems in the palette
-        Arrays.sort(iComb); // sort so when converting to string combinations are not repeated
-        Set<String> sCombinations;
-        sCombinations = mPref.getStringSet(KEY_COLOR_COMBINATIONS, null);
+        Set<String> sCombinations = mPref.getStringSet(KEY_COLOR_COMBINATIONS, null);
 
         if(sCombinations == null) {
             sCombinations = new HashSet<>();
         }
 
-        String sComb = "";
-        for(int color : iComb) {
-            sComb += String.valueOf(color) + ";";
-        }
-        sComb = sComb.substring(0, sComb.length() - 1);
+        String sComb = SeasonifyImage.colorsAsString(colors);
         sCombinations.add(sComb);
 
         mPref.edit().putStringSet(KEY_COLOR_COMBINATIONS, sCombinations).apply();
     }
 
+    // colors has to be sorted
     public boolean hasColorCombination(int[] colors) {
         Set<String> sCombinations = mPref.getStringSet(KEY_COLOR_COMBINATIONS, null);
 
         if(sCombinations != null) {
-
-            int[] iComb = Arrays.copyOf(colors, colors.length); // copy to avoid problems in the palette
-            Arrays.sort(iComb); // sort so when converting to string combinations are not repeated
-
-            String sComb = "";
-            for(int color : iComb) {
-                sComb += String.valueOf(color) + ";";
-            }
-            sComb = sComb.substring(0, sComb.length() - 1);
+            String sComb = SeasonifyImage.colorsAsString(colors);
 
             return sCombinations.contains(sComb);
         }
@@ -173,18 +160,12 @@ public class PreferencesHelper {
         return false;
     }
 
+    // colors has to be sorted
     public boolean deleteColorCombination(int[] colors) {
         Set<String> sCombinations = mPref.getStringSet(KEY_COLOR_COMBINATIONS, null);
 
         if(sCombinations != null) {
-            int[] iComb = Arrays.copyOf(colors, colors.length); // copy to avoid problems in the palette
-            Arrays.sort(iComb);
-
-            String sComb = "";
-            for(int color : iComb) {
-                sComb += String.valueOf(color) + ";";
-            }
-            sComb = sComb.substring(0, sComb.length() - 1);
+            String sComb = SeasonifyImage.colorsAsString(colors);
 
             int originalCount = sCombinations.size();
             Iterator iter = sCombinations.iterator();
@@ -207,6 +188,7 @@ public class PreferencesHelper {
         return false;
     }
 
+    // colors has to be sorted
     public void processColorCombination(int[] colors) {
         if(hasColorCombination(colors)) {
             deleteColorCombination(colors);

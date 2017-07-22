@@ -431,7 +431,8 @@ public class MainFragment extends BaseFragment implements MainMvpView{
 
         plt_combination.setVisibility(View.VISIBLE);
 
-        boolean existCombination = mPresenter.existColorCombination(numColors);
+        int[] sortedColors = SeasonifyImage.sortColors(numColors);
+        boolean existCombination = mPresenter.existColorCombination(sortedColors);
         imv_fav.setSelected(existCombination);
     }
 
