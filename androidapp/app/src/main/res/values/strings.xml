@@ -2,13 +2,6 @@
     <string name="app_name">Seasonify</string>
     <string name="action_scan">Scan</string>
 
-    <!--Keys for previous photo and prediction stored in shared preferences-->
-    <string name="prf_photo_path" translatable="false">prf_photo_path</string>
-    <string name="prf_prediction" translatable="false">prf_prediction</string>
-    <string name="prf_selection_type" translatable="false">prf_selection_type</string>
-    <string name="prf_color_coords" translatable="false">prf_color_coords</string>
-    <string name="prf_color_combinations" translatable="false">prf_color_combinations</string>
-
     <string name="lbl_w_season">Seasonify widget</string>
     <string name="lbl_about">About</string>
     <string name="lbl_share">Share</string>

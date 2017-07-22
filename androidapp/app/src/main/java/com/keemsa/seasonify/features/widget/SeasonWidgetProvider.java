@@ -6,7 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 
-import com.keemsa.seasonify.features.start.MainPresenter;
+import com.keemsa.seasonify.data.DataManager;
 
 /**
  * Created by sebastian on 4/6/17.
@@ -26,7 +26,7 @@ public class SeasonWidgetProvider extends AppWidgetProvider {
     @Override
     public void onReceive(Context context, Intent intent) {
         super.onReceive(context, intent);
-        if(MainPresenter.ACTION_DATA_UPDATED.equals(intent.getAction())){
+        if(DataManager.ACTION_DATA_UPDATED.equals(intent.getAction())){
             context.startService(new Intent(context, SeasonWidgetIntentService.class));
         }
     }

@@ -3,7 +3,6 @@ package com.keemsa.seasonify.data.local;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.support.annotation.ColorInt;
-import android.util.Log;
 
 import com.keemsa.colorwheel.ColorElement;
 import com.keemsa.colorwheel.ColorPickerView;
@@ -36,6 +35,8 @@ public class PreferencesHelper {
     public static final String KEY_SELECTION_TYPE = "prf_selection_type";
     public static final String KEY_COLOR_COORDS = "prf_color_coords";
     public static final String KEY_COLOR_COMBINATIONS = "prf_color_combinations";
+    public static final String KEY_USER_ID = "prf_user_id";
+    public static final String KEY_PREDICTION_ID = "prf_prediction_id";
 
     private final SharedPreferences mPref;
 
@@ -46,6 +47,22 @@ public class PreferencesHelper {
 
     public void clear() {
         mPref.edit().clear().apply();
+    }
+
+    public String retrieveUserId() {
+        return mPref.getString(KEY_USER_ID, "");
+    }
+
+    public void storeUserId(String userId) {
+        mPref.edit().putString(KEY_USER_ID, userId).apply();
+    }
+
+    public String retrievePredictionId() {
+        return mPref.getString(KEY_PREDICTION_ID, "");
+    }
+
+    public void storePredictionId(String predictionId) {
+        mPref.edit().putString(KEY_PREDICTION_ID, predictionId).apply();
     }
 
     public String retrievePhotoPath() {

@@ -1,18 +1,13 @@
 package com.keemsa.seasonify.features.start;
 
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.Bitmap;
-import android.net.Uri;
 
-import com.google.firebase.storage.StorageReference;
-import com.google.firebase.storage.UploadTask;
 import com.keemsa.seasonify.BuildConfig;
 import com.keemsa.seasonify.R;
 import com.keemsa.seasonify.base.BasePresenter;
 import com.keemsa.seasonify.data.DataManager;
 import com.keemsa.seasonify.injection.ConfigPersistent;
-import com.keemsa.seasonify.model.Prediction;
 import com.keemsa.seasonify.processing.Classifier;
 import com.keemsa.seasonify.processing.ImageClassifierHelper;
 import com.keemsa.seasonify.processing.ImageProcessingHelper;
@@ -23,8 +18,6 @@ import java.io.File;
 import java.util.List;
 
 import javax.inject.Inject;
-
-import timber.log.Timber;
 
 import static com.keemsa.seasonify.processing.ImageClassifierHelper.INPUT_SIZE;
 
@@ -38,8 +31,6 @@ public class MainPresenter extends BasePresenter<MainMvpView> {
     private final DataManager mDataManager;
     private final ImageClassifierHelper mImageClassifierHelper;
     private final ImageProcessingHelper mImageProcesssingHelper;
-
-    public static final String ACTION_DATA_UPDATED = "com.keemsa.seasonify.ACTION_DATA_UPDATED";
 
     @Inject
     public MainPresenter(DataManager dataManager, ImageClassifierHelper imageClassifierHelper, ImageProcessingHelper imageProcessingHelper) {
@@ -113,50 +104,14 @@ public class MainPresenter extends BasePresenter<MainMvpView> {
             if (isViewAttached()) {
 
                 String season = results.get(0).getTitle();
-                Uri photoUri2 = Uri.fromFile(new File(faceOnlyPath)); // To store in firebase
 
                 getMvpView().updatePrediction(season, faceBitmap, true);
 
-                mDataManager.getPreferencesHelper().storePrediction(season);
-                mDataManager.getPreferencesHelper().storePhotoPath(faceOnlyPath);
-
-                int seasonInt = getPredictionAsInteger(season);
-                StorageReference facePhotoRef = mDataManager.getFirebaseHelper().getFacePhotoReference(photoUri2.getLastPathSegment());
-                facePhotoRef.putFile(photoUri2)
-                        .addOnSuccessListener((y) -> onSuccessPutFile(context, y, seasonInt))
-                        .addOnFailureListener((y) -> Timber.e("Error when storing file: " + y.getMessage()));
+                mDataManager.storePrediction(context, season, faceOnlyPath);
             }
         } else {
             getMvpView().showToastMessage(context.getString(R.string.msg_face_no_detected));
         }
         getMvpView().endProcessing();
-    }
-
-    private void onSuccessPutFile(Context context, UploadTask.TaskSnapshot taskSnapshot, int seasonInt) {
-        try {
-            Uri downloadUrl = taskSnapshot.getDownloadUrl();
-            Prediction prediction = new Prediction(seasonInt, downloadUrl.toString());
-            mDataManager.getFirebaseHelper().storePrediction(prediction);
-
-            // Send broadcast to update the widgets
-            Intent updateIntent = new Intent(ACTION_DATA_UPDATED);
-            updateIntent.setPackage(context.getPackageName());
-            context.sendBroadcast(updateIntent);
-        } catch (NullPointerException e) {
-            Timber.e(e.getMessage());
-        }
-    }
-
-    private int getPredictionAsInteger(String season) {
-        if (season.equals("autumn")) {
-            return 0;
-        } else if (season.equals("spring")) {
-            return 1;
-        } else if (season.equals("summer")) {
-            return 2;
-        } else if (season.equals("winter")) {
-            return 3;
-        }
-        return -1;
     }
 }
