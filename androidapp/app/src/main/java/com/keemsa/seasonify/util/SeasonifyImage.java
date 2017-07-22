@@ -23,6 +23,7 @@ import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.StringTokenizer;
 
 import timber.log.Timber;
 
@@ -175,5 +176,19 @@ public class SeasonifyImage {
         sPalette = sPalette.substring(0, sPalette.length() - 1);
 
         return sPalette;
+    }
+
+    public static int[] colorsAsIntArray(String colors) {
+        StringTokenizer st = new StringTokenizer(colors, ";");
+
+        int[] iColors = new int[st.countTokens()];
+
+        int i = 0;
+        while(st.hasMoreTokens()){
+            iColors[i] = Integer.parseInt(st.nextToken());
+            i++;
+        }
+
+        return iColors;
     }
 }

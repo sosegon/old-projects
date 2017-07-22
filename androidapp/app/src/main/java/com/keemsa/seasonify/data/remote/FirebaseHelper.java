@@ -58,6 +58,10 @@ public class FirebaseHelper {
         mFacePhotoStorageReference = mFirebaseStorage.getReference().child(FACE_PHOTOS_FIELD);
     }
 
+    public DatabaseReference retrievePalettes(String userId) {
+        return mUsersDatabaseReference.child(userId).child(PALETTES_KEY);
+    }
+
     public StorageReference getFacePhotoReference(String name) {
         return mFacePhotoStorageReference.child(name);
     }

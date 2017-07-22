@@ -42,6 +42,7 @@
     <string name="dsc_analogous_palette">Select analogous colors</string>
     <string name="dsc_quad_palette">Select quad colors</string>
     <string name="dsc_like_palette">Like color palette</string>
+    <string name="dsc_delete_palette">Delete color palette</string>
     <string name="dsc_start_camera">Start camera</string>
 
 </resources>
