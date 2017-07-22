@@ -25,8 +25,9 @@ android {
 }
 dependencies {
     final DAGGER_VERSION = '2.5'
-    final FIREBASE_VERSION = '9.6.1'
-    final SUPPORT_LIBRARY_VERSION = '23.2.0'
+    final FIREBASE_VERSION = '11.0.2'
+    final FIREBASEUI_VERSION = '2.1.0'
+    final SUPPORT_LIBRARY_VERSION = '23.4.0'
     final MOCKITO_VERSION = '2.6.2'
 
     def jUnit = "junit:junit:4.12"
@@ -36,7 +37,7 @@ dependencies {
 
     compile 'com.flurgle:camerakit:0.9.13'
 
-    compile "com.android.support:appcompat-v7:23.2.0"
+    compile "com.android.support:appcompat-v7:23.4.0"
     compile "com.android.support:design:$SUPPORT_LIBRARY_VERSION"
 
     compile files('libs/libandroid_tensorflow_inference_java.jar')
@@ -58,6 +59,8 @@ dependencies {
     compile "com.google.firebase:firebase-storage:$FIREBASE_VERSION"
     compile "com.google.firebase:firebase-ads:$FIREBASE_VERSION"
 
+    compile "com.firebaseui:firebase-ui-database:$FIREBASEUI_VERSION"
+
     compile project(':openCVLibrary320')
     compile project(':colorwheel')
     compile project(':colorpalette')
@@ -69,6 +72,5 @@ dependencies {
     testCompile jUnit
     testCompile mockito
 }
-
 
 apply plugin: 'com.google.gms.google-services'

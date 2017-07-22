@@ -120,6 +120,7 @@ public class MainFragment extends BaseFragment implements MainMvpView{
     @BindView(R.id.ll_just_started)
     LinearLayout ll_just_started;
 
+    // TODO: fav is marked when palette is not faved.
     @BindView(R.id.imv_fav)
     ImageView imv_fav;
 
