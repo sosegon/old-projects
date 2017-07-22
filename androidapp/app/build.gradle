@@ -2,6 +2,14 @@ apply plugin: 'com.android.application'
 apply plugin: 'me.tatarka.retrolambda'
 
 android {
+    signingConfigs {
+        config {
+            keyAlias 'seasonify'
+            keyPassword 's3kut3'
+            storeFile file("$rootDir/seasonifyKeyStore.jks")
+            storePassword 's3kut3'
+        }
+    }
     compileSdkVersion 23
     buildToolsVersion "24.0.3"
     defaultConfig {
@@ -16,6 +24,7 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.config
         }
     }
     compileOptions {
