@@ -162,18 +162,18 @@ public class SeasonifyImage {
     }
 
     public static int[] sortColors(int[] colors) {
-        int[] iComb = Arrays.copyOf(colors, colors.length); // copy to avoid problems in the palette
-        Arrays.sort(iComb); // sort so when converting to string combinations are not repeated
-        return iComb;
+        int[] iPalette = Arrays.copyOf(colors, colors.length); // copy to avoid problems in the palette
+        Arrays.sort(iPalette); // sort so when converting to string palettes are not repeated
+        return iPalette;
     }
 
     public static String colorsAsString(int[] colors) {
-        String sComb = "";
+        String sPalette = "";
         for(int color : colors) {
-            sComb += String.valueOf(color) + ";";
+            sPalette += String.valueOf(color) + ";";
         }
-        sComb = sComb.substring(0, sComb.length() - 1);
+        sPalette = sPalette.substring(0, sPalette.length() - 1);
 
-        return sComb;
+        return sPalette;
     }
 }

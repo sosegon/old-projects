@@ -76,8 +76,8 @@ public class MainPresenter extends BasePresenter<MainMvpView> {
         return mDataManager.getPreferencesHelper().retrieveSelectedColorCoords();
     }
 
-    public boolean existColorCombination(int[] colors) {
-        return mDataManager.getPreferencesHelper().hasColorCombination(colors);
+    public boolean existColorPalette(int[] colors) {
+        return mDataManager.getPreferencesHelper().hasColorPalette(colors);
     }
 
     private void load(Bitmap bitmap) {

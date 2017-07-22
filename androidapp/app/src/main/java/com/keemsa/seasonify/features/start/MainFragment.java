@@ -60,8 +60,8 @@ import static com.keemsa.colorwheel.ColorPickerView.COLOR_SELECTION.SINGLE;
 import static com.keemsa.colorwheel.ColorPickerView.COLOR_SELECTION.SQUARE;
 import static com.keemsa.colorwheel.ColorPickerView.COLOR_SELECTION.TRIAD;
 import static com.keemsa.seasonify.util.RxEvent.RX_EVENT_TYPE.COLOR_CHANGED;
-import static com.keemsa.seasonify.util.RxEvent.RX_EVENT_TYPE.COLOR_COMBINATION_LIKED;
-import static com.keemsa.seasonify.util.RxEvent.RX_EVENT_TYPE.COLOR_COMBINATION_UPDATED;
+import static com.keemsa.seasonify.util.RxEvent.RX_EVENT_TYPE.COLOR_PALETTE_LIKED;
+import static com.keemsa.seasonify.util.RxEvent.RX_EVENT_TYPE.COLOR_PALETTE_UPDATED;
 import static com.keemsa.seasonify.util.RxEvent.RX_EVENT_TYPE.COLOR_COORDS_SELECTED;
 import static com.keemsa.seasonify.util.RxEvent.RX_EVENT_TYPE.COLOR_SELECTION_SELECTED;
 import static com.keemsa.seasonify.util.RxEvent.RX_EVENT_TYPE.COLOR_SELECTION_UPDATED;
@@ -96,8 +96,8 @@ public class MainFragment extends BaseFragment implements MainMvpView{
     @BindView(R.id.color_wheel)
     ColorPickerView color_wheel;
 
-    @BindView(R.id.plt_combination)
-    ColorPalette plt_combination;
+    @BindView(R.id.plt_colors)
+    ColorPalette plt_colors;
 
     @BindView(R.id.imv_single_sel)
     ImageView imv_single_sel;
@@ -153,8 +153,8 @@ public class MainFragment extends BaseFragment implements MainMvpView{
     }
 
     @OnClick(R.id.imv_fav)
-    public void favCombination() {
-        mEventBus.post(new RxEvent(COLOR_COMBINATION_LIKED, plt_combination.getColors()));
+    public void favPalette() {
+        mEventBus.post(new RxEvent(COLOR_PALETTE_LIKED, plt_colors.getColors()));
     }
 
     @Override
@@ -358,7 +358,7 @@ public class MainFragment extends BaseFragment implements MainMvpView{
     private void initFav() { // TODO update fav at start
         Consumer<Object> favConsumer = (y) ->
         {
-            if(((RxEvent)y).getType() == COLOR_COMBINATION_UPDATED) {
+            if(((RxEvent)y).getType() == COLOR_PALETTE_UPDATED) {
                 try {
                     boolean isFav = (boolean)(((RxEvent) y).getArgument());
                     imv_fav.setSelected(isFav);
@@ -427,13 +427,13 @@ public class MainFragment extends BaseFragment implements MainMvpView{
             numColors[i] = colors.get(i).getColor();
         }
 
-        plt_combination.setColors(numColors);
+        plt_colors.setColors(numColors);
 
-        plt_combination.setVisibility(View.VISIBLE);
+        plt_colors.setVisibility(View.VISIBLE);
 
         int[] sortedColors = SeasonifyImage.sortColors(numColors);
-        boolean existCombination = mPresenter.existColorCombination(sortedColors);
-        imv_fav.setSelected(existCombination);
+        boolean existPalette = mPresenter.existColorPalette(sortedColors);
+        imv_fav.setSelected(existPalette);
     }
 
     private boolean clickColorSelection(ColorPickerView.COLOR_SELECTION colorSelection) {

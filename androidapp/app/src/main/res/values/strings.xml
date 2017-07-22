@@ -9,7 +9,7 @@
     <string name="lbl_cancel">Cancel</string>
     <string name="lbl_permission">Permission</string>
     <string name="lbl_main">Main</string>
-    <string name="lbl_combinations">Combinations</string>
+    <string name="lbl_palettes">Palettes</string>
 
     <string name="msg_start_here">Start here!</string>
     <string name="msg_face_no_detected">No face was detected. Try again.</string>
@@ -36,12 +36,12 @@
 
     <!--Descriptions-->
     <string name="dsc_photo_face">Classified face</string>
-    <string name="dsc_single_combination">Select single color</string>
-    <string name="dsc_complementary_combination">Select complementary colors</string>
-    <string name="dsc_triad_combination">Select triad colors</string>
-    <string name="dsc_analogous_combination">Select analogous colors</string>
-    <string name="dsc_quad_combination">Select quad colors</string>
-    <string name="dsc_like_combination">Like color combination</string>
+    <string name="dsc_single_palette">Select single color</string>
+    <string name="dsc_complementary_palette">Select complementary colors</string>
+    <string name="dsc_triad_palette">Select triad colors</string>
+    <string name="dsc_analogous_palette">Select analogous colors</string>
+    <string name="dsc_quad_palette">Select quad colors</string>
+    <string name="dsc_like_palette">Like color palette</string>
     <string name="dsc_start_camera">Start camera</string>
 
 </resources>

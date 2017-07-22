@@ -34,8 +34,8 @@ import static com.keemsa.seasonify.data.remote.FirebaseHelper.LAST_PREDICTION_KE
 import static com.keemsa.seasonify.data.remote.FirebaseHelper.PHOTO_URL_KEY;
 import static com.keemsa.seasonify.data.remote.FirebaseHelper.PREDICTIONS_KEY;
 import static com.keemsa.seasonify.data.remote.FirebaseHelper.USERS_KEY;
-import static com.keemsa.seasonify.util.RxEvent.RX_EVENT_TYPE.COLOR_COMBINATION_LIKED;
-import static com.keemsa.seasonify.util.RxEvent.RX_EVENT_TYPE.COLOR_COMBINATION_UPDATED;
+import static com.keemsa.seasonify.util.RxEvent.RX_EVENT_TYPE.COLOR_PALETTE_LIKED;
+import static com.keemsa.seasonify.util.RxEvent.RX_EVENT_TYPE.COLOR_PALETTE_UPDATED;
 import static com.keemsa.seasonify.util.RxEvent.RX_EVENT_TYPE.COLOR_COORDS_SELECTED;
 import static com.keemsa.seasonify.util.RxEvent.RX_EVENT_TYPE.COLOR_SELECTION_SELECTED;
 import static com.keemsa.seasonify.util.RxEvent.RX_EVENT_TYPE.COLOR_SELECTION_UPDATED;
@@ -154,20 +154,20 @@ public class DataManager {
     private void initBus() {
         // Favourite color
         Consumer<Object> favouriteColor = (y) -> {
-            if(((RxEvent)y).getType() == COLOR_COMBINATION_LIKED) {
+            if(((RxEvent)y).getType() == COLOR_PALETTE_LIKED) {
                 try {
                     int[] colors = (int[])(((RxEvent) y).getArgument());
                     int[] sortedColors = SeasonifyImage.sortColors(colors);
                     String season = mPreferencesHelper.retrievePrediction();
 
-                    mPreferencesHelper.processColorCombination(sortedColors);
-                    boolean hasColorCombination = mPreferencesHelper.hasColorCombination(sortedColors);
+                    mPreferencesHelper.processColorPalette(sortedColors);
+                    boolean hasColorPalette = mPreferencesHelper.hasColorPalette(sortedColors);
 
                     // firebase
                     String userId = mPreferencesHelper.retrieveUserId();
-                    mFirebaseHelper.processColorCombination(userId, sortedColors, season, hasColorCombination);
+                    mFirebaseHelper.processColorPalette(userId, sortedColors, season, hasColorPalette);
 
-                    mEventBus.post(new RxEvent(COLOR_COMBINATION_UPDATED, hasColorCombination));
+                    mEventBus.post(new RxEvent(COLOR_PALETTE_UPDATED, hasColorPalette));
                 } catch(ClassCastException e) {
                     Timber.e(e.getMessage());
                 }

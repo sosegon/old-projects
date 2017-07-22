@@ -1,4 +1,4 @@
-package com.keemsa.seasonify.features.combinations;
+package com.keemsa.seasonify.features.palettes;
 
 import com.keemsa.seasonify.base.BasePresenter;
 import com.keemsa.seasonify.injection.ConfigPersistent;
@@ -10,9 +10,9 @@ import javax.inject.Inject;
  */
 
 @ConfigPersistent
-public class CombinationsPresenter extends BasePresenter<CombinationsMvpView> {
+public class PalettesPresenter extends BasePresenter<PalettesMvpView> {
 
     @Inject
-    public CombinationsPresenter() {
+    public PalettesPresenter() {
     }
 }

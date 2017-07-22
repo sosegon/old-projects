@@ -34,7 +34,7 @@ public class PreferencesHelper {
     public static final String KEY_PREDICTION = "prf_prediction";
     public static final String KEY_SELECTION_TYPE = "prf_selection_type";
     public static final String KEY_COLOR_COORDS = "prf_color_coords";
-    public static final String KEY_COLOR_COMBINATIONS = "prf_color_combinations";
+    public static final String KEY_COLOR_PALETTE = "prf_color_palette";
     public static final String KEY_USER_ID = "prf_user_id";
     public static final String KEY_PREDICTION_ID = "prf_prediction_id";
 
@@ -112,75 +112,75 @@ public class PreferencesHelper {
         }
     }
 
-    public List<int[]> retrieveColorCombinations() {
-        Set<String> sCombinations = mPref.getStringSet(KEY_COLOR_COMBINATIONS, null);
-        List<int[]> listCombs = new ArrayList<>();
+    public List<int[]> retrieveColorPalette() {
+        Set<String> sPalette = mPref.getStringSet(KEY_COLOR_PALETTE, null);
+        List<int[]> listPalettes = new ArrayList<>();
 
-        if(sCombinations !=  null) {
-            Iterator iter = sCombinations.iterator();
+        if(sPalette !=  null) {
+            Iterator iter = sPalette.iterator();
             while(iter.hasNext()) {
-                String sCurrentComb = (String) iter.next();
-                StringTokenizer st = new StringTokenizer(sCurrentComb, ";");
-                int[] iCurrentComb = new int[st.countTokens()];
+                String sCurrentPalette = (String) iter.next();
+                StringTokenizer st = new StringTokenizer(sCurrentPalette, ";");
+                int[] iCurrentPalette = new int[st.countTokens()];
                 int i = 0;
                 while(st.hasMoreTokens()) {
-                    iCurrentComb[i] = Integer.valueOf(st.nextToken());
+                    iCurrentPalette[i] = Integer.valueOf(st.nextToken());
                 }
-                listCombs.add(iCurrentComb);
+                listPalettes.add(iCurrentPalette);
             }
         }
 
-        return listCombs;
+        return listPalettes;
     }
 
     // colors has to be sorted
-    public void addColorCombination(@ColorInt int[] colors) {
-        Set<String> sCombinations = mPref.getStringSet(KEY_COLOR_COMBINATIONS, null);
+    public void addColorPalette(@ColorInt int[] colors) {
+        Set<String> sPalette = mPref.getStringSet(KEY_COLOR_PALETTE, null);
 
-        if(sCombinations == null) {
-            sCombinations = new HashSet<>();
+        if(sPalette == null) {
+            sPalette = new HashSet<>();
         }
 
-        String sComb = SeasonifyImage.colorsAsString(colors);
-        sCombinations.add(sComb);
+        String sPalet = SeasonifyImage.colorsAsString(colors);
+        sPalette.add(sPalet);
 
-        mPref.edit().putStringSet(KEY_COLOR_COMBINATIONS, sCombinations).apply();
+        mPref.edit().putStringSet(KEY_COLOR_PALETTE, sPalette).apply();
     }
 
     // colors has to be sorted
-    public boolean hasColorCombination(int[] colors) {
-        Set<String> sCombinations = mPref.getStringSet(KEY_COLOR_COMBINATIONS, null);
+    public boolean hasColorPalette(int[] colors) {
+        Set<String> sPalette = mPref.getStringSet(KEY_COLOR_PALETTE, null);
 
-        if(sCombinations != null) {
-            String sComb = SeasonifyImage.colorsAsString(colors);
+        if(sPalette != null) {
+            String sPalet = SeasonifyImage.colorsAsString(colors);
 
-            return sCombinations.contains(sComb);
+            return sPalette.contains(sPalet);
         }
 
         return false;
     }
 
     // colors has to be sorted
-    public boolean deleteColorCombination(int[] colors) {
-        Set<String> sCombinations = mPref.getStringSet(KEY_COLOR_COMBINATIONS, null);
+    public boolean deleteColorPalette(int[] colors) {
+        Set<String> sPalette = mPref.getStringSet(KEY_COLOR_PALETTE, null);
 
-        if(sCombinations != null) {
-            String sComb = SeasonifyImage.colorsAsString(colors);
+        if(sPalette != null) {
+            String sPalet = SeasonifyImage.colorsAsString(colors);
 
-            int originalCount = sCombinations.size();
-            Iterator iter = sCombinations.iterator();
+            int originalCount = sPalette.size();
+            Iterator iter = sPalette.iterator();
             while(iter.hasNext()) {
-                String sCurrentComb = (String) iter.next();
+                String sCurrentPalette = (String) iter.next();
 
-                if(sComb.equals(sCurrentComb)) {
+                if(sPalet.equals(sCurrentPalette)) {
                     iter.remove();
                     break;
                 }
             }
-            int finalCount = sCombinations.size();
+            int finalCount = sPalette.size();
 
             if(finalCount < originalCount) {
-                mPref.edit().putStringSet(KEY_COLOR_COMBINATIONS, sCombinations).apply();
+                mPref.edit().putStringSet(KEY_COLOR_PALETTE, sPalette).apply();
                 return true;
             }
         }
@@ -189,11 +189,11 @@ public class PreferencesHelper {
     }
 
     // colors has to be sorted
-    public void processColorCombination(int[] colors) {
-        if(hasColorCombination(colors)) {
-            deleteColorCombination(colors);
+    public void processColorPalette(int[] colors) {
+        if(hasColorPalette(colors)) {
+            deleteColorPalette(colors);
         } else {
-            addColorCombination(colors);
+            addColorPalette(colors);
         }
     }
 

@@ -31,14 +31,15 @@ public class RxEvent {
     public enum RX_EVENT_TYPE {
         // Events from View
         COLOR_SELECTION_SELECTED,
-        COLOR_COMBINATION_LIKED,
+        COLOR_PALETTE_LIKED,
         COLOR_COORDS_SELECTED,
         COLOR_CHANGED,
         PREDICTION_CHANGED,
         PROCESSING_STARTED,
         PROCESSING_ENDED,
+
         // Events from Model
-        COLOR_COMBINATION_UPDATED,
+        COLOR_PALETTE_UPDATED,
         COLOR_SELECTION_UPDATED,
         PREDICTION_REQUESTED,
         PREDICTION_QUERIED,

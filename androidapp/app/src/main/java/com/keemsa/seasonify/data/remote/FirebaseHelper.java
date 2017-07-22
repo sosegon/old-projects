@@ -90,7 +90,7 @@ public class FirebaseHelper {
         return mSeasonsDatabaseReference.child(seasonId);
     }
 
-    public void processColorCombination(String userId, int[] colors, String season, boolean hasFavPalette) {
+    public void processColorPalette(String userId, int[] colors, String season, boolean hasFavPalette) {
         String sPalette = SeasonifyImage.colorsAsString(colors);
 
         // TODO: check if this can be done with transaction

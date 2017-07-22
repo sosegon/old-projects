@@ -64,32 +64,32 @@
                             style="@style/ic_color_selection"
                             android:src="@drawable/ic_sel_single"
                             android:background="@drawable/color_selector_status"
-                            android:contentDescription="@string/dsc_single_combination"/>
+                            android:contentDescription="@string/dsc_single_palette"/>
                         <ImageView
                             android:id="@+id/imv_complementary_sel"
                             style="@style/ic_color_selection"
                             android:src="@drawable/ic_sel_complementary"
                             android:background="@drawable/color_selector_status"
-                            android:contentDescription="@string/dsc_complementary_combination"/>
+                            android:contentDescription="@string/dsc_complementary_palette"/>
                         <ImageView
                             android:id="@+id/imv_triad_sel"
                             style="@style/ic_color_selection"
                             android:src="@drawable/ic_sel_triad"
                             android:background="@drawable/color_selector_status"
-                            android:contentDescription="@string/dsc_triad_combination"/>
+                            android:contentDescription="@string/dsc_triad_palette"/>
                         <ImageView
                             android:id="@+id/imv_analogous_sel"
                             style="@style/ic_color_selection"
                             android:src="@drawable/ic_sel_analogous"
                             android:background="@drawable/color_selector_status"
-                            android:contentDescription="@string/dsc_analogous_combination"/>
+                            android:contentDescription="@string/dsc_analogous_palette"/>
                         <ImageView
                             android:id="@+id/imv_quad_sel"
                             style="@style/ic_color_selection"
                             android:layout_marginBottom="@dimen/icon_margin"
                             android:src="@drawable/ic_sel_quad"
                             android:background="@drawable/color_selector_status"
-                            android:contentDescription="@string/dsc_quad_combination"/>
+                            android:contentDescription="@string/dsc_quad_palette"/>
                     </LinearLayout>
 
                     <com.keemsa.colorwheel.ColorPickerView
@@ -112,7 +112,7 @@
                     android:orientation="horizontal">
 
                     <com.keemsa.colorpalette.ColorPalette
-                        android:id="@+id/plt_combination"
+                        android:id="@+id/plt_colors"
                         android:layout_height="@dimen/bar_horizontal_height"
                         android:layout_width="0dp"
                         android:layout_weight="1"
@@ -131,7 +131,7 @@
                         android:layout_gravity="center_vertical"
                         android:scaleType="fitXY"
                         android:background="@drawable/fav_status"
-                        android:contentDescription="@string/dsc_like_combination"/>
+                        android:contentDescription="@string/dsc_like_palette"/>
 
                 </LinearLayout>
 

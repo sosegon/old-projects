@@ -1,4 +1,4 @@
-package com.keemsa.seasonify.features.combinations;
+package com.keemsa.seasonify.features.palettes;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -17,16 +17,16 @@ import butterknife.ButterKnife;
  * Created by sebastian on 20/07/17.
  */
 
-public class CombinationsFragment extends BaseFragment implements CombinationsMvpView {
+public class PalettesFragment extends BaseFragment implements PalettesMvpView {
 
     @Inject
-    CombinationsPresenter mPresenter;
+    PalettesPresenter mPresenter;
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
-        View view = inflater.inflate(R.layout.fragment_combinations, container, false);
+        View view = inflater.inflate(R.layout.fragment_palettes, container, false);
 
         ButterKnife.bind(this, view);
 
