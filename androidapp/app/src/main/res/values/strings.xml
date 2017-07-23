@@ -27,8 +27,9 @@
         My seasonal color is <xliff:g id="season">%1$s</xliff:g>. Find yours! <a href="https://"></a> #Seasonify
     </string>
 
-    <!--Camera permission-->
-    <string name="msg_seasonify_camera_permission">Seasonify needs camera permission</string>
+    <!--Permissions-->
+    <string name="msg_seasonify_permissions">Seasonify needs permissions</string>
+    <string name="msg_no_permissions">Unable to get permissions</string>
 
     <!--Ads-->
     <string name="id_admob">ca-app-pub-2537006732160548~6139664116</string>

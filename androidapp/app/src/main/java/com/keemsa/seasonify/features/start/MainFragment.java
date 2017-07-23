@@ -76,11 +76,10 @@ import static com.keemsa.seasonify.util.RxEvent.RX_EVENT_TYPE.PROCESSING_STARTED
 public class MainFragment extends BaseFragment implements MainMvpView{
 
     private static final int REQUEST_IMAGE_CAPTURE = 1;
-    private static final int IMAGE_CAPTURE_PERMISSION_CONSTANT = 100;
+    private static final int MULTIPLE_PERMISSION_CONSTANT = 100;
     private boolean onActivityResultCalled = false;
     private File mPhotoFile;
     private InterstitialAd mInterstitialAd;
-    private SharedPreferences permissionStatus;
 
     @Inject
     MainPresenter mPresenter;
@@ -480,30 +479,33 @@ public class MainFragment extends BaseFragment implements MainMvpView{
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if(requestCode == IMAGE_CAPTURE_PERMISSION_CONSTANT) {
-            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+        if(requestCode == MULTIPLE_PERMISSION_CONSTANT) {
+            if (grantResults.length > 0 &&
+                    grantResults[0] == PackageManager.PERMISSION_GRANTED &&
+                    grantResults[1] == PackageManager.PERMISSION_GRANTED) {
                 displayCameraWithPermission();
             } else {
-                if (ActivityCompat.shouldShowRequestPermissionRationale(getActivity(), Manifest.permission.CAMERA)) {
+                if (ActivityCompat.shouldShowRequestPermissionRationale(getActivity(), Manifest.permission.CAMERA) ||
+                    ActivityCompat.shouldShowRequestPermissionRationale(getActivity(), Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
                     requestPermissionWithMessage();
                 } else {
-                    Toast.makeText(getContext(),"Unable to get Permission",Toast.LENGTH_LONG).show();
+                    showToastMessage(getString(R.string.msg_no_permissions));
                 }
             }
         }
     }
 
     private void displayCamera() {
-        permissionStatus = getContext().getSharedPreferences("permissionStatus",MODE_PRIVATE);
-
         int cameraPermission = ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.CAMERA);
+        int writePermission = ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE);
 
-        if (cameraPermission != PackageManager.PERMISSION_GRANTED) {
-            if (ActivityCompat.shouldShowRequestPermissionRationale(getActivity(), Manifest.permission.CAMERA)) {
+        if (cameraPermission + writePermission != PackageManager.PERMISSION_GRANTED) {
+            if (ActivityCompat.shouldShowRequestPermissionRationale(getActivity(), Manifest.permission.CAMERA) ||
+                ActivityCompat.shouldShowRequestPermissionRationale(getActivity(), Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
                 requestPermissionWithMessage();
             } else {
-                //just request the permission
-                ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.CAMERA}, IMAGE_CAPTURE_PERMISSION_CONSTANT);
+                //just request the permissions
+                requestPermissions();
             }
         } else {
             displayCameraWithPermission();
@@ -513,16 +515,24 @@ public class MainFragment extends BaseFragment implements MainMvpView{
     private void requestPermissionWithMessage() {
         new AlertDialog.Builder(getContext())
                 .setTitle(getString(R.string.lbl_permission))
-                .setMessage(getString(R.string.msg_seasonify_camera_permission))
+                .setMessage(getString(R.string.msg_seasonify_permissions))
                 .setPositiveButton(R.string.lbl_grant, (d, i) -> {
                     d.cancel();
-                    ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.CAMERA}, IMAGE_CAPTURE_PERMISSION_CONSTANT);
+                    requestPermissions();
                 })
                 .setNegativeButton(R.string.lbl_cancel, (d, i) -> {
                     d.cancel();
                 })
                 .show();
     }
+
+    private void requestPermissions() {
+        ActivityCompat.requestPermissions(
+                getActivity(),
+                new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                MULTIPLE_PERMISSION_CONSTANT);
+    }
+
     private void displayCameraWithPermission() {
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         // Ensure that there's a camera activity to handle the intent
@@ -555,6 +565,5 @@ public class MainFragment extends BaseFragment implements MainMvpView{
 
         return new int[]{};
     }
-
 
 }
