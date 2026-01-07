@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "236486648340",
+    "firebase_url": "https://seasonify.firebaseio.com",
+    "project_id": "seasonify",
+    "storage_bucket": "seasonify.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:236486648340:android:7b1b60c4acfeadcd",
+        "android_client_info": {
+          "package_name": "com.keemsa.seasonify"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "236486648340-d6n25id72mpct7al7citehs9upqhlhnh.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAvRWF8x0rYQJzWJ3AKITRKeDc5z7YIEDo"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

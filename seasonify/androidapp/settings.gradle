@@ -1,0 +1,2 @@
+include ':app', ':colorwheel', ':colorpalette'
+include ':openCVLibrary320'

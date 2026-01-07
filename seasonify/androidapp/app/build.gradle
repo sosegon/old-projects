@@ -1,0 +1,85 @@
+apply plugin: 'com.android.application'
+apply plugin: 'me.tatarka.retrolambda'
+
+android {
+    signingConfigs {
+        config {
+            keyAlias 'seasonify'
+            keyPassword 's3kut3'
+            storeFile file("$rootDir/seasonifyKeyStore.jks")
+            storePassword 's3kut3'
+        }
+    }
+    compileSdkVersion 23
+    buildToolsVersion "24.0.3"
+    defaultConfig {
+        applicationId "com.keemsa.seasonify"
+        minSdkVersion 21
+        targetSdkVersion 23
+        versionCode 1
+        versionName "1.0"
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.config
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+}
+dependencies {
+    final DAGGER_VERSION = '2.5'
+    final FIREBASE_VERSION = '11.0.2'
+    final FIREBASEUI_VERSION = '2.1.0'
+    final SUPPORT_LIBRARY_VERSION = '23.4.0'
+    final MOCKITO_VERSION = '2.6.2'
+
+    def jUnit = "junit:junit:4.12"
+    def mockito = "org.mockito:mockito-core:$MOCKITO_VERSION"
+
+    compile fileTree(include: ['*.jar'], dir: 'libs')
+
+    compile 'com.flurgle:camerakit:0.9.13'
+
+    compile "com.android.support:appcompat-v7:23.4.0"
+    compile "com.android.support:design:$SUPPORT_LIBRARY_VERSION"
+
+    compile files('libs/libandroid_tensorflow_inference_java.jar')
+
+    compile 'com.jakewharton.timber:timber:4.5.1'
+    compile 'com.jakewharton:butterknife:8.5.1'
+    annotationProcessor 'com.jakewharton:butterknife-compiler:8.5.1'
+
+    compile 'io.reactivex.rxjava2:rxandroid:2.0.1'
+    // Because RxAndroid releases are few and far between, it is recommended you also
+    // explicitly depend on RxJava's latest version for bug fixes and new features.
+    compile 'io.reactivex.rxjava2:rxjava:2.1.0'
+
+    compile  "com.google.dagger:dagger:$DAGGER_VERSION"
+    provided 'org.glassfish:javax.annotation:10.0-b28' //Required by Dagger2
+    annotationProcessor "com.google.dagger:dagger-compiler:$DAGGER_VERSION"
+
+    compile "com.google.firebase:firebase-database:$FIREBASE_VERSION"
+    compile "com.google.firebase:firebase-storage:$FIREBASE_VERSION"
+    compile "com.google.firebase:firebase-ads:$FIREBASE_VERSION"
+
+    compile "com.firebaseui:firebase-ui-database:$FIREBASEUI_VERSION"
+
+    compile project(':openCVLibrary320')
+    compile project(':colorwheel')
+    compile project(':colorpalette')
+
+    androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
+        exclude group: 'com.android.support', module: 'support-annotations'
+    })
+
+    testCompile jUnit
+    testCompile mockito
+}
+
+apply plugin: 'com.google.gms.google-services'

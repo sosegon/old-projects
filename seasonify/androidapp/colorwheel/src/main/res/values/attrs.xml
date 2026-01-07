@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="ColorPickerPreference">
+        <attr name="innerRadiusRatio" format="float"/>
+        <attr name="centerRadiusRatio" format="float"/>
+        <attr name="wheelType" format="enum">
+            <enum name="CIRCLE" value="0"/>
+            <enum name="ARC" value="1"/>
+        </attr>
+        <attr name="colorSelection" format="enum">
+            <enum name="SINGLE" value="0"/>
+            <enum name="COMPLEMENTARY" value="1"/>
+            <enum name="TRIAD" value="2"/>
+            <enum name="ANALOGOUS" value="3"/>
+            <enum name="SQUARE" value="4"/>
+        </attr>
+    </declare-styleable>
+</resources>

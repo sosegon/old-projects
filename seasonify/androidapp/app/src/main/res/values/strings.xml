@@ -1,0 +1,50 @@
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="app_name">Seasonify</string>
+    <string name="action_scan">Scan</string>
+
+    <string name="lbl_w_season">Seasonify widget</string>
+    <string name="lbl_about">About</string>
+    <string name="lbl_share">Share</string>
+    <string name="lbl_grant">Grant</string>
+    <string name="lbl_cancel">Cancel</string>
+    <string name="lbl_permission">Permission</string>
+    <string name="lbl_main">Main</string>
+    <string name="lbl_palettes">Palettes</string>
+
+    <string name="msg_start_here">Start here!</string>
+    <string name="msg_face_no_detected">No face was detected. Try again.</string>
+
+    <!--About -->
+    <string name="about">
+        Seasonify is an application aimed to determine
+        the <a href="https://en.wikipedia.org/wiki/Color_analysis_(art)">seasonal color</a>
+        of a person.
+    </string>
+
+    <!--Share-->
+    <string name="msg_share">
+        <!--TODO update app url-->
+        My seasonal color is <xliff:g id="season">%1$s</xliff:g>. Find yours! <a href="https://"></a> #Seasonify
+    </string>
+
+    <!--Permissions-->
+    <string name="msg_seasonify_permissions">Seasonify needs permissions</string>
+    <string name="msg_no_permissions">Unable to get permissions</string>
+
+    <!--Ads-->
+    <string name="id_admob">ca-app-pub-2537006732160548~6139664116</string>
+    <string name="id_adunit">ca-app-pub-2537006732160548/9093130510</string>
+
+    <!--Descriptions-->
+    <string name="dsc_photo_face">Classified face</string>
+    <string name="dsc_single_palette">Select single color</string>
+    <string name="dsc_complementary_palette">Select complementary colors</string>
+    <string name="dsc_triad_palette">Select triad colors</string>
+    <string name="dsc_analogous_palette">Select analogous colors</string>
+    <string name="dsc_quad_palette">Select quad colors</string>
+    <string name="dsc_like_palette">Like color palette</string>
+    <string name="dsc_delete_palette">Delete color palette</string>
+    <string name="dsc_start_camera">Start camera</string>
+
+</resources>
+
