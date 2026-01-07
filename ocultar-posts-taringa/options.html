@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8"></meta>
+		<title>Personalizar extension para Taringa</title>
+		<link rel="stylesheet" type="text/css" href="bootstrap.min.css">
+		<script type="text/javascript" src="jquery-1.11.3.min.js"></script>
+		<script type="text/javascript" src="jquery.storageapi.min.js"></script>
+		<script type="text/javascript" src="options.js"></script>
+		<style type="text/css" rel="stylesheet">
+			.container{
+				margin: auto;
+				width: 40%;
+			}
+			#save-config{
+				float: right;
+				margin-top: 10px;
+			}
+			.navbar-header {
+				float: left;
+				padding: 15px;
+				text-align: center;
+				width: 100%;
+			}
+			.navbar-brand {
+				float:none;
+				color: "red" !important;
+			}
+			.navbar-nav > li > a {
+				padding-top:5px !important; 
+				padding-bottom:5px !important;
+			}
+			.navbar {
+				min-height:32px !important;
+			}
+			.navbar-creator{
+				float: right;
+				padding-right: 20px;
+			}
+		</style>
+	</head>
+	
+	<body>
+		<div class="navbar navbar-inverse navbar-inverse-top" role="navigation">
+			<div class="navbar-header">
+				<label class="navbar-brand">Configuración</label>
+			</div>
+		</div>
+
+		<div class="container">
+			<em>Ocultar posts con las siguientes palabras:</em>			
+			<textarea id="words-to-avoid" type="text" class="form-control" rows="5" placeholder="separar palabras con comas"></textarea>
+			<br>
+			<em>Ocultar posts de los siguientes usuarios:</em>			
+			<textarea id="users-to-avoid" type="text" class="form-control" rows="5" placeholder="separar nombres de usuario con comas"></textarea>
+			<div class="btn-group" role="group" style="width: 100%">
+				<button id="save-config" type="button" class="btn btn-default pull-right">Guardar</button>
+			</div>
+			<div id="message" style="display: none; margin-top: 10px;" class="alert alert-success" role="alert">
+				Configuración guardada <br>
+				Ir a <a href="http://www.taringa.net">TARINGA!</a> para ver los cambios
+			</div>
+		</div>
+		<div class="navbar navbar-inverse navbar-fixed-bottom" role="navigation">
+			<div class="navbar-creator">
+				<em>Creado por <a href="https://github.com/sosegon">sosegon</a></em>
+			</div>
+		</div>
+	</body>
+</html>
