@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">Boilerplate</string>
+
+    <string name="lbl_add">Add</string>
+    <string name="lbl_main">Main</string>
+    <string name="lbl_list">List</string>
+</resources>

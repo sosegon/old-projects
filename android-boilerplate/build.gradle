@@ -1,0 +1,35 @@
+// Top-level build file where you can add configuration options common to all sub-projects/modules.
+
+
+buildscript {
+
+    repositories {
+        jcenter()
+        google()
+    }
+    dependencies {
+        classpath 'com.android.tools.build:gradle:3.2.0-alpha10'
+        classpath 'com.google.gms:google-services:3.0.0' // https://stackoverflow.com/a/40085096
+
+        ///////////////////////////////////////////////////////////////////
+        // NOTE: The google-services.json file has to be the corresponding
+        // to the new application
+        ///////////////////////////////////////////////////////////////////
+
+        // NOTE: Do not place your application dependencies here; they belong
+        // in the individual module build.gradle files
+        // NOTE: Do not place your application dependencies here; they belong
+        // in the individual module build.gradle files
+    }
+}
+
+allprojects {
+    repositories {
+        jcenter()
+        google()
+    }
+}
+
+task clean(type: Delete) {
+    delete rootProject.buildDir
+}

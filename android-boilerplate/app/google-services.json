@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "720446183832",
+    "firebase_url": "https://android-boilerplate-keemsa.firebaseio.com",
+    "project_id": "android-boilerplate-keemsa",
+    "storage_bucket": "android-boilerplate-keemsa.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:720446183832:android:8088f2adbd03ec8b",
+        "android_client_info": {
+          "package_name": "com.keemsa.boilerplate"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "720446183832-ir281ovjkhnqpksktjil514sj12ehgfq.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyByZ1osJ0sYKE7bSDwG0f5MFY1c8ItvuoU"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
