@@ -1,0 +1,41 @@
+{
+	"movies": 
+		[
+			{
+				"name": "Back to the Future",
+				"description": "A guy and his professor who travel in time using a car",
+				"trailer_url": "https://www.youtube.com/watch?v=qvsgGtivCgs",
+				"poster_url": "https://upload.wikimedia.org/wikipedia/en/d/d2/Back_to_the_Future.jpg"
+			},
+			{
+				"name": "The Cube",
+				"description": "A group of six people trying to scape from a cube",
+				"trailer_url": "https://www.youtube.com/watch?v=MY5PkidV1cM",
+				"poster_url": "https://upload.wikimedia.org/wikipedia/en/0/0c/Cube_The_Movie_Poster_Art.jpg"
+			},
+			{
+				"name": "Mr. Brooks",
+				"description": "A serial killer who kills for pleasure",
+				"trailer_url": "https://www.youtube.com/watch?v=MY5PkidV1cM",
+				"poster_url": "https://upload.wikimedia.org/wikipedia/en/4/4d/Mr_brooks_ver2_xlg.jpg"
+			},
+			{
+				"name": "Rush",
+				"description": "The story of two F1 pilots",
+				"trailer_url": "https://www.youtube.com/watch?v=lzNbGH1oZJc",
+				"poster_url": "https://upload.wikimedia.org/wikipedia/en/d/d0/Rush_UK_poster.jpeg"
+			},
+			{
+				"name": "The Girl with the Dragon Tattoo",
+				"description": "A female hacker and a journalist work together to solve an old mistery",
+				"trailer_url": "https://www.youtube.com/watch?v=DqQe3OrsMKI",
+				"poster_url": "https://upload.wikimedia.org/wikipedia/en/8/80/The_Girl_with_the_Dragon_Tattoo_Poster.jpg"
+			},
+			{
+				"name": "Seven",
+				"description": "Two detectives pursuing a serial killer.",
+				"trailer_url": "https://www.youtube.com/watch?v=znmZoVkCjpI",
+				"poster_url": "https://upload.wikimedia.org/wikipedia/en/6/68/Seven_%28movie%29_poster.jpg"
+			}
+		]
+}

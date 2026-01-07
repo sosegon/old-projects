@@ -1,0 +1,116 @@
+$def with (movies)
+
+<head>
+	<title>Movies list</title>
+
+	<link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.1.0/css/bootstrap.min.css">
+	<link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.1.0/css/bootstrap-theme.min.css">
+	<script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
+	<script src="https://netdna.bootstrapcdn.com/bootstrap/3.1.0/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="/static/javascripts/libs/three.js"></script>
+    <script type="text/javascript" src="/static/javascripts/libs/Tween.js"></script>
+	<script type="text/javascript" src="/static/javascripts/canvas.js"></script>
+	<style type="text/css" media="screen">
+        body {
+            padding-top: 0px;
+        }
+        #trailer .modal-dialog {
+            margin-top: 200px;
+            width: 640px;
+            height: 480px;
+        }
+        .hanging-close {
+            position: absolute;
+            top: -12px;
+            right: -12px;
+            z-index: 9001;
+        }
+        #trailer-video {
+            width: 100%;
+            height: 100%;
+        }
+        .movie-tile {
+            margin-bottom: 20px;
+            padding-top: 20px;
+        }
+        .movie-tile:hover {
+            background-color: #EEE;
+            cursor: pointer;
+        }
+        .scale-media {
+            padding-bottom: 56.25%;
+            position: relative;
+        }
+        .scale-media iframe {
+            border: none;
+            height: 100%;
+            position: absolute;
+            width: 100%;
+            left: 0;
+            top: 0;
+            background-color: white;
+        }
+        #movie-info{
+            color: wheat;
+        }
+        #movie-info .label{
+            font-weight: bold;
+        }
+        /* center text in navbar bootstrap http://stackoverflow.com/a/20029582*/
+        .navbar-header {
+            float: left;
+            padding: 15px;
+            text-align: center;
+            width: 100%;
+        }
+        .navbar-brand {float:none;}
+    </style>
+    <script type="text/javascript" charset="utf-8">
+
+    </script>
+</head>
+
+
+<html>
+	<body>
+		 <!-- Trailer Video Modal -->
+	    <div class="modal" id="trailer">
+	      <div class="modal-dialog">
+	        <div class="modal-content">
+	          <a href="#" class="hanging-close" data-dismiss="modal" aria-hidden="true">
+	            <img src="https://lh5.ggpht.com/v4-628SilF0HtHuHdu5EzxD7WRqOrrTIDi_MhEG6_qkNtUK5Wg7KPkofp_VJoF7RS2LhxwEFCO1ICHZlc-o_=s0#w=24&h=24"/>
+	          </a>
+	          <div class="scale-media" id="trailer-video-container">
+	          </div>
+	        </div>
+	      </div>
+	    </div>
+		$if movies:
+			<movies>
+				$for movie in movies:
+					<item data = '$movie.toJSON()' youtubeId = '$movie.extractYoutubeId()'></item>
+			</movies>
+		<div id="canvas"></div>
+        <div class="container">
+            <div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+                <div class="container">
+                    <div class="navbar-header">
+                       <a class="navbar-brand" href="#">Custom List of Movie Trailers</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="container">
+            <div class="navbar navbar-inverse navbar-fixed-bottom" role="navigation">
+                <div class="container">
+                    <div class="navbar-header">
+                        <div id="movie-info" style="display: none">
+                            <em class="label">Name:</em><em id="movie-name"></em><br/>
+                            <em class="label">Description:</em><em id="movie-description"></em>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+	</body>
+</html>
